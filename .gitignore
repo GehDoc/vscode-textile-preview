@@ -1,0 +1,6 @@
+/out/
+/node_modules/
+package.nls.*.json
+vscode-textile-preview*.vsix
+
+/PERSONAL-NOTES.md

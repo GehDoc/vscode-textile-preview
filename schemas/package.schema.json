@@ -1,0 +1,28 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"title": "Textile contributions to package.json",
+	"type": "object",
+	"properties": {
+		"contributes": {
+			"type": "object",
+			"properties": {
+				"textile.previewStyles": {
+					"type": "array",
+					"description": "Contributed CSS files that change the look or layout of the Textile preview",
+					"items": {
+						"type": "string",
+						"description": "Extension relative path to a css file"
+					}
+				},
+				"textile.previewScripts": {
+					"type": "array",
+					"description": "Contributed scripts that are executed in the Textile preview",
+					"items": {
+						"type": "string",
+						"description": "Extension relative path to a JavaScript file"
+					}
+				}
+			}
+		}
+	}
+}

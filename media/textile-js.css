@@ -1,0 +1,150 @@
+/* From http://borgar.github.io/textile-js/app.css
+ * with some colors removed, and vscode theming applied
+ */
+
+#text_preview {
+  padding: 0 1em 4px 1em;
+  /* color: #444; */
+  font-size: 13px;
+  line-height: 1.4;
+}
+#text_preview h1 {
+  line-height: 1.1;
+  font-size: 2em;
+}
+#text_preview h2 {
+  line-height: 1.1;
+  font-size: 1.6em;
+}
+#text_preview h3 {
+  line-height: 1.14;
+  font-size: 1.36em;
+}
+#text_preview h4 {
+  line-height: 1.2;
+  font-size: 1.14em;
+}
+#text_preview h5 {
+  line-height: 1.24;
+  font-size: 1em;
+}
+#text_preview h6 {
+  line-height: 1.24;
+  font-size: 1em;
+}
+/*
+#text_preview code {
+  background: #f4f4f4;
+}
+*/
+#text_preview table {
+  border-collapse : collapse;
+}
+#text_preview table th,
+#text_preview table td {
+  padding : 4px 8px;
+  border : 1px solid /*#aaa*/;
+}
+#text_preview ul {
+  margin-left: 0;
+  padding-left: 2em;
+}
+#text_preview acronym {
+  text-decoration : none;
+  border-bottom : 1px dotted /*#888*/;
+  cursor: help;
+}
+#text_preview blockquote {
+  margin-left: .6em;
+  padding-left: 1em;
+  border-left: .4em solid /*#ddd*/;
+}
+#text_preview pre > code {
+  display: block;
+}
+#text_preview .caps {
+  font-variant: small-caps;
+  text-transform: lowercase;
+  letter-spacing: .1em;
+}
+
+/** Theming */
+
+.vscode-light,
+.vscode-light pre code {
+	color: rgb(30, 30, 30);
+}
+
+.vscode-dark,
+.vscode-dark pre code {
+	color: #DDD;
+}
+
+.vscode-high-contrast,
+.vscode-high-contrast pre code {
+	color: white;
+}
+
+.vscode-light code {
+	color: #A31515;
+}
+
+.vscode-dark code {
+	color: #D7BA7D;
+}
+
+.vscode-light pre:not(.hljs),
+.vscode-light code > div {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre:not(.hljs),
+.vscode-dark code > div {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre:not(.hljs),
+.vscode-high-contrast code > div {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+.vscode-light blockquote,
+.vscode-dark blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.vscode-high-contrast blockquote {
+	background: transparent;
+	border-color: #fff;
+}
+
+.vscode-light acronym,
+.vscode-dark acronym,
+.vscode-high-contrast acronym {
+  border-color: #888;
+}

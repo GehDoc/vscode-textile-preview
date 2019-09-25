@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es2018",
+		"outDir": "./out",
+		"experimentalDecorators": true,
+		"lib": [
+			"es6",
+			"es2015.promise",
+			"dom"
+		],
+		"sourceMap": true,
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"strict": true,
+		"alwaysStrict": true
+	},
+	"include": [
+		"src/**/*"
+	]
+}
