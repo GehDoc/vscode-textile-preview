@@ -2,7 +2,7 @@
 
 Full featured document preview for the [Textile](https://en.wikipedia.org/wiki/Textile_(markup_language)) markup language.
 
-*Still Alpha version !! See the [Roadmap](##Known-issues-/-TODO-/-Roadmap).*
+*Still Alpha version !! See the [Roadmap](##Known-issues--TODO--Roadmap).*
 
 Based on the source code of [Visual Studio Code's Markdown preview](https://github.com/microsoft/vscode/tree/master/extensions/markdown-language-features), it uses a modified version of [textile.js](https://github.com/GehDoc/textile-js) Textile to HTML parser in order to display live preview.
 
@@ -50,6 +50,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 	* **OK** publisher : choose !
 	* **OK** add LICENSES directory, and change links from README.md
 	* **OK** Before last : check all links in README.md
+	* fix github security alerts
 	* Last : update version to 0.2.0, compile, publish to marketplace, publish to github
 * (BETA) - Improvements / bugs :
 	* vscode-nls : use 1 file bundle => update to vscode-nls-dev > 2.0.1 ?
