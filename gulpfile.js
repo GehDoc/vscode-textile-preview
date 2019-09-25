@@ -46,7 +46,7 @@ gulp.task('package', function(callback) {
 });
 
 gulp.task('clean', function() {
-	return del(['out/**', 'package.nls.*.json', 'vscode-textile-preview*.vsix']);
+	return del(['out/**', 'package.nls.*.json', 'vscode-textile-preview*.vsix', 'media/index.js', 'media/pre.js']);
 });
 
 //---- internal
