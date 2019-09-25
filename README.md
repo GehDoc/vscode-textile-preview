@@ -2,7 +2,7 @@
 
 Full featured document preview for the [Textile](https://en.wikipedia.org/wiki/Textile_(markup_language)) markup language.
 
-*Still Alpha version !! See the [Roadmap](##Known-issues--TODO--Roadmap).*
+*Still Alpha version !! See the [Roadmap](#known-issues--todo--roadmap).*
 
 Based on the source code of [Visual Studio Code's Markdown preview](https://github.com/microsoft/vscode/tree/master/extensions/markdown-language-features), it uses a modified version of [textile.js](https://github.com/GehDoc/textile-js) Textile to HTML parser in order to display live preview.
 
