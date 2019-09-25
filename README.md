@@ -51,7 +51,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 	* **OK** publisher : choose !
 	* **OK** add LICENSES directory, and change links from README.md
 	* **OK** Before last : check all links in README.md
-	* fix github security alerts
+	* **OK** fix github security alerts
 	* Last : update version to 0.2.0, compile, publish to marketplace, publish to github
 * (BETA) - Improvements / bugs :
 	* vscode-nls : use 1 file bundle => update to vscode-nls-dev > 2.0.1 ?
