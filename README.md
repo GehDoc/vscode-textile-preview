@@ -58,6 +58,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 	* update all depencies (gulp, ... ?)
 	* check webpack use in build process : missing from 'package' command
 	* Reactivate Telemetry Reporter
+	* in root tsconfig.json file, reactivate : noImplicitAny, noUnusedLocals, noUnusedParameters
 	* add patreon/github sponsor link
 	* Last : remove "alpha notice" from README.md
 * (RELEASE) - Fix bugs for release :
