@@ -45,7 +45,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 	* (RELEASE) - support / deprecate all options
 	* (FUTURE) - implement other features
 * (ALPHA) - Improvements / bugs :
-	* vscode-nls : integrate French entirely
+	* **OK** vscode-nls : integrate French entirely
 	* **OK** change logo, remove old png/svg
 	* **OK** publisher : choose !
 	* **OK** add LICENSES directory, and change links from README.md
