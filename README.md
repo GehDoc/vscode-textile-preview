@@ -55,6 +55,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 * (BETA) - Improvements / bugs :
 	* vscode-nls : use 1 file bundle => update to vscode-nls-dev > 2.0.1 ?
 	* update all depencies (gulp, ... ?)
+	* check webpack use in build process : missing from 'package' command
 	* add patreon/github sponsor link
 	* Last : remove "alpha notice" from README.md
 * (RELEASE) - Fix bugs for release :
@@ -68,6 +69,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 	* conflict with Visual Studio Code's Markdown preview for all keybindings. *Ex :* <kbd>Ctrl+Shift+V</kbd>.
 * (FUTURE) - Improvements :
 	* more tests
+	* generate/find Typescript declaration file for textile-js
 	* line-number support for at least :
 		* block HTML (inside "pre"),
 		* parseTable (WIP : need CSS for different vscode theme, and selection-marker's height is not dynamic),
