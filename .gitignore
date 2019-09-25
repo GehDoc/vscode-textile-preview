@@ -1,6 +1,10 @@
-/out/
 /node_modules/
-package.nls.*.json
-vscode-textile-preview*.vsix
 
 /PERSONAL-NOTES.md
+
+# generated files :
+package.nls.*.json
+vscode-textile-preview*.vsix
+/media/index.js
+/media/pre.js
+/out/
