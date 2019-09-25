@@ -43,8 +43,11 @@ class ExtensionReporter implements TelemetryReporter {
 }
 
 export function loadDefaultTelemetryReporter(): TelemetryReporter {
+	return nullReporter;
+	/* FIXME : activate
 	const packageInfo = getPackageInfo();
 	return packageInfo ? new ExtensionReporter(packageInfo) : nullReporter;
+	*/
 }
 
 function getPackageInfo(): IPackageInfo | null {

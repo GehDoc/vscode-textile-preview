@@ -29,6 +29,7 @@ To be done / triaged :
 * Generation of table of content, and table of symbols
 * Support 'linkify' option
 * Translations (now only English and French)
+* Reactivate Telemetry Reporter
 
 
 ## Release Notes
@@ -56,6 +57,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 	* vscode-nls : use 1 file bundle => update to vscode-nls-dev > 2.0.1 ?
 	* update all depencies (gulp, ... ?)
 	* check webpack use in build process : missing from 'package' command
+	* Reactivate Telemetry Reporter
 	* add patreon/github sponsor link
 	* Last : remove "alpha notice" from README.md
 * (RELEASE) - Fix bugs for release :
