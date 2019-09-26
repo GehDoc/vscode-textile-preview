@@ -16,13 +16,15 @@ import { Logger } from './logger';
 import { TextileEngine } from './textileEngine';
 import { getTextileExtensionContributions } from './textileExtensions';
 import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector, ContentSecurityPolicyArbiter } from './security';
-import { loadDefaultTelemetryReporter, TelemetryReporter } from './telemetryReporter';
+//import { loadDefaultTelemetryReporter, TelemetryReporter } from './telemetryReporter';
 //import { githubSlugifier } from './slugify';
 
 
 export function activate(context: vscode.ExtensionContext) {
+	/* Disabled
 	const telemetryReporter = loadDefaultTelemetryReporter();
 	context.subscriptions.push(telemetryReporter);
+	*/
 
 	const contributions = getTextileExtensionContributions(context);
 	context.subscriptions.push(contributions);
@@ -48,7 +50,7 @@ export function activate(context: vscode.ExtensionContext) {
 		*/
 		engine
 	));
-	context.subscriptions.push(registerTextileCommands(previewManager, telemetryReporter, cspArbiter, engine));
+	context.subscriptions.push(registerTextileCommands(previewManager, /* disabled : telemetryReporter, */ cspArbiter, engine));
 
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
 		logger.updateConfiguration();
@@ -84,16 +86,16 @@ function registerTextileLanguageFeatures(
 
 function registerTextileCommands(
 	previewManager: TextilePreviewManager,
-	telemetryReporter: TelemetryReporter,
+	// disabled : telemetryReporter: TelemetryReporter,
 	cspArbiter: ContentSecurityPolicyArbiter,
 	engine: TextileEngine
 ): vscode.Disposable {
 	const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager);
 
 	const commandManager = new CommandManager();
-	commandManager.register(new commands.ShowPreviewCommand(previewManager, telemetryReporter));
-	commandManager.register(new commands.ShowPreviewToSideCommand(previewManager, telemetryReporter));
-	commandManager.register(new commands.ShowLockedPreviewToSideCommand(previewManager, telemetryReporter));
+	commandManager.register(new commands.ShowPreviewCommand(previewManager /* disabled : , telemetryReporter */));
+	commandManager.register(new commands.ShowPreviewToSideCommand(previewManager /* disabled : , telemetryReporter */));
+	commandManager.register(new commands.ShowLockedPreviewToSideCommand(previewManager /* disabled : , telemetryReporter */));
 	commandManager.register(new commands.ShowSourceCommand(previewManager));
 	commandManager.register(new commands.RefreshPreviewCommand(previewManager, engine));
 	commandManager.register(new commands.MoveCursorToPositionCommand());

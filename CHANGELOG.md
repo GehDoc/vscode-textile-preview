@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [UNRELEASED]
+### Changed
+- Remove Telemetry Reporter, as it requires a non free Azure account
+
+
 ## [0.2.1] - 2019-09-26
 ### Fixed
 - webpack generated files were missing from the VSIX package

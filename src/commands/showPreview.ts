@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 
 import { Command } from '../commandManager';
 import { TextilePreviewManager } from '../features/previewManager';
-import { TelemetryReporter } from '../telemetryReporter';
+// disabled : import { TelemetryReporter } from '../telemetryReporter';
 import { PreviewSettings } from '../features/preview';
 
 interface ShowPreviewSettings {
@@ -17,7 +17,7 @@ interface ShowPreviewSettings {
 
 async function showPreview(
 	webviewManager: TextilePreviewManager,
-	telemetryReporter: TelemetryReporter,
+	/* disabled : telemetryReporter: TelemetryReporter, */
 	uri: vscode.Uri | undefined,
 	previewSettings: ShowPreviewSettings,
 ): Promise<any> {
@@ -45,23 +45,27 @@ async function showPreview(
 		locked: !!previewSettings.locked
 	});
 
+	/* disabled :
 	telemetryReporter.sendTelemetryEvent('openPreview', {
 		where: previewSettings.sideBySide ? 'sideBySide' : 'inPlace',
 		how: (uri instanceof vscode.Uri) ? 'action' : 'pallete'
 	});
+	*/
 }
 
 export class ShowPreviewCommand implements Command {
 	public readonly id = 'textile.showPreview';
 
 	public constructor(
-		private readonly webviewManager: TextilePreviewManager,
+		private readonly webviewManager: TextilePreviewManager
+		/* disabled :
 		private readonly telemetryReporter: TelemetryReporter
+		*/
 	) { }
 
 	public execute(mainUri?: vscode.Uri, allUris?: vscode.Uri[], previewSettings?: PreviewSettings) {
 		for (const uri of Array.isArray(allUris) ? allUris : [mainUri]) {
-			showPreview(this.webviewManager, this.telemetryReporter, uri, {
+			showPreview(this.webviewManager, /* disabled : this.telemetryReporter, */ uri, {
 				sideBySide: false,
 				locked: previewSettings && previewSettings.locked
 			});
@@ -73,12 +77,14 @@ export class ShowPreviewToSideCommand implements Command {
 	public readonly id = 'textile.showPreviewToSide';
 
 	public constructor(
-		private readonly webviewManager: TextilePreviewManager,
+		private readonly webviewManager: TextilePreviewManager
+		/* disabled :
 		private readonly telemetryReporter: TelemetryReporter
+		*/
 	) { }
 
 	public execute(uri?: vscode.Uri, previewSettings?: PreviewSettings) {
-		showPreview(this.webviewManager, this.telemetryReporter, uri, {
+		showPreview(this.webviewManager, /* disabled : this.telemetryReporter, */ uri, {
 			sideBySide: true,
 			locked: previewSettings && previewSettings.locked
 		});
@@ -90,12 +96,14 @@ export class ShowLockedPreviewToSideCommand implements Command {
 	public readonly id = 'textile.showLockedPreviewToSide';
 
 	public constructor(
-		private readonly webviewManager: TextilePreviewManager,
+		private readonly webviewManager: TextilePreviewManager
+		/* disabled :
 		private readonly telemetryReporter: TelemetryReporter
+		*/
 	) { }
 
 	public execute(uri?: vscode.Uri) {
-		showPreview(this.webviewManager, this.telemetryReporter, uri, {
+		showPreview(this.webviewManager, /* disabled : this.telemetryReporter, */ uri, {
 			sideBySide: true,
 			locked: true
 		});

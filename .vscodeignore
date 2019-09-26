@@ -24,5 +24,3 @@ media/textile-mark_logo.svg
 node_modules/**
 # but VSIX won't work without them :
 !node_modules/vscode-nls
-!node_modules/vscode-extension-telemetry
-!node_modules/applicationinsights

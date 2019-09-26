@@ -323,7 +323,6 @@
 		"build-preview": "webpack --mode development"
 	},
 	"dependencies": {
-		"vscode-extension-telemetry": "0.1.1",
 		"vscode-nls": "2.0.2"
 	},
 	"devDependencies": {
