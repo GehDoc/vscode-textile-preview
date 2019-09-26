@@ -38,21 +38,13 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 ## Known issues / TODO / Roadmap
 
-* (BETA) - Fill bug reports on github, for all of the following
+* (BETA) - Fill bug reports on github (or create project ?), for all of the following
 * (BETA) - finalize the tool to [ease update from VSCode tree](tools/prepare_vscode_tree.sh).
 * implement the "Missing features" (see above) :
 	* (BETA) - *internal :* import tests
 	* (BETA) - reintegrate all translations from "Visual Studio Code's Markdown preview" (now, only French), from here : vscode/i18n/[LANG]/extensions/markdown/package.i18n.json
 	* (RELEASE) - support / deprecate all options
 	* (FUTURE) - implement other features
-* (ALPHA) - Improvements / bugs :
-	* **OK** vscode-nls : integrate French entirely
-	* **OK** change logo, remove old png/svg
-	* **OK** publisher : choose !
-	* **OK** add LICENSES directory, and change links from README.md
-	* **OK** Before last : check all links in README.md
-	* **OK** fix github security alerts
-	* Last : update version to 0.2.0, compile, publish to marketplace, publish to github
 * (BETA) - Improvements / bugs :
 	* vscode-nls : use 1 file bundle => update to vscode-nls-dev > 2.0.1 ?
 	* update all depencies (gulp, ... ?)

@@ -2,14 +2,13 @@
 	"name": "vscode-textile-preview",
 	"displayName": "%displayName%",
 	"description": "%description%",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"icon": "media/textile-mark_logo.png",
 	"publisher": "GehDoc",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/GehDoc/vscode-textile-preview.git"
 	},
-	"enableProposedApi": true,
 	"license": "SEE LICENSE IN LICENSE.txt",
 	"engines": {
 		"vscode": "^1.38.0"
