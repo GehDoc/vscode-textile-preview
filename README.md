@@ -46,7 +46,13 @@ See [CHANGELOG.md](CHANGELOG.md).
 	* (RELEASE) - support / deprecate all options
 	* (FUTURE) - implement other features
 * (BETA) - Improvements / bugs :
-	* vscode-nls : use 1 file bundle => update to vscode-nls-dev > 2.0.1 ?
+	* vscode-nls : use 1 file bundle => update to vscode-nls-dev > 2.0.1 ?  
+	Try this (execution = OK, but doesn't compile to JS) :
+	```typescript
+	nls.config({locale: process.env.VSCODE_NLS_CONFIG.locale, messageFormat:nls.MessageFormat.file, cacheLanguageResolution: true})();
+	```
+	And look there : https://github.com/microsoft/vscode-node-debug/commit/c7e835fca89c50ab6b9d753e0465ca730d435ae0  
+	*Note :* it may be easyer to automatically split bundle.
 	* update all depencies (gulp, ... ?)
 	* check webpack use in build process : file are missing from 'package' and 'publish' commands. Should be called by gulp in the sequence, not by vscode task.  
 	And, look at integration with nls : https://github.com/microsoft/vscode-extension-samples/tree/master/webpack-sample
