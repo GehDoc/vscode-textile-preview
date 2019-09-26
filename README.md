@@ -38,6 +38,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 ## Known issues / TODO / Roadmap
 
+* (ALPHA) - VISX file broken
 * (BETA) - Fill bug reports on github (or create project ?), for all of the following
 * (BETA) - finalize the tool to [ease update from VSCode tree](tools/prepare_vscode_tree.sh).
 * implement the "Missing features" (see above) :
@@ -48,7 +49,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 * (BETA) - Improvements / bugs :
 	* vscode-nls : use 1 file bundle => update to vscode-nls-dev > 2.0.1 ?
 	* update all depencies (gulp, ... ?)
-	* check webpack use in build process : missing from 'package' command
+	* check webpack use in build process : file are missing from 'package' and 'publish' commands. Should be called by gulp in the sequence, not by vscode task.
 	* Reactivate Telemetry Reporter
 	* in root tsconfig.json file, reactivate : noImplicitAny, noUnusedLocals, noUnusedParameters
 	* add patreon/github sponsor link
