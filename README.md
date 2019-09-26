@@ -38,7 +38,6 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 ## Known issues / TODO / Roadmap
 
-* (ALPHA) - VISX file broken
 * (BETA) - Fill bug reports on github (or create project ?), for all of the following
 * (BETA) - finalize the tool to [ease update from VSCode tree](tools/prepare_vscode_tree.sh).
 * implement the "Missing features" (see above) :
@@ -66,6 +65,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 * (FUTURE) - Improvements :
 	* more tests
 	* generate/find Typescript declaration file for textile-js
+	* find a way to remove "node_modules" directory completly ?
 	* line-number support for at least :
 		* block HTML (inside "pre"),
 		* parseTable (WIP : need CSS for different vscode theme, and selection-marker's height is not dynamic),

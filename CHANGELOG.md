@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - webpack generated files were missing from the VSIX package
 - correctly depends on vscode
+- correct VSIX file was broken due to dependencies not installed by vscode
 
 
 ## [0.2.0] - 2019-09-26
