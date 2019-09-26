@@ -21,6 +21,7 @@ Out of scope :
 * Snippets / Source syntax coloring : You have to use another extensions for these purpose.
 * Bloc-quote syntax coloring : Need another textile to HTML engine
 * Support plugins like mardown-it : Need antother textile to HTML engine
+* Telemetry Reporter : Need a non free Azure account : https://www.npmjs.com/package/vscode-extension-telemetry
 
 To be done / triaged :
 * *internal :* Import tests.
@@ -29,7 +30,6 @@ To be done / triaged :
 * Generation of table of content, and table of symbols
 * Support 'linkify' option
 * Translations (now only English and French)
-* Reactivate Telemetry Reporter
 
 
 ## Release Notes
@@ -51,7 +51,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 	* check webpack use in build process : file are missing from 'package' and 'publish' commands. Should be called by gulp in the sequence, not by vscode task.  
 	And, look at integration with nls : https://github.com/microsoft/vscode-extension-samples/tree/master/webpack-sample
 	And, verify : https://code.visualstudio.com/api/working-with-extensions/bundling-extension
-	* Reactivate Telemetry Reporter
+	* Remove Telemetry Reporter, as it requires a non free Azure account
 	* in root tsconfig.json file, reactivate : noImplicitAny, noUnusedLocals, noUnusedParameters
 	* Check manifest : https://code.visualstudio.com/api/references/extension-manifest
 	* add patreon/github sponsor link
@@ -67,6 +67,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 	* conflict with Visual Studio Code's Markdown preview for all keybindings. *Ex :* <kbd>Ctrl+Shift+V</kbd>.
 * (FUTURE) - Improvements :
 	* more tests
+	* Add Codecov+Travis ? https://github.com/codecov/example-typescript-vscode-extension
 	* generate/find Typescript declaration file for textile-js
 	* find a way to remove "node_modules" directory completly ?
 	* line-number support for at least :
