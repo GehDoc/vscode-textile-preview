@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [UNRELEASED]
 ### Fixed
-- webpack generated files were missing from the VISX package
+- webpack generated files were missing from the VSIX package
+- correctly depends on vscode
 
 
 ## [0.2.0] - 2019-09-26
