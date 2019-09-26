@@ -48,9 +48,12 @@ See [CHANGELOG.md](CHANGELOG.md).
 * (BETA) - Improvements / bugs :
 	* vscode-nls : use 1 file bundle => update to vscode-nls-dev > 2.0.1 ?
 	* update all depencies (gulp, ... ?)
-	* check webpack use in build process : file are missing from 'package' and 'publish' commands. Should be called by gulp in the sequence, not by vscode task.
+	* check webpack use in build process : file are missing from 'package' and 'publish' commands. Should be called by gulp in the sequence, not by vscode task.  
+	And, look at integration with nls : https://github.com/microsoft/vscode-extension-samples/tree/master/webpack-sample
+	And, verify : https://code.visualstudio.com/api/working-with-extensions/bundling-extension
 	* Reactivate Telemetry Reporter
 	* in root tsconfig.json file, reactivate : noImplicitAny, noUnusedLocals, noUnusedParameters
+	* Check manifest : https://code.visualstudio.com/api/references/extension-manifest
 	* add patreon/github sponsor link
 	* Last : remove "alpha notice" from README.md
 * (RELEASE) - Fix bugs for release :
