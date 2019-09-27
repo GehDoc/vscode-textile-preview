@@ -13,7 +13,7 @@ import { ContentSecurityPolicyArbiter, TextilePreviewSecurityLevel } from '../se
 import { WebviewResourceProvider } from '../util/resources';
 import { TextilePreviewConfiguration, TextilePreviewConfigurationManager } from './previewConfig';
 
-const localize = nls.config( process.env.VSCODE_NLS_CONFIG )();
+const localize = nls.loadMessageBundle();
 
 /**
  * Strings used inside the textile preview.

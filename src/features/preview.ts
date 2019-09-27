@@ -17,7 +17,7 @@ import { TextileContributionProvider, TextileContributions } from '../textileExt
 import { isTextileFile } from '../util/file';
 import { resolveLinkToTextileFile } from '../commands/openDocumentLink';
 import { WebviewResourceProvider, normalizeResource } from '../util/resources';
-const localize = nls.config( process.env.VSCODE_NLS_CONFIG )();
+const localize = nls.loadMessageBundle();
 
 interface WebviewMessage {
 	readonly source: string;

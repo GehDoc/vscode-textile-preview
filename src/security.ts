@@ -9,7 +9,7 @@ import { TextilePreviewManager } from './features/previewManager';
 
 import * as nls from 'vscode-nls';
 
-const localize = nls.config( process.env.VSCODE_NLS_CONFIG )();
+const localize = nls.loadMessageBundle();
 
 export const enum TextilePreviewSecurityLevel {
 	Strict = 0,

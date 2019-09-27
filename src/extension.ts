@@ -4,6 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+
+import * as nls from 'vscode-nls';
+nls.config({ messageFormat: nls.MessageFormat.file })();
+
 import { CommandManager } from './commandManager';
 import * as commands from './commands/index';
 import LinkProvider from './features/documentLinkProvider';

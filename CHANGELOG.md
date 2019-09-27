@@ -6,8 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [UNRELEASED]
+### Fixed
+- Initialize correctly vscode-nls
 ### Changed
 - Remove Telemetry Reporter, as it requires a non free Azure account
+- update to vscode-nls-dev > 2.0.1
 
 
 ## [0.2.1] - 2019-09-26

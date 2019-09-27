@@ -9,7 +9,7 @@ import * as nls from 'vscode-nls';
 import { OpenDocumentLinkCommand } from '../commands/openDocumentLink';
 import { getUriForLinkWithKnownExternalScheme } from '../util/links';
 
-const localize = nls.config( process.env.VSCODE_NLS_CONFIG )();
+const localize = nls.loadMessageBundle();
 
 function parseLink(
 	document: vscode.TextDocument,
