@@ -1,5 +1,8 @@
 # Textile Live Preview
 
+[![Marketplace Version](https://vsmarketplacebadge.apphb.com/version-short/GehDoc.vscode-textile-preview.svg)](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview)
+[![Installs](https://vsmarketplacebadge.apphb.com/installs/GehDoc.vscode-textile-preview.svg)](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview)
+
 Full featured document preview for the [Textile](https://en.wikipedia.org/wiki/Textile_(markup_language)) markup language.
 
 *Still Alpha version !! See the [Roadmap](#known-issues--todo--roadmap).*
@@ -64,7 +67,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 * (RELEASE) - Fix bugs for release :
 	* (VERIFY) click on LI preview, highlights the UL : it should highlight the LI
 * (RELEASE) - Improvements for release :
-	* improve documentation
+	* improve documentation : add marketplace rating; add animation;
 	* update to the last version of vscode
 	* Last : remove "beta notice" from README.md
 * (BETA) - Verify / Report these bugs to vscode mardown preview :
@@ -85,6 +88,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 		* I'm using my fork https://github.com/GehDoc/textile-js for now. I'm waiting an approval for this PR : https://github.com/borgar/textile-js/pull/51.
 		* If this PR is not accepted, I'll slowly maitain my fork.
 	* use another textile engine, with [Redmine](https://www.redmine.org/) support.
+	* export to HTML & PDF.
 
 
 ## License
