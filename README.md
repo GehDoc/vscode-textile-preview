@@ -52,7 +52,6 @@ See [CHANGELOG.md](CHANGELOG.md).
 	* vscode-nls : use 1 file bundle  
 	Look there : https://github.com/microsoft/vscode-node-debug/commit/c7e835fca89c50ab6b9d753e0465ca730d435ae0  
 	*Note :* it may be easyer to automatically split bundle.
-	* update all depencies (gulp, ... ?)
 	* check webpack use in build process : file are missing from 'package' and 'publish' commands. Should be called by gulp in the sequence, not by vscode task.  
 	And, look at integration with nls : https://github.com/microsoft/vscode-extension-samples/tree/master/webpack-sample
 	And, verify : https://code.visualstudio.com/api/working-with-extensions/bundling-extension
