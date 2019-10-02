@@ -34,7 +34,6 @@ To be done / triaged :
 * Support 'linkify' option
 * Translations (now only English and French)
 
-
 ## Release Notes
 
 See [CHANGELOG.md](CHANGELOG.md).
@@ -64,6 +63,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 * (RELEASE) - Improvements for release :
 	* improve documentation : add marketplace rating; add animation;
 	* update to the last version of vscode
+	* Describe how-to report bugs (triage : myrepo, VSCode Makdown, Textile-js)
 	* Last : remove "beta notice" from README.md
 * (BETA) - Verify / Report these bugs to vscode mardown preview :
 	* double-click inside preview should not open a new source view, if the source is already opened and not focused : in this case, it should focus the vscode tab containing this source.
@@ -85,6 +85,11 @@ See [CHANGELOG.md](CHANGELOG.md).
 	* use another textile engine, with [Redmine](https://www.redmine.org/) support.
 	* export to HTML & PDF.
 
+## Support this project
+
+You can support this project by :
+* reporting any bug / suggestion to [GitHub repository](https://github.com/GehDoc/vscode-textile-preview).
+* giving feedback and rating through [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview).
 
 ## License
 
