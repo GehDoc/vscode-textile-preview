@@ -57,6 +57,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 	* in root tsconfig.json file, reactivate : noImplicitAny, noUnusedLocals, noUnusedParameters
 	* Check manifest : https://code.visualstudio.com/api/references/extension-manifest
 	* add patreon/github sponsor link
+	* add back src processing to tools/prepare_vscode_tree.sh
 	* Last : remove "alpha notice" from README.md
 * (RELEASE) - Fix bugs for release :
 	* (VERIFY) click on LI preview, highlights the UL : it should highlight the LI

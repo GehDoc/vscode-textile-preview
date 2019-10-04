@@ -18,6 +18,12 @@ function warning() {
 function process_dir_src() {
 	dir=$1
 	echo "Processing tree of $dir"
+
+	# TODO : don't use 'cd'
+	# TODO : use ./tools/tmp/ as working dir
+	warning "src processing disabled (see TODO)"
+	return 0
+
 	cd $dir
 	if [ $? -ne 0 ]; then
 	  fatal_error "cannot chdir $dir"
