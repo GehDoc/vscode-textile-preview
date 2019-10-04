@@ -53,6 +53,32 @@ function process_dir_src() {
 	done
 }
 
+function process_dir_i18n() {
+	# Process : https://github.com/Microsoft/vscode-loc/blob/master/i18n/vscode-language-pack-fr/translations/extensions/markdown-language-features.i18n.json
+	dir=$1
+	out_dir=$2
+
+	echo "Processing tree of $dir to $out_dir"
+	if [ ! -d "$dir" ]; then
+	  fatal_error "$dir doesn't exist"
+	fi
+
+	mkdir -p $out_dir
+	if [ $? -ne 0 ]; then
+	  fatal_error "cannot mkdir $out_dir"
+	fi
+
+	processed=0
+	for file in $dir/vscode-language-pack-*/translations/extensions/markdown-language-features.i18n.json; do
+		echo $file
+		let processed++
+	done
+	if [ $processed -eq 0 ]; then
+		fatal_error "Nothing done"
+	fi
+}
+
+
 # -----------
 echo "Processing src $vscode"
 
@@ -63,8 +89,8 @@ process_dir_src "../$vscode/extensions/markdown-language-features/" './src/*.ts 
 # -----------
 echo "Processing locales"
 
-# TODO :
-fatal_error "TODO : i18n now on : https://github.com/Microsoft/vscode-loc/blob/master/i18n/vscode-language-pack-fr/translations/extensions/markdown-language-features.i18n.json"
-# process_dir "../../../$vscode/i18n/fra/extensions/markdown-language-features/" './*.json ./out/*.json ./out/*/*.json'
+# TODO : download from github : https://github.com/Microsoft/vscode-loc.git
+
+process_dir_i18n ./tools/tmp/vscode-loc/i18n/ ./tools/tmp/out/i18n
 
 exit 0
