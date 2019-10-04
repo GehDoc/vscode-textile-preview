@@ -14,6 +14,8 @@ function warning() {
 	msg=$1
 	echo -e "\e[01;31mWRN:\e[0m $1"
 }
+
+function process_dir_src() {
 	dir=$1
 	echo "Processing tree of $dir"
 	cd $dir
@@ -45,11 +47,15 @@ function warning() {
 	done
 }
 
-echo "Processing $vscode"
+# -----------
+echo "Processing src $vscode"
 
 # TODO : download from github
 
-process_dir "../$vscode/extensions/markdown-language-features/" './src/*.ts ./src/*/*.ts ./media/*.js ./package.json ./package.nls.json ./preview-src/*.ts ./schemas/package.schema.json'
+process_dir_src "../$vscode/extensions/markdown-language-features/" './src/*.ts ./src/*/*.ts ./media/*.js ./package.json ./package.nls.json ./preview-src/*.ts ./schemas/package.schema.json'
+
+# -----------
+echo "Processing locales"
 
 # TODO :
 fatal_error "TODO : i18n now on : https://github.com/Microsoft/vscode-loc/blob/master/i18n/vscode-language-pack-fr/translations/extensions/markdown-language-features.i18n.json"
