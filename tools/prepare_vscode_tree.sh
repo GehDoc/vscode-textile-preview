@@ -10,12 +10,15 @@ function fatal_error() {
 	exit -1
 }
 
-function process_dir() {
+function warning() {
+	msg=$1
+	echo -e "\e[01;31mWRN:\e[0m $1"
+}
 	dir=$1
 	echo "Processing tree of $dir"
 	cd $dir
 	if [ $? -ne 0 ]; then
-	  fatal_error "*ERR: cannot chdir $dir"
+	  fatal_error "cannot chdir $dir"
 	fi
 
 	elements=$2
