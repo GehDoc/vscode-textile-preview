@@ -21,15 +21,15 @@ const outDest = 'out';
 
 // See : https://github.com/microsoft/vscode/blob/release/1.22/build/lib/i18n.ts
 const languages = [
-	//{ id: 'zh-tw', folderName: 'cht', transifexId: 'zh-hant' },
-	//{ id: 'zh-cn', folderName: 'chs', transifexId: 'zh-hans' },
+	{ id: 'zh-tw', folderName: 'cht', transifexId: 'zh-hant' },
+	{ id: 'zh-cn', folderName: 'chs', transifexId: 'zh-hans' },
 	{ id: 'ja', folderName: 'jpn' },
-	//{ id: 'ko', folderName: 'kor' },
-	//{ id: 'de', folderName: 'deu' },
+	{ id: 'ko', folderName: 'kor' },
+	{ id: 'de', folderName: 'deu' },
 	{ id: 'fr', folderName: 'fra' },
-	//{ id: 'es', folderName: 'esn' },
-	//{ id: 'ru', folderName: 'rus' },
-	//{ id: 'it', folderName: 'ita' }
+	{ id: 'es', folderName: 'esn' },
+	{ id: 'ru', folderName: 'rus' },
+	{ id: 'it', folderName: 'ita' }
 ];
 
 const cleanTask = function() {

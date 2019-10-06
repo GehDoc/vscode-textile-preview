@@ -23,18 +23,43 @@ if( process.argv.length != 5 ) {
 }
 
 // TODO : share this list with gulpfile
+//
 // Supported languages list :
 // lang => [
 //	dirname: directory's name for this lang files
 //	replacement : list of strings replacements, to transform markdown into textile :
 //		[ regexp, replacement string, count, i18n_dirname ]
+//
+// Note : usually, 49 replacements
 const langs = {
+	'de':{
+		dirname: 'deu',
+		replacements: [
+			[ /markdown/g, 'textile', 28 ],
+			[ /Markdown/g, 'Textile', 21 ],
+		]
+	},
+	'es':{
+		dirname: 'esn',
+		replacements: [
+			// OK, count is 44
+			[ /markdown/g, 'textile', 29 ],
+			[ /Markdown/g, 'Textile', 15 ],
+		]
+	},
 	'fr':{
 		dirname: 'fra',
 		replacements: [
 			[ /markdown/g, 'textile', 31 ],
 			[ /Markdown/g, 'Textile', 17 ],
 			[ /markdow/g, 'textile', 1 ],
+		]
+	},
+	'it':{
+		dirname: 'ita',
+		replacements: [
+			[ /markdown/g, 'textile', 41 ],
+			[ /Markdown/g, 'Textile', 8 ],
 		]
 	},
 	'ja':{
@@ -44,7 +69,35 @@ const langs = {
 			[ /マークダウン/g, 'Textile', 17 ],
 			[ /Markdown/g, 'Textile', 5 ],
 		]
-	}
+	},
+	'ko':{
+		dirname: 'kor',
+		replacements: [
+			[ /markdown/g, 'textile', 35 ],
+			[ /Markdown/g, 'Textile', 14 ],
+		]
+	},
+	'ru':{
+		dirname: 'rus',
+		replacements: [
+			[ /markdown/g, 'textile', 28 ],
+			[ /Markdown/g, 'Textile', 21 ],
+		]
+	},
+	'zh-hant':{ // Note: transifexId
+		dirname: 'cht',
+		replacements: [
+			[ /markdown/g, 'textile', 29 ],
+			[ /Markdown/g, 'Textile', 20 ],
+		]
+	},
+	'zh-hans':{ // Note: transifexId
+		dirname: 'chs',
+		replacements: [
+			[ /markdown/g, 'textile', 29 ],
+			[ /Markdown/g, 'Textile', 20 ],
+		]
+	},
 };
 
 const	lang = process.argv[2],

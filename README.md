@@ -25,6 +25,7 @@ Out of scope :
 * Bloc-quote syntax coloring : Need another textile to HTML engine
 * Support plugins like mardown-it : Need antother textile to HTML engine
 * Telemetry Reporter : Need a non free Azure account : https://www.npmjs.com/package/vscode-extension-telemetry
+* Add other translations than the 9 core languages listed there (unless requested) : https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
 
 To be done / triaged :
 * *internal :* Import tests.
@@ -32,7 +33,6 @@ To be done / triaged :
 * Paragraph folding
 * Generation of table of content, and table of symbols
 * Support 'linkify' option
-* Translations (now only English and French)
 
 ## Release Notes
 
@@ -44,7 +44,6 @@ See [CHANGELOG.md](CHANGELOG.md).
 * (BETA) - finalize the tool to [ease update from VSCode tree](tools/prepare_vscode_tree.sh).
 * implement the "Missing features" (see above) :
 	* (BETA) - *internal :* import tests
-	* (BETA) - reintegrate all translations from "Visual Studio Code's Markdown preview" (now, only French), from here : vscode/i18n/[LANG]/extensions/markdown/package.i18n.json
 	* (RELEASE) - support / deprecate all options
 	* (FUTURE) - implement other features
 * (BETA) - Improvements / bugs :
