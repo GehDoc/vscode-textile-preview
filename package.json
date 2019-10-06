@@ -2,7 +2,7 @@
 	"name": "vscode-textile-preview",
 	"displayName": "%displayName%",
 	"description": "%description%",
-	"version": "0.2.3",
+	"version": "0.2.4",
 	"icon": "media/textile-mark_logo.png",
 	"publisher": "GehDoc",
 	"preview": true,
