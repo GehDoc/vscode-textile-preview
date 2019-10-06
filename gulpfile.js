@@ -19,9 +19,17 @@ const inlineMap = true;
 const inlineSource = false;
 const outDest = 'out';
 
-// If all VS Code langaues are support you can use nls.coreLanguages
+// See : https://github.com/microsoft/vscode/blob/release/1.22/build/lib/i18n.ts
 const languages = [
-	{ folderName: 'fra', id: 'fr' }
+	//{ id: 'zh-tw', folderName: 'cht', transifexId: 'zh-hant' },
+	//{ id: 'zh-cn', folderName: 'chs', transifexId: 'zh-hans' },
+	{ id: 'ja', folderName: 'jpn' },
+	//{ id: 'ko', folderName: 'kor' },
+	//{ id: 'de', folderName: 'deu' },
+	{ id: 'fr', folderName: 'fra' },
+	//{ id: 'es', folderName: 'esn' },
+	//{ id: 'ru', folderName: 'rus' },
+	//{ id: 'it', folderName: 'ita' }
 ];
 
 const cleanTask = function() {

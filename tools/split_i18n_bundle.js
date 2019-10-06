@@ -36,6 +36,14 @@ const langs = {
 			[ /Markdown/g, 'Textile', 17 ],
 			[ /markdow/g, 'textile', 1 ],
 		]
+	},
+	'ja':{
+		dirname: 'jpn',
+		replacements: [
+			[ /markdown/g, 'textile', 27 ],
+			[ /マークダウン/g, 'Textile', 17 ],
+			[ /Markdown/g, 'Textile', 5 ],
+		]
 	}
 };
 

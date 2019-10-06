@@ -8,7 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [UNRELEASED]
 ### Changed
 - [INTERNAL] : prepare the import tool for batch processing of translations.
-- Update FR and EN languages
+- Update FR and EN translations
+
+### Added
+- JA translation
 
 
 ## [0.2.2] - 2019-09-27
