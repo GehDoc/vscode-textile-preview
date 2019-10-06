@@ -48,9 +48,6 @@ See [CHANGELOG.md](CHANGELOG.md).
 	* (RELEASE) - support / deprecate all options
 	* (FUTURE) - implement other features
 * (BETA) - Improvements / bugs :
-	* vscode-nls : use 1 file bundle  
-	Look there : https://github.com/microsoft/vscode-node-debug/commit/c7e835fca89c50ab6b9d753e0465ca730d435ae0  
-	*Note :* it may be easyer to automatically split bundle.
 	* check webpack use in build process : file are missing from 'package' and 'publish' commands. Should be called by gulp in the sequence, not by vscode task.  
 	And, look at integration with nls : https://github.com/microsoft/vscode-extension-samples/tree/master/webpack-sample
 	And, verify : https://code.visualstudio.com/api/working-with-extensions/bundling-extension
@@ -75,6 +72,9 @@ See [CHANGELOG.md](CHANGELOG.md).
 	* Add Codecov+Travis ? https://github.com/codecov/example-typescript-vscode-extension
 	* generate/find Typescript declaration file for textile-js
 	* find a way to remove "node_modules" directory completly ?
+	* vscode-nls : use 1 file bundle  
+	Look there : https://github.com/microsoft/vscode-node-debug/commit/c7e835fca89c50ab6b9d753e0465ca730d435ae0  
+	*Note :* it may be easyer to automatically split bundle.
 	* line-number support for at least :
 		* block HTML (inside "pre"),
 		* parseTable (WIP : need CSS for different vscode theme, and selection-marker's height is not dynamic),
