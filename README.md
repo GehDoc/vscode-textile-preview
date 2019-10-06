@@ -66,6 +66,8 @@ See [CHANGELOG.md](CHANGELOG.md).
 * (BETA) - Verify / Report these bugs to vscode mardown preview :
 	* double-click inside preview should not open a new source view, if the source is already opened and not focused : in this case, it should focus the vscode tab containing this source.
 	* conflict with Visual Studio Code's Markdown preview for all keybindings. *Ex :* <kbd>Ctrl+Shift+V</kbd>.
+* (BETA) - Verify / Report these bugs to vs marketplace :
+	* Visual Studio Marketplace, markdown, github flavor, doesn't compute correctly the hashtag for my REAMDE's chapter "Known issues / TODO / Roadmap" => the link works on github, but not on VSMarketplace.
 * (FUTURE) - Improvements :
 	* more tests
 	* Add Codecov+Travis ? https://github.com/codecov/example-typescript-vscode-extension
