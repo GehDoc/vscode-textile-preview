@@ -1,5 +1,5 @@
 {
-	"displayName": "Textile Live Preview",
+	"displayName": "Textile Language Features",
 	"description": "Provides rich language support for Textile.",
 	"textile.preview.breaks.desc": "Sets how line-breaks are rendered in the Textile preview. Setting it to 'true' creates a <br> for every newline.",
 	"textile.preview.linkify": "Enable or disable conversion of URL-like text to links in the Textile preview.",
@@ -10,8 +10,6 @@
 	"textile.preview.markEditorSelection.desc": "Mark the current editor selection in the Textile preview.",
 	"textile.preview.scrollEditorWithPreview.desc": "When a Textile preview is scrolled, update the view of the editor.",
 	"textile.preview.scrollPreviewWithEditor.desc": "When a Textile editor is scrolled, update the view of the preview.",
-	"textile.preview.scrollPreviewWithEditorSelection.desc": "[Deprecated] Scrolls the Textile preview to reveal the currently selected line from the editor.",
-	"textile.preview.scrollPreviewWithEditorSelection.deprecationMessage": "This setting has been replaced by 'textile.preview.scrollPreviewWithEditor' and no longer has any effect.",
 	"textile.preview.title": "Open Preview",
 	"textile.previewSide.title": "Open Preview to the Side",
 	"textile.showLockedPreviewToSide.title": "Open Locked Preview to the Side",
