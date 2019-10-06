@@ -65,6 +65,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 	* improve documentation : add marketplace rating; add animation;
 	* update to the last version of vscode
 	* Describe how-to report bugs (triage : myrepo, VSCode Makdown, Textile-js)
+	* share supported languages list, between tools/split_i18n_bundle.js and gulpfile.js
 	* Last : remove "beta notice" from README.md
 * (BETA) - Verify / Report these bugs to vscode mardown preview :
 	* double-click inside preview should not open a new source view, if the source is already opened and not focused : in this case, it should focus the vscode tab containing this source.

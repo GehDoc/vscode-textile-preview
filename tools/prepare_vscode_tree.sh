@@ -63,6 +63,7 @@ function process_dir_i18n() {
 	  fatal_error "$dir doesn't exist"
 	fi
 
+	rm -rf $out_dir
 	mkdir -p $out_dir
 	if [ $? -ne 0 ]; then
 	  fatal_error "cannot mkdir $out_dir"
@@ -70,8 +71,17 @@ function process_dir_i18n() {
 
 	processed=0
 	for file in $dir/vscode-language-pack-*/translations/extensions/markdown-language-features.i18n.json; do
-		echo $file
-		let processed++
+		echo " - Processing $file"
+
+		lang=${file%/translations/extensions/markdown-language-features.i18n.json}
+		lang=${lang#$dir/vscode-language-pack-}
+
+		./tools/split_i18n_bundle.js $lang $file $out_dir
+		if [ $? -eq 0 ]; then
+			let processed++
+		else
+			fatal_error "Error"
+		fi
 	done
 	if [ $processed -eq 0 ]; then
 		fatal_error "Nothing done"
@@ -91,6 +101,6 @@ echo "Processing locales"
 
 # TODO : download from github : https://github.com/Microsoft/vscode-loc.git
 
-process_dir_i18n ./tools/tmp/vscode-loc/i18n/ ./tools/tmp/out/i18n
+process_dir_i18n ./tools/tmp/vscode-loc/i18n/ ./tools/tmp/out/i18n/
 
 exit 0
