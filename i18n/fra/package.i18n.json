@@ -16,7 +16,7 @@
 	"textile.preview.lineHeight.desc": "Contrôle la hauteur de ligne utilisée dans l'aperçu Textile. Ce nombre est relatif à la taille de police.",
 	"textile.preview.markEditorSelection.desc": "Permet de marquer la sélection actuelle de l'éditeur dans l'aperçu Textile.",
 	"textile.preview.scrollEditorWithPreview.desc": "Lors du défilement de l'aperçu textile, actualiser l’affichage de l’éditeur.",
-	"textile.preview.scrollPreviewWithEditor.desc": "Lors du défilement d’un éditeur markdow, actualiser l’affichage de l’aperçu.",
+	"textile.preview.scrollPreviewWithEditor.desc": "Lors du défilement d’un éditeur textile, actualiser l’affichage de l’aperçu.",
 	"textile.preview.title": "Ouvrir l'aperçu",
 	"textile.previewSide.title": "Ouvrir l'aperçu sur le côté",
 	"textile.showLockedPreviewToSide.title": "Ouvrir l'aperçu verrrouillé sur le côté",

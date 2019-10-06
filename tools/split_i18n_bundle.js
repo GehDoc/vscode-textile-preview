@@ -34,6 +34,7 @@ const langs = {
 		replacements: [
 			[ /markdown/g, 'textile', 31 ],
 			[ /Markdown/g, 'Textile', 17 ],
+			[ /markdow/g, 'textile', 1 ],
 		]
 	}
 };
