@@ -50,7 +50,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 	* check webpack use in build process : file are missing from 'package' and 'publish' commands. Should be called by gulp in the sequence, not by vscode task.  
 	And, look at integration with nls : https://github.com/microsoft/vscode-extension-samples/tree/master/webpack-sample
 	And, verify : https://code.visualstudio.com/api/working-with-extensions/bundling-extension
-	* in root tsconfig.json file, reactivate : noImplicitAny, noUnusedLocals, noUnusedParameters
+	* in root tsconfig.json file, reactivate : noUnusedLocals, noUnusedParameters
 	* Check manifest : https://code.visualstudio.com/api/references/extension-manifest
 	* add patreon/github sponsor link
 	* add back src processing to tools/prepare_vscode_tree.sh

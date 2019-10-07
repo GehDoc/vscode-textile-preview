@@ -10,7 +10,7 @@
 			"dom"
 		],
 		"sourceMap": true,
-		"noImplicitAny": false,
+		"noImplicitAny": true,
 		"noImplicitReturns": true,
 		"noUnusedLocals": false,
 		"noUnusedParameters": false,
