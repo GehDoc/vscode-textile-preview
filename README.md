@@ -1,9 +1,9 @@
-# Textile Live Preview
+# Textile Language Features
 
 [![Marketplace Version](https://vsmarketplacebadge.apphb.com/version-short/GehDoc.vscode-textile-preview.svg)](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview)
 [![Installs](https://vsmarketplacebadge.apphb.com/installs/GehDoc.vscode-textile-preview.svg)](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview)
 
-Full featured document preview for the [Textile](https://en.wikipedia.org/wiki/Textile_(markup_language)) markup language.
+Full featured document live preview for the [Textile](https://en.wikipedia.org/wiki/Textile_(markup_language)) markup language.
 
 *Still Alpha version !! See the [Roadmap](#known-issues--todo--roadmap).*
 
@@ -14,20 +14,24 @@ Based on the source code of [Visual Studio Code's Markdown preview](https://gith
 Create or open any file with a .textile extension, and then you can toggle the visualization of the editor between the code and the preview of the [Textile](https://en.wikipedia.org/wiki/Textile_(markup_language)) file.
 To switch between views, press (<kbd>Ctrl+Shift+V</kbd>) in the editor. You can view the preview side-by-side (<kbd>Ctrl+K</kbd> <kbd>V</kbd>) with the file you are editing and see changes reflected in real-time as you edit.
 
+## Features
+
 To see the full list of features and interactions, you can read the documentation of the [Visual Studio Code's Markdown preview](https://code.visualstudio.com/docs/languages/markdown#_markdown-preview).
 
 This extension is entirely based on the Markdown preview provided by Visual Studio Code, and tries to offer the same functionalities.
 
 ### Missing features
 
-Out of scope :
+For now, some features of the original Markdown preview have been disabled.
+
+Features considered out of scope of this extension :
 * Snippets / Source syntax coloring : You have to use another extensions for these purpose.
 * Bloc-quote syntax coloring : Need another textile to HTML engine
-* Support plugins like mardown-it : Need antother textile to HTML engine
+* Support plugins, like mardown-it : Need antother textile to HTML engine
 * Telemetry Reporter : Need a non free Azure account : https://www.npmjs.com/package/vscode-extension-telemetry
 * Add other translations than the 9 core languages listed there (unless requested) : https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
 
-To be done / triaged :
+Features to be implemented / triaged :
 * *internal :* Import tests.
 * Make all links clickable in the source document (linkProvider)
 * Paragraph folding
