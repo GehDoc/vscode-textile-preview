@@ -71,7 +71,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 * (FUTURE) - Improvements :
 	* more tests
 	* Add Codecov+Travis ? https://github.com/codecov/example-typescript-vscode-extension
-	* generate/find Typescript declaration file for textile-js
+	* generate Typescript declaration file for textile-js : improve and publish to textile-js repo.
 	* find a way to remove "node_modules" directory completly ?
 	* vscode-nls : use 1 file bundle  
 	Look there : https://github.com/microsoft/vscode-node-debug/commit/c7e835fca89c50ab6b9d753e0465ca730d435ae0  

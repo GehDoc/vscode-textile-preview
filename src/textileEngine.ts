@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 //import * as crypto from 'crypto';
-//import * as textile from './textile-js'
+import TextileJS = require( '../libs/textile-js/textile' );
 //import * as path from 'path';
 import * as vscode from 'vscode';
 import { TextileContributionProvider as TextileContributionProvider } from './textileExtensions';
@@ -55,14 +55,6 @@ class TokenCache {
 	}
 }
 */
-
-interface TextileJS {
-	convert(text: string, options: undefined | object): string;
-
-	//parse(text: string, env: any): IToken[];
-
-	//utils: any;
-}
 
 const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/;
 

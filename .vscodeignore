@@ -6,6 +6,7 @@
 out/test/**
 test/**
 **/*.map
+**/*.ts
 
 i18n/**
 src/**
