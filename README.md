@@ -44,9 +44,9 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 ## Roadmap
 
-The todo-list for the first beta is on GitHub, in the project [VSCode Textile Preview Extension](https://github.com/GehDoc/vscode-textile-preview/projects/1).
+The todo-list is on GitHub, in the project [VSCode Textile Preview Extension](https://github.com/GehDoc/vscode-textile-preview/projects/1).
 
-All existing bugs/enhancements are already tagged to create the following roadmap : BETA, RELEASE 1.0.0, then FUTURE.
+All existing bugs/enhancements are already tagged to create the following roadmap : RELEASE 1.0.0, then FUTURE.
 
 ## Support this project
 
@@ -59,7 +59,7 @@ You can support this project by :
 This project is licensed under the terms of the [MIT license](./LICENSE.txt).
 
 It is entirely based on :
-* [Visual Studio Code's Markdown preview](https://github.com/Microsoft/vscode/tree/master/extensions/markdown-language-features) under the terms of the [MIT license](LICENSES/vscode-LICENSE.txt).  
+* [Visual Studio Code's Markdown preview](https://github.com/Microsoft/vscode/tree/master/extensions/markdown-language-features) under the terms of the [MIT license](LICENSES/vscode-LICENSE.txt).
 * and, the [Visual Studio Code Language Packs](https://github.com/microsoft/vscode-loc) under the terms of the [MIT license](LICENSES/vscode-loc-LICENSE.md).
 
 It includes a modified version of [textile-js](https://github.com/GehDoc/textile-js) under the terms of the [MIT license](LICENSES/textile-js-LICENSE.txt).
