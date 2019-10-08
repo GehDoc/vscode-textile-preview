@@ -12,6 +12,7 @@ i18n/**
 src/**
 preview-src/**
 tools/**
+exemples/**
 
 gulpfile.js
 tsconfig.json

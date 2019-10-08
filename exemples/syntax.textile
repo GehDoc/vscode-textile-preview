@@ -1,0 +1,72 @@
+---
+original-URL: https://github.com/borgar/textile-js/blob/gh-pages/syntax.txt
+modified-by:  Gérald Hameau
+---
+h1. level 1 heading
+
+h2. level 2 heading
+
+h3. level 3 heading
+
+h4. level 4 heading
+
+bq. this is blockquoted text
+
+fn1. footnote 1
+
+fn2. footnote 2
+
+This text references a footnote[1]
+
+# numbered list item 1
+## numbered list sub-item 1
+## numbered list sub-item 2
+# numbered list item 2
+# numbered list item 3
+
+* bulleted list first item
+** bulleted list first sub-item
+** bulleted list second sub-item
+* bulleted list second item
+* bulleted list 3rd item
+
+_emphasis_
+*strong*
+??citation??
+-deleted text-
++inserted text+
+^superscript^
+~subscript~
+%span%
+
+p(class). paragraph with a classname
+
+p(#id). paragraph with an ID
+
+p{color:red}. paragrah with a CSS style
+
+p[fr]. paragraphe en français
+
+p<. left aligned paragraph
+
+p>. right aligned paragraph
+
+p=. centered aligned paragraph
+
+p<>. justified text paragraph
+
+|_. head |_. table |_. row |
+| a | table | row 1 |
+| a | table | row 2 |
+
+"link text":https://github.com/GehDoc/vscode-textile-preview
+
+!../media/textile-mark_logo.png(the alt text)!
+
+ABBR(Abbreviation)
+
+<pre>
+// Pre-formatted text
+	1 TAB
+			2 TABs
+</pre>
