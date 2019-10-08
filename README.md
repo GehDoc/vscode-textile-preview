@@ -14,6 +14,8 @@ Based on the source code of [Visual Studio Code's Markdown preview](https://gith
 Create or open any file with a .textile extension, and then you can toggle the visualization of the editor between the code and the preview of the [Textile](https://en.wikipedia.org/wiki/Textile_(markup_language)) file.
 To switch between views, press (<kbd>Ctrl+Shift+V</kbd>) in the editor. You can view the preview side-by-side (<kbd>Ctrl+K</kbd> <kbd>V</kbd>) with the file you are editing and see changes reflected in real-time as you edit.
 
+![Demo](https://raw.githubusercontent.com/GehDoc/vscode-textile-preview/master/media/readme/video_scroll-sync.resized.gif)!
+
 ## Features
 
 To see the full list of features and interactions, you can read the documentation of the [Visual Studio Code's Markdown preview](https://code.visualstudio.com/docs/languages/markdown#_markdown-preview).

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [INTERNAL] : Add .d.ts for textile-js library
 - [INTERNAL] : Imports the tests from mardown preview, when they are coherent for Textile.
+- [DOC] : Add screencast to show some features
 
 ### Fxed
 - [INTERNAL] : in root tsconfig.json file, reactivate : noImplicitAny
