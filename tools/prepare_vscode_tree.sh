@@ -92,7 +92,7 @@ function process_dir_i18n() {
 # -----------
 echo "Processing src $vscode"
 
-# TODO : download from github
+# TODO : download from github : https://github.com/Microsoft/vscode
 
 process_dir_src "../$vscode/extensions/markdown-language-features/" './src/*.ts ./src/*/*.ts ./media/*.js ./package.json ./package.nls.json ./preview-src/*.ts ./schemas/package.schema.json'
 
