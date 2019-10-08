@@ -32,7 +32,6 @@ Features considered out of scope of this extension :
 * Add other translations than the 9 core languages listed there (unless requested) : https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
 
 Features to be implemented / triaged :
-* *internal :* Import tests.
 * Make all links clickable in the source document (linkProvider)
 * Paragraph folding
 * Generation of table of content, and table of symbols
