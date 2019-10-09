@@ -88,6 +88,21 @@ function process_dir_i18n() {
 	fi
 }
 
+function github_DL() {
+	package=$1
+	OLD_PWD=`pwd`
+	cd ./tools/tmp/
+	if [ -d "$package" ]; then
+		cd "$package"
+		git pull
+	else
+		git clone "https://github.com/Microsoft/$package.git"
+	fi
+	if [ $? -ne 0 ]; then
+		fatal_error "cannot fetch $package"
+	fi
+	cd $OLD_PWD
+}
 
 # -----------
 echo "Processing src $vscode"
@@ -100,15 +115,7 @@ process_dir_src "../$vscode/extensions/markdown-language-features/" './src/*.ts 
 echo "Processing locales"
 
 # Download from github : https://github.com/Microsoft/vscode-loc.git
-OLD_PWD=`pwd`
-cd ./tools/tmp/
-if [ -d ./vscode-loc ]; then
-	cd vscode-loc
-	git pull
-else
-	git clone https://github.com/Microsoft/vscode-loc.git
-fi
-cd $OLD_PWD
+github_DL "vscode-loc"
 
 process_dir_i18n ./tools/tmp/vscode-loc/i18n/ ./tools/tmp/out/i18n/
 
