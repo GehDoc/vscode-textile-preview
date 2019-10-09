@@ -320,7 +320,7 @@
 		"watch": "tsc -watch -p ./",
 		"build": "gulp build && npm run build-preview",
 		"clean": "gulp clean",
-		"build-preview": "webpack --mode development"
+		"build-preview": "webpack --mode production"
 	},
 	"dependencies": {
 		"vscode-nls": "^4.0.0"
