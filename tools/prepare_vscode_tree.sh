@@ -99,7 +99,16 @@ process_dir_src "../$vscode/extensions/markdown-language-features/" './src/*.ts 
 # -----------
 echo "Processing locales"
 
-# TODO : download from github : https://github.com/Microsoft/vscode-loc.git
+# Download from github : https://github.com/Microsoft/vscode-loc.git
+OLD_PWD=`pwd`
+cd ./tools/tmp/
+if [ -d ./vscode-loc ]; then
+	cd vscode-loc
+	git pull
+else
+	git clone https://github.com/Microsoft/vscode-loc.git
+fi
+cd $OLD_PWD
 
 process_dir_i18n ./tools/tmp/vscode-loc/i18n/ ./tools/tmp/out/i18n/
 
