@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [INTERNAL] vscode-nls : use 1 file bundle
 
 
-## [0.2.5] - 2019-09-08
+## [0.2.5] - 2019-10-08
 ### Added
 - [INTERNAL] : Add .d.ts for textile-js library
 - [INTERNAL] : Imports the tests from mardown preview, when they are coherent for Textile.
@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - roadmap is now in GitHub project
 
 
-## [0.2.4] - 2019-09-06
+## [0.2.4] - 2019-10-06
 ### Added
 - translations : DE, ES, IT, KO, RU, ZH-TW, ZH-CN. Now, all the 9 core languages are imported : https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
 
