@@ -26,10 +26,10 @@
 	"textile.trace.desc": "Включить ведение журнала отладки для расширения Textile.",
 	"textile.preview.refresh.title": "Обновить область предварительного просмотра",
 	"textile.preview.toggleLock.title": "Включить/отключить блокировку области предварительного просмотра",
-	"configuration.textile.preview.openTextileLinks.description": "Controls how links to other textile files in the textile preview should be opened.",
+	"configuration.textile.preview.openTextileLinks.description": "Указывает, как следует открывать ссылки на другие файлы Textile при предварительном просмотре Textile.",
 	"configuration.textile.preview.openTextileLinks.inEditor": "Пробовать открывать ссылки в редакторе",
 	"configuration.textile.preview.openTextileLinks.inPreview": "Пробовать открывать ссылки в окне предварительного просмотра Textile",
-	"configuration.textile.links.openLocation.description": "Controls where links in textile files should be opened.",
-	"configuration.textile.links.openLocation.currentGroup": "Open links in the active editor group.",
-	"configuration.textile.links.openLocation.beside": "Open links beside the active editor."
+	"configuration.textile.links.openLocation.description": "Определяет, где следует открывать ссылки в файлах Textile.",
+	"configuration.textile.links.openLocation.currentGroup": "Откройте ссылки в группе активного редактора.",
+	"configuration.textile.links.openLocation.beside": "Открытые ссылки рядом с активным редактором."
 }

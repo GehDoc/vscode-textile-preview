@@ -26,10 +26,10 @@
 	"textile.trace.desc": "Aktiviert die Debugprotokollierung für die Textile-Erweiterung.",
 	"textile.preview.refresh.title": "Vorschau aktualisieren",
 	"textile.preview.toggleLock.title": "Vorschausperre umschalten",
-	"configuration.textile.preview.openTextileLinks.description": "Controls how links to other textile files in the textile preview should be opened.",
+	"configuration.textile.preview.openTextileLinks.description": "Steuert, wie Links zu anderen Textiledateien in der Textile-Vorschau geöffnet werden sollen.",
 	"configuration.textile.preview.openTextileLinks.inEditor": "Versuchen, Links im Editor zu öffnen",
 	"configuration.textile.preview.openTextileLinks.inPreview": "Versuchen, Links in der Textilevorschau zu öffnen",
-	"configuration.textile.links.openLocation.description": "Controls where links in textile files should be opened.",
-	"configuration.textile.links.openLocation.currentGroup": "Open links in the active editor group.",
-	"configuration.textile.links.openLocation.beside": "Open links beside the active editor."
+	"configuration.textile.links.openLocation.description": "Steuert, wo Links in Textiledateien geöffnet werden sollen.",
+	"configuration.textile.links.openLocation.currentGroup": "Öffnen Sie Links in der aktiven Editor-Gruppe.",
+	"configuration.textile.links.openLocation.beside": "Öffnen Sie die Links neben dem aktiven Editor."
 }

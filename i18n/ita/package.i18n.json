@@ -26,10 +26,10 @@
 	"textile.trace.desc": "Abilitare la registrazione debug per l'estensione textile.",
 	"textile.preview.refresh.title": "Aggiorna anteprima",
 	"textile.preview.toggleLock.title": "Attiva/Disattiva blocco anteprima",
-	"configuration.textile.preview.openTextileLinks.description": "Controls how links to other textile files in the textile preview should be opened.",
+	"configuration.textile.preview.openTextileLinks.description": "Controlla in che modo aprire i collegamenti ad altri file textile nell'anteprima textile.",
 	"configuration.textile.preview.openTextileLinks.inEditor": "Prova ad aprire i collegamenti nell'editor",
 	"configuration.textile.preview.openTextileLinks.inPreview": "Prova ad aprire i collegamenti nell'anteprima textile",
-	"configuration.textile.links.openLocation.description": "Controls where links in textile files should be opened.",
-	"configuration.textile.links.openLocation.currentGroup": "Open links in the active editor group.",
-	"configuration.textile.links.openLocation.beside": "Open links beside the active editor."
+	"configuration.textile.links.openLocation.description": "Controlla dove aprire i collegamenti nei file textile.",
+	"configuration.textile.links.openLocation.currentGroup": "Apre i collegamenti nel gruppo di editor attivo.",
+	"configuration.textile.links.openLocation.beside": "Apre i collegamenti accanto all'editor attivo."
 }

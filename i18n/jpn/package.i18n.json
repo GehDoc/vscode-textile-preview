@@ -26,10 +26,10 @@
 	"textile.trace.desc": "Textile拡張機能のデバッグ ログを有効にします。",
 	"textile.preview.refresh.title": "プレビューを更新",
 	"textile.preview.toggleLock.title": "プレビュー ロックの切り替え",
-	"configuration.textile.preview.openTextileLinks.description": "Controls how links to other textile files in the textile preview should be opened.",
+	"configuration.textile.preview.openTextileLinks.description": "Textile プレビューで他のTextile ファイルへのリンクを開く方法を制御します。",
 	"configuration.textile.preview.openTextileLinks.inEditor": "エディターでリンクを開こうとします",
 	"configuration.textile.preview.openTextileLinks.inPreview": "Textile プレビューでリンクを開こうとします",
 	"configuration.textile.links.openLocation.description": "Textileファイル内のリンクを開く場所を制御します。",
-	"configuration.textile.links.openLocation.currentGroup": "Open links in the active editor group.",
+	"configuration.textile.links.openLocation.currentGroup": "アクティブなエディター グループ内にリンクを開きます。",
 	"configuration.textile.links.openLocation.beside": "アクティブなエディタの横にあるリンクを開きます。"
 }

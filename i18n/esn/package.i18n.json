@@ -26,10 +26,10 @@
 	"textile.trace.desc": "Habilitar registro de depuración para las extensiones de Textile. ",
 	"textile.preview.refresh.title": "Actualizar vista previa",
 	"textile.preview.toggleLock.title": "Cambiar fijación de la vista previa ",
-	"configuration.textile.preview.openTextileLinks.description": "Controls how links to other textile files in the textile preview should be opened.",
+	"configuration.textile.preview.openTextileLinks.description": "Controla cómo deben abrirse los vínculos hacia otros archivos textile en la previsualización de textile.",
 	"configuration.textile.preview.openTextileLinks.inEditor": "Tratar de abrir los vínculos en el editor",
 	"configuration.textile.preview.openTextileLinks.inPreview": "Intenta abrir los vínculos en la vista previa de Textile.",
-	"configuration.textile.links.openLocation.description": "Controls where links in textile files should be opened.",
-	"configuration.textile.links.openLocation.currentGroup": "Open links in the active editor group.",
-	"configuration.textile.links.openLocation.beside": "Open links beside the active editor."
+	"configuration.textile.links.openLocation.description": "Controla dónde se deben abrir los vínculos de los archivos textile.",
+	"configuration.textile.links.openLocation.currentGroup": "Abra vínculos en el grupo de editor activo.",
+	"configuration.textile.links.openLocation.beside": "Abrir enlaces junto al editor activo."
 }

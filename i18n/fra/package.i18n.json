@@ -26,10 +26,10 @@
 	"textile.trace.desc": "Active la journalisation du débogage pour l'extension Textile.",
 	"textile.preview.refresh.title": "Actualiser l'aperçu",
 	"textile.preview.toggleLock.title": "Activer/désactiver le verrouillage de l'aperçu",
-	"configuration.textile.preview.openTextileLinks.description": "Controls how links to other textile files in the textile preview should be opened.",
+	"configuration.textile.preview.openTextileLinks.description": "Contrôle la façon dont les liens vers d'autres fichiers Textile doivent être ouverts dans l'aperçu Textile.",
 	"configuration.textile.preview.openTextileLinks.inEditor": "Essayer d’ouvrir les liens dans l’éditeur",
 	"configuration.textile.preview.openTextileLinks.inPreview": "Essayer d'ouvrir les liens dans l'aperçu textile",
-	"configuration.textile.links.openLocation.description": "Controls where links in textile files should be opened.",
-	"configuration.textile.links.openLocation.currentGroup": "Open links in the active editor group.",
-	"configuration.textile.links.openLocation.beside": "Open links beside the active editor."
+	"configuration.textile.links.openLocation.description": "Contrôle où ouvrir les liens dans les fichiers Textile.",
+	"configuration.textile.links.openLocation.currentGroup": "Ouvrez les liens dans le groupe d'éditeurs actif.",
+	"configuration.textile.links.openLocation.beside": "Ouvrez les liens à côté de l'éditeur actif."
 }

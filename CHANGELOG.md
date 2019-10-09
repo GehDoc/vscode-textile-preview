@@ -5,13 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [UNRELEASED]8
+### Changed
+- Udate translations from vscode-loc repo
+
+
 ## [0.2.5] - 2019-09-08
 ### Added
 - [INTERNAL] : Add .d.ts for textile-js library
 - [INTERNAL] : Imports the tests from mardown preview, when they are coherent for Textile.
 - [DOC] : Add screencast to show some features
 
-### Fxed
+### Fixed
 - [INTERNAL] : in root tsconfig.json file, reactivate : noImplicitAny
 
 ### Changed

@@ -35,8 +35,8 @@ const langs = {
 	'de':{
 		dirname: 'deu',
 		replacements: [
-			[ /markdown/g, 'textile', 28 ],
-			[ /Markdown/g, 'Textile', 21 ],
+			[ /markdown/g, 'textile', 25 ],
+			[ /Markdown/g, 'Textile', 24 ],
 		]
 	},
 	'es':{
@@ -50,8 +50,8 @@ const langs = {
 	'fr':{
 		dirname: 'fra',
 		replacements: [
-			[ /markdown/g, 'textile', 31 ],
-			[ /Markdown/g, 'Textile', 17 ],
+			[ /markdown/g, 'textile', 28 ],
+			[ /Markdown/g, 'Textile', 20 ],
 			[ /markdow/g, 'textile', 1 ],
 		]
 	},
@@ -65,30 +65,31 @@ const langs = {
 	'ja':{
 		dirname: 'jpn',
 		replacements: [
-			[ /markdown/g, 'textile', 27 ],
-			[ /マークダウン/g, 'Textile', 17 ],
+			[ /markdown/g, 'textile', 25 ],
+			[ /マークダウン/g, 'Textile', 19 ],
 			[ /Markdown/g, 'Textile', 5 ],
 		]
 	},
 	'ko':{
 		dirname: 'kor',
 		replacements: [
-			[ /markdown/g, 'textile', 35 ],
+			[ /markdown/g, 'textile', 32 ],
 			[ /Markdown/g, 'Textile', 14 ],
+			[ /마크다운/g, 'Textile', 3]
 		]
 	},
 	'ru':{
 		dirname: 'rus',
 		replacements: [
-			[ /markdown/g, 'textile', 28 ],
-			[ /Markdown/g, 'Textile', 21 ],
+			[ /markdown/g, 'textile', 25 ],
+			[ /Markdown/g, 'Textile', 24 ],
 		]
 	},
 	'zh-hant':{ // Note: transifexId
 		dirname: 'cht',
 		replacements: [
-			[ /markdown/g, 'textile', 29 ],
-			[ /Markdown/g, 'Textile', 20 ],
+			[ /markdown/g, 'textile', 26 ],
+			[ /Markdown/g, 'Textile', 23 ],
 		]
 	},
 	'zh-hans':{ // Note: transifexId
