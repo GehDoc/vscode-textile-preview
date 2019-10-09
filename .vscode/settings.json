@@ -10,4 +10,5 @@
         "out": true // set this to false to include "out" folder in search results
     },
     "tslint.enable": true,
+    "diffEditor.ignoreTrimWhitespace": false
 }

@@ -26,30 +26,30 @@ function process_dir_src() {
 
 	cd $dir
 	if [ $? -ne 0 ]; then
-	  fatal_error "cannot chdir $dir"
+		fatal_error "cannot chdir $dir"
 	fi
 
 	elements=$2
 
 	for element in $elements
 	do
-	  echo "- Processing element $element"
-	  for file in $element
-	  do
-		echo " - Processing $file"
+		echo "- Processing element $element"
+		for file in $element
+		do
+			echo " - Processing $file"
 
-		sed -i -e "s/markdown/textile/g" "$file"
-		sed -i -e "s/Markdown/Textile/g" "$file"
-		sed -i -e "s/MDDocument/TextileDocument/g" "$file"
-		# TODO: replace "'.md'" by "'.textile'" (file extension)
-		# TODO : i18n, replace "Textile Language Features" by "Textile Live Preview"
+			sed -i -e "s/markdown/textile/g" "$file"
+			sed -i -e "s/Markdown/Textile/g" "$file"
+			sed -i -e "s/MDDocument/TextileDocument/g" "$file"
+			# TODO: replace "'.md'" by "'.textile'" (file extension)
+			# TODO : i18n, replace "Textile Language Features" by "Textile Live Preview"
 
-		# move files named "markdown..."
-		if echo $file | egrep -iq "markdown[a-z]+.ts$" ; then
-			target="${file/markdown/textile}"
-			mv $file $target
-		fi
-	  done
+			# move files named "markdown..."
+			if echo $file | egrep -iq "markdown[a-z]+.ts$" ; then
+				target="${file/markdown/textile}"
+				mv $file $target
+			fi
+		done
 	done
 }
 
@@ -60,13 +60,13 @@ function process_dir_i18n() {
 
 	echo "Processing tree of $dir to $out_dir"
 	if [ ! -d "$dir" ]; then
-	  fatal_error "$dir doesn't exist"
+		fatal_error "$dir doesn't exist"
 	fi
 
 	rm -rf $out_dir
 	mkdir -p $out_dir
 	if [ $? -ne 0 ]; then
-	  fatal_error "cannot mkdir $out_dir"
+		fatal_error "cannot mkdir $out_dir"
 	fi
 
 	processed=0
