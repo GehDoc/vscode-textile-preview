@@ -23,6 +23,7 @@ if( process.argv.length != 5 ) {
 }
 
 // TODO : share this list with gulpfile
+// TODO (not sure) : i18n, replace "Textile Language Features" by "Textile Live Preview"
 //
 // Supported languages list :
 // lang => [

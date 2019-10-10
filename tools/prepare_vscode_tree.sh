@@ -1,8 +1,8 @@
 #!/bin/bash
-# Replace Markdown by Textile in vscode markdown tree
-
-version=1.38.1
-vscode="vscode-$version"
+#
+# Replace Markdown by Textile in vscode markdown tree.
+# vscode and vscode-loc are fecthed from their GitHub repo, into ./tools/tmp/
+# Then, all needed files are processed and copied to ./tools/tmp/out/
 
 function fatal_error() {
 	msg=$1
@@ -17,40 +17,57 @@ function warning() {
 
 function process_dir_src() {
 	dir=$1
-	echo "Processing tree of $dir"
+	out_dir=$2
+	elements=$3
 
-	# TODO : don't use 'cd'
-	# TODO : use ./tools/tmp/ as working dir
-	warning "src processing disabled (see TODO)"
-	return 0
+	OLD_DIR=`pwd`
+	DEST_DIR=$OLD_DIR/$out_dir
 
-	cd $dir
+	# unsafe
+	rm -rf $out_dir
+	mkdir -p $out_dir
+	echo `pwd`
 	if [ $? -ne 0 ]; then
-		fatal_error "cannot chdir $dir"
+		fatal_error "cannot mkdir $out_dir"
 	fi
 
-	elements=$2
+	echo "Processing tree of $dir to $out_dir"
+	if [ ! -d "$dir" ]; then
+		fatal_error "$dir doesn't exist"
+	fi
+	# After this line, don't forget to `cd $OLD_DIR` before leaving function, and use $DEST_DIR instead of $out_dir
+	cd $dir
 
-	for element in $elements
-	do
-		echo "- Processing element $element"
-		for file in $element
-		do
-			echo " - Processing $file"
+	processed=0
+	for file in $elements; do
+		echo " - Processing $file"
 
-			sed -i -e "s/markdown/textile/g" "$file"
-			sed -i -e "s/Markdown/Textile/g" "$file"
-			sed -i -e "s/MDDocument/TextileDocument/g" "$file"
-			# TODO: replace "'.md'" by "'.textile'" (file extension)
-			# TODO : i18n, replace "Textile Language Features" by "Textile Live Preview"
+		# files will be copied to $DEST_DIR
+		mkdir -p $DEST_DIR/$(dirname ${file})
+	
+		# replace markdown by textile
+		sed -e "s/markdown/textile/g" $file > $DEST_DIR/$file
+		sed -i -e "s/Markdown/Textile/g" $DEST_DIR/$file
+		sed -i -e "s/MDDocument/TextileDocument/g" $DEST_DIR/$file
+		sed -i -e "s/'.md'/'.textile'/g" $DEST_DIR/$file
+		sed -i -e 's/`.md`/`.textile`/g' $DEST_DIR/$file
 
-			# move files named "markdown..."
-			if echo $file | egrep -iq "markdown[a-z]+.ts$" ; then
-				target="${file/markdown/textile}"
-				mv $file $target
-			fi
-		done
+		# rename files named "markdown..." to "textile..."
+		if echo $file | egrep -iq "markdown[a-z]+.ts$" ; then
+			target="${file/markdown/textile}"
+			mv DEST_DIR/$file DEST_DIR/$target
+		fi
+
+		let processed++
 	done
+
+	cd $OLD_DIR
+
+	if [ $processed -eq 0 ]; then
+		fatal_error "Nothing done"
+	else
+		echo " -> $processed files processed"
+	fi
 }
 
 function process_dir_i18n() {
@@ -63,6 +80,7 @@ function process_dir_i18n() {
 		fatal_error "$dir doesn't exist"
 	fi
 
+	# unsafe
 	rm -rf $out_dir
 	mkdir -p $out_dir
 	if [ $? -ne 0 ]; then
@@ -85,6 +103,8 @@ function process_dir_i18n() {
 	done
 	if [ $processed -eq 0 ]; then
 		fatal_error "Nothing done"
+	else
+		echo " -> $processed files processed"
 	fi
 }
 
@@ -105,11 +125,13 @@ function github_DL() {
 }
 
 # -----------
-echo "Processing src $vscode"
+echo "Processing src"
 
-# TODO : download from github : https://github.com/Microsoft/vscode
+# Download from github : https://github.com/Microsoft/vscode
+github_DL "vscode"
 
-process_dir_src "../$vscode/extensions/markdown-language-features/" './src/*.ts ./src/*/*.ts ./media/*.js ./package.json ./package.nls.json ./preview-src/*.ts ./schemas/package.schema.json'
+process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools/tmp/out/ './src/*.ts ./src/*/*.ts ./media/*.js ./package.json ./package.nls.json ./preview-src/*.ts ./schemas/package.schema.json'
+
 
 # -----------
 echo "Processing locales"
