@@ -59,7 +59,7 @@ const doCompile = function (buildNls) {
 		.pipe(tsProject()).js
 		.pipe(buildNls ? nls.rewriteLocalizeCalls() : es.through())
 		.pipe(buildNls ? nls.createAdditionalLanguageFiles(languages, 'i18n', 'out') : es.through())
-		.pipe(buildNls ? nls.bundleMetaDataFiles('vscode-textile-preview', 'out') : es.through())
+		.pipe(buildNls ? nls.bundleMetaDataFiles('GehDoc.vscode-textile-preview', 'out') : es.through())
 		.pipe(buildNls ? nls.bundleLanguageFiles() : es.through());
 
 	if (inlineMap && inlineSource) {
