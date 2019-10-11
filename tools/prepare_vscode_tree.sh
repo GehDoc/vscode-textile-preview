@@ -136,7 +136,7 @@ echo "Processing src"
 # Download from github : https://github.com/Microsoft/vscode
 github_DL "vscode"
 
-process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools/tmp/out/ './src/*.* ./src/*/*.* ./media/*.* ./package.json ./package.nls.json ./preview-src/*.* ./schemas/package.schema.json'
+process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools/tmp/out/ './src/*.* ./src/*/*.* ./media/*.* ./*.json ./*.js ./preview-src/*.* ./schemas/package.schema.json'
 
 
 # -----------
