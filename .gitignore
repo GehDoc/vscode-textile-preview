@@ -8,3 +8,4 @@ vscode-textile-preview*.vsix
 /media/index.js
 /media/pre.js
 /out/
+/dist/

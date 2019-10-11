@@ -25,7 +25,7 @@
 			"task": "clean",
 			"problemMatcher": []
 		},
-		{
+		/*{
 			"type": "npm",
 			"script": "build",
 			"problemMatcher": [
@@ -37,11 +37,34 @@
 				"isDefault": true
 			},
 			"identifier": "build"
-		},
+		},*/
 		{
 			"type": "gulp",
 			"task": "package",
-			"problemMatcher": []
+			"problemMatcher": [],
+			"identifier": "package"
+		},
+		{
+			"type": "gulp",
+			"task": "build",
+			"problemMatcher": [],
+			"isBackground": false,
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"identifier": "build"
+		},
+		{
+			"type": "gulp",
+			"task": "build-dev",
+			"problemMatcher": [],
+			"isBackground": false,
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"identifier": "build-dev"
 		},
     ]
 }

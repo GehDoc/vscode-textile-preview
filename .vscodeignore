@@ -3,7 +3,7 @@
 
 .gitignore
 
-out/test/**
+out/**
 test/**
 **/*.map
 **/*.ts
@@ -16,6 +16,7 @@ exemples/**
 
 gulpfile.js
 tsconfig.json
+shared.webpack.config.js
 extension.webpack.config.js
 webpack.config.js
 
@@ -25,5 +26,3 @@ media/readme/**
 
 # mandatory
 node_modules/**
-# but VSIX won't work without them :
-!node_modules/vscode-nls

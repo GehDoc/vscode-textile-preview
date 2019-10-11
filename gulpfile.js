@@ -12,8 +12,11 @@ const del = require('del');
 const es = require('event-stream');
 const vsce = require('vsce');
 const nls = require('vscode-nls-dev');
+const webpack = require('webpack');
 
 const tsProject = ts.createProject('./tsconfig.json', { typescript });
+const configWebpackExt = require('./extension.webpack.config.js');
+const configWebpackPreview = require('./webpack.config.js');
 
 const inlineMap = true;
 const inlineSource = false;
@@ -34,7 +37,7 @@ const languages = [
 ];
 
 const cleanTask = function() {
-	return del(['out/**', 'package.nls.*.json', 'vscode-textile-preview*.vsix' /* FIXME : webpack generated files should be removed : 'media/index.js', 'media/pre.js' */]);
+	return del(['out/**', 'dist/**', 'package.nls.*.json', 'vscode-textile-preview*.vsix' /* FIXME : webpack generated files should be removed : 'media/index.js', 'media/pre.js' */]);
 }
 
 const internalCompileTask = function() {
@@ -51,7 +54,19 @@ const addI18nTask = function() {
 		.pipe(gulp.dest('.'));
 };
 
-const buildTask = gulp.series(cleanTask, internalNlsCompileTask, addI18nTask);
+const buildTask = function( cb ) {
+	configWebpackPreview.mode = "production";
+	configWebpackExt.mode = "production";
+
+	return gulp.series(cleanTask, internalNlsCompileTask, addI18nTask, packPreview, packExt)( cb );
+};
+
+const buildDevTask = function( cb ) {
+	configWebpackPreview.mode = "development";
+	configWebpackExt.mode = "development";
+
+	return gulp.series(cleanTask, internalNlsCompileTask, addI18nTask, packPreview, packExt)( cb );
+};
 
 const doCompile = function (buildNls) {
 	var r = tsProject.src()
@@ -84,11 +99,21 @@ const vscePackageTask = function() {
 	return vsce.createVSIX();
 };
 
+const packExt = function( cb ) {
+	webpack(configWebpackExt).run( cb );
+};
+
+const packPreview = function( cb ) {
+	webpack(configWebpackPreview).run( cb );
+};
+
 gulp.task('default', buildTask);
 
 gulp.task('clean', cleanTask);
 
 gulp.task('compile', gulp.series(cleanTask, internalCompileTask));
+
+gulp.task('build-dev', buildDevTask);
 
 gulp.task('build', buildTask);
 
