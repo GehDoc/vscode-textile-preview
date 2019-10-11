@@ -42,7 +42,14 @@
 			"type": "gulp",
 			"task": "package",
 			"problemMatcher": [],
-			"identifier": "package"
+			"identifier": "package",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"showReuseMessage": true,
+				"clear": true
+			}
 		},
 		{
 			"type": "gulp",
@@ -53,7 +60,14 @@
 				"kind": "build",
 				"isDefault": true
 			},
-			"identifier": "build"
+			"identifier": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"showReuseMessage": true,
+				"clear": true
+			}
 		},
 		{
 			"type": "gulp",
@@ -64,7 +78,14 @@
 				"kind": "build",
 				"isDefault": false
 			},
-			"identifier": "build-dev"
+			"identifier": "build-dev",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"showReuseMessage": true,
+				"clear": true
+			}
 		},
     ]
 }
