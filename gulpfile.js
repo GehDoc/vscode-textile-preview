@@ -37,7 +37,7 @@ const languages = [
 ];
 
 const cleanTask = function() {
-	return del(['out/**', 'dist/**', 'package.nls.*.json', 'vscode-textile-preview*.vsix' /* FIXME : webpack generated files should be removed : 'media/index.js', 'media/pre.js' */]);
+	return del(['out/**', 'dist/**', 'package.nls.*.json', 'vscode-textile-preview*.vsix', 'media/index.js', 'media/pre.js']);
 }
 
 const internalCompileTask = function() {
