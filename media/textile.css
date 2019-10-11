@@ -33,7 +33,7 @@ html, body {
 }
 
 body.scrollBeyondLastLine {
-	margin-bottom: calc(100vh - 22px - 1em);
+	margin-bottom: calc(100vh - 22px);
 }
 
 body.showEditorSelection .code-line {
