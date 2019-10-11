@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Fixed
 - [INTERNAL] Reactivate src processing, in the tool to import sources from vscode
+- [INTERNAL] Improve src processing, in the tool to import sources from vscode
 
 
 ## [0.2.6] - 2019-10-09

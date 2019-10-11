@@ -45,17 +45,23 @@ function process_dir_src() {
 		# files will be copied to $DEST_DIR
 		mkdir -p $DEST_DIR/$(dirname ${file})
 	
-		# replace markdown by textile
-		sed -e "s/markdown/textile/g" $file > $DEST_DIR/$file
-		sed -i -e "s/Markdown/Textile/g" $DEST_DIR/$file
-		sed -i -e "s/MDDocument/TextileDocument/g" $DEST_DIR/$file
-		sed -i -e "s/'.md'/'.textile'/g" $DEST_DIR/$file
-		sed -i -e 's/`.md`/`.textile`/g' $DEST_DIR/$file
+		extension="${file##*.}"
+		if [ "$extension" = "js" ] || [ "$extension" = "json" ] || [ "$extension" = "ts" ] || [ "$extension" = "css" ]; then
+			# replace markdown by textile
+			sed -e "s/markdown/textile/g" $file > $DEST_DIR/$file
+			sed -i -e "s/Markdown/Textile/g" $DEST_DIR/$file
+			sed -i -e "s/MDDocument/TextileDocument/g" $DEST_DIR/$file
+			sed -i -e "s/'.md'/'.textile'/g" $DEST_DIR/$file
+			sed -i -e 's/`.md`/`.textile`/g' $DEST_DIR/$file
+		else
+			# just copy other kind of files
+			cp $file $DEST_DIR/$file
+		fi
 
 		# rename files named "markdown..." to "textile..."
-		if echo $file | egrep -iq "markdown[a-z]+.ts$" ; then
+		if echo $file | egrep -iq "markdown[a-z]*.[a-z]+$" ; then
 			target="${file/markdown/textile}"
-			mv DEST_DIR/$file DEST_DIR/$target
+			mv $DEST_DIR/$file $DEST_DIR/$target
 		fi
 
 		let processed++
@@ -130,7 +136,7 @@ echo "Processing src"
 # Download from github : https://github.com/Microsoft/vscode
 github_DL "vscode"
 
-process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools/tmp/out/ './src/*.ts ./src/*/*.ts ./media/*.js ./package.json ./package.nls.json ./preview-src/*.ts ./schemas/package.schema.json'
+process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools/tmp/out/ './src/*.* ./src/*/*.* ./media/*.* ./package.json ./package.nls.json ./preview-src/*.* ./schemas/package.schema.json'
 
 
 # -----------
