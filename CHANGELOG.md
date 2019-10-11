@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [UNRELEASED]
+### Changed
+- [INTERNAL] pack the extension with webpack
+
+### Added
+- [DOC] Add more stats
+
+## Fixed
+- [INTERNAL] Reactivate src processing, in the tool to import sources from vscode
+
+
 ## [0.2.6] - 2019-10-09
 ### Changed
 - Udate translations from vscode-loc repo
