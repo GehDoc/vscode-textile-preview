@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [UNRELEASED]
 ### Added
 - [DOC] Adhere to CII best practices
+- [DOC] Create code of conduct
 
 
 ## [0.2.8] - 2019-10-13
