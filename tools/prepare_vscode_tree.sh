@@ -4,6 +4,8 @@
 # vscode and vscode-loc are fecthed from their GitHub repo, into ./tools/tmp/
 # Then, all needed files are processed and copied to ./tools/tmp/out/
 
+VSCODE_VERSION_GIT_TAG=1.39.1
+
 function fatal_error() {
 	msg=$1
 	echo -e "\e[01;31mERR:\e[0m $1"
@@ -127,6 +129,10 @@ function github_DL() {
 	if [ $? -ne 0 ]; then
 		fatal_error "cannot fetch $package"
 	fi
+	# Checkout to specific tag
+	if [ ! -z "$2" ]; then
+		git checkout tags/$2
+	fi
 	cd $OLD_PWD
 }
 
@@ -134,7 +140,7 @@ function github_DL() {
 echo "Processing src"
 
 # Download from github : https://github.com/Microsoft/vscode
-github_DL "vscode"
+github_DL "vscode" $VSCODE_VERSION_GIT_TAG
 
 process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools/tmp/out/ './src/*.* ./src/*/*.* ./media/*.* ./*.json ./*.js ./preview-src/*.* ./schemas/package.schema.json'
 

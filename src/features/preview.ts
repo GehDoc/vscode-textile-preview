@@ -140,9 +140,9 @@ export class TextilePreview extends Disposable {
 			TextilePreview.viewType,
 			TextilePreview.getPreviewTitle(resource, locked),
 			previewColumn, {
-				enableFindWidget: true,
-				...TextilePreview.getWebviewOptions(resource, contributionProvider.contributions)
-			});
+			enableFindWidget: true,
+			...TextilePreview.getWebviewOptions(resource, contributionProvider.contributions)
+		});
 
 		return new TextilePreview(
 			webview,

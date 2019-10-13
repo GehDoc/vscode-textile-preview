@@ -38,7 +38,7 @@ function parseLink(
 	}
 
 	return {
-		uri: OpenDocumentLinkCommand.createCommandUri(resourcePath, tempUri.fragment),
+		uri: OpenDocumentLinkCommand.createCommandUri(document.uri, resourcePath, tempUri.fragment),
 		tooltip: localize('documentLink.tooltip', 'Follow link')
 	};
 }
@@ -101,7 +101,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 
 		return [
 			/* FIXME : activate
-			...this.providerInlineLinks(text, document, base)
+			...this.providerInlineLinks(text, document, base),
 			...this.provideReferenceLinks(text, document, base)
 			*/
 		];

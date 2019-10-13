@@ -230,7 +230,7 @@
 				},
 				"textile.preview.fontFamily": {
 					"type": "string",
-					"default": "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif",
+					"default": "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'Ubuntu', 'Droid Sans', sans-serif",
 					"description": "%textile.preview.fontFamily.desc%",
 					"scope": "resource"
 				},
@@ -282,6 +282,20 @@
 					"enumDescriptions": [
 						"%configuration.textile.preview.openTextileLinks.inPreview%",
 						"%configuration.textile.preview.openTextileLinks.inEditor%"
+					]
+				},
+				"textile.links.openLocation": {
+					"type": "string",
+					"default": "currentGroup",
+					"description": "%configuration.textile.links.openLocation.description%",
+					"scope": "resource",
+					"enum": [
+						"currentGroup",
+						"beside"
+					],
+					"enumDescriptions": [
+						"%configuration.textile.links.openLocation.currentGroup%",
+						"%configuration.textile.links.openLocation.beside%"
 					]
 				},
 				"textile.trace": {

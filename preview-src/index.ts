@@ -141,7 +141,11 @@ document.addEventListener('click', event => {
 				break;
 			}
 			if (node.href.startsWith('file://') || node.href.startsWith('vscode-resource:') || node.href.startsWith(settings.webviewResourceRoot)) {
-				const [path, fragment] = node.href.replace(/^(file:\/\/|vscode-resource:)/i, '').replace(new RegExp(`^${escapeRegExp(settings.webviewResourceRoot)}`)).split('#');
+				const [path, fragment] = node.href
+					.replace(/^file:\/\//i, '')
+					.replace(/^vscode-resource:\/\/[^\/]+\//i, '')
+					.replace(new RegExp(`^${escapeRegExp(settings.webviewResourceRoot)}`))
+					.split('#');
 				messaging.postMessage('clickLink', { path, fragment });
 				event.preventDefault();
 				event.stopPropagation();
@@ -153,20 +157,18 @@ document.addEventListener('click', event => {
 	}
 }, true);
 
-if (settings.scrollEditorWithPreview) {
-	window.addEventListener('scroll', throttle(() => {
-		if (scrollDisabled) {
-			scrollDisabled = false;
-		} else {
-			const line = getEditorLineNumberForPageOffset(window.scrollY);
-			if (typeof line === 'number' && !isNaN(line)) {
-				messaging.postMessage('revealLine', { line });
-				state.line = line;
-				vscode.setState(state);
-			}
+window.addEventListener('scroll', throttle(() => {
+	if (scrollDisabled) {
+		scrollDisabled = false;
+	} else {
+		const line = getEditorLineNumberForPageOffset(window.scrollY);
+		if (typeof line === 'number' && !isNaN(line)) {
+			messaging.postMessage('revealLine', { line });
+			state.line = line;
+			vscode.setState(state);
 		}
-	}, 50));
-}
+	}
+}, 50));
 
 function escapeRegExp(text: string) {
 	return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');

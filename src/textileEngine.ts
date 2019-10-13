@@ -106,15 +106,15 @@ export class TextileEngine {
 				});
 
 				for (const renderName of ['paragraph_open', 'heading_open', 'image', 'code_block', 'fence', 'blockquote_open', 'list_item_open']) {
-					this.addLineNumberRenderer(this.md, renderName);
+					this.addLineNumberRenderer(md, renderName);
 				}
 
-				this.addImageStabilizer(this.md);
-				this.addFencedRenderer(this.md);
-
-				this.addLinkNormalizer(this.md);
-				this.addLinkValidator(this.md);
-				this.addNamedHeaders(this.md);
+				this.addImageStabilizer(md);
+				this.addFencedRenderer(md);
+				this.addLinkNormalizer(md);
+				this.addLinkValidator(md);
+				this.addNamedHeaders(md);
+				this.addLinkRenderer(md);
 				return md;
 			*/
 		}
@@ -234,36 +234,28 @@ export class TextileEngine {
 		const normalizeLink = md.normalizeLink;
 		md.normalizeLink = (link: string) => {
 			try {
-				const externalSchemeUri = getUriForLinkWithKnownExternalScheme(link);
-				if (externalSchemeUri) {
-					// set true to skip encoding
-					return normalizeLink(externalSchemeUri.toString(true));
-				}
+				// If original link doesn't look like a url with a scheme, assume it must be a link to a file in workspace
+				if (!/^[a-z\-]+:/i.test(link)) {
+					// Use a fake scheme for parsing
+					let uri = vscode.Uri.parse('textile-link:' + link);
 
-				// Assume it must be an relative or absolute file path
-				// Use a fake scheme to avoid parse warnings
-				let uri = vscode.Uri.parse(`vscode-resource:${link}`);
-
-				if (uri.path) {
-					// Assume it must be a file
-					const fragment = uri.fragment;
+					// Relative paths should be resolved correctly inside the preview but we need to
+					// handle absolute paths specially (for images) to resolve them relative to the workspace root
 					if (uri.path[0] === '/') {
 						const root = vscode.workspace.getWorkspaceFolder(this.currentDocument!);
 						if (root) {
-							uri = vscode.Uri.file(path.join(root.uri.fsPath, uri.path));
+							uri = uri.with({
+								path: path.join(root.uri.fsPath, uri.path),
+							});
 						}
-					} else {
-						uri = vscode.Uri.file(path.join(path.dirname(this.currentDocument!.path), uri.path));
 					}
 
-					if (fragment) {
+					if (uri.fragment) {
 						uri = uri.with({
-							fragment: this.slugifier.fromHeading(fragment).value
+							fragment: this.slugifier.fromHeading(uri.fragment).value
 						});
 					}
-					return normalizeLink(uri.with({ scheme: 'vscode-resource' }).toString(true));
-				} else if (!uri.path && uri.fragment) {
-					return `#${this.slugifier.fromHeading(uri.fragment).value}`;
+					return normalizeLink(uri.toString(true).replace(/^textile-link:/, ''));
 				}
 			} catch (e) {
 				// noop
@@ -276,7 +268,7 @@ export class TextileEngine {
 		const validateLink = md.validateLink;
 		md.validateLink = (link: string) => {
 			// support file:// links
-			return validateLink(link) || link.startsWith('file:') || /^data:image\/.*?;/.test(link);
+			return validateLink(link) || isOfScheme(Schemes.file, link) || /^data:image\/.*?;/.test(link);
 		};
 	}
 
@@ -304,6 +296,22 @@ export class TextileEngine {
 			}
 		};
 	}
+
+	private addLinkRenderer(md: any): void {
+		const old_render = md.renderer.rules.link_open || ((tokens: any, idx: number, options: any, _env: any, self: any) => {
+			return self.renderToken(tokens, idx, options);
+		});
+
+		md.renderer.rules.link_open = (tokens: any, idx: number, options: any, env: any, self: any) => {
+			const token = tokens[idx];
+			const hrefIndex = token.attrIndex('href');
+			if (hrefIndex >= 0) {
+				const href = token.attrs[hrefIndex][1];
+				token.attrPush(['data-href', href]);
+			}
+			return old_render(tokens, idx, options, env, self);
+		};
+	}
 	*/
 }
 
@@ -313,16 +321,7 @@ async function getTextileOptions(md: () => TextileIt) {
 	return {
 		html: true,
 		highlight: (str: string, lang?: string) => {
-			// Workaround for highlight not supporting tsx: https://github.com/isagalaev/highlight.js/issues/1155
-			if (lang && ['tsx', 'typescriptreact'].includes(lang.toLocaleLowerCase())) {
-				lang = 'jsx';
-			}
-			if (lang && lang.toLocaleLowerCase() === 'json5') {
-				lang = 'json';
-			}
-			if (lang && ['c#', 'csharp'].includes(lang.toLocaleLowerCase())) {
-				lang = 'cs';
-			}
+			lang = normalizeHighlightLang(lang);
 			if (lang && hljs.getLanguage(lang)) {
 				try {
 					return `<div>${hljs.highlight(lang, str, true).value}</div>`;
@@ -332,5 +331,25 @@ async function getTextileOptions(md: () => TextileIt) {
 			return `<code><div>${md().utils.escapeHtml(str)}</div></code>`;
 		}
 	};
+}
+
+function normalizeHighlightLang(lang: string | undefined) {
+	switch (lang && lang.toLowerCase()) {
+		case 'tsx':
+		case 'typescriptreact':
+			// Workaround for highlight not supporting tsx: https://github.com/isagalaev/highlight.js/issues/1155
+			return 'jsx';
+
+		case 'json5':
+		case 'jsonc':
+			return 'json';
+
+		case 'c#':
+		case 'csharp':
+			return 'cs';
+
+		default:
+			return lang;
+	}
 }
 */
