@@ -47,14 +47,19 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 ## Roadmap
 
-The todo-list for the first beta is on GitHub, in the project [VSCode Textile Preview Extension](https://github.com/GehDoc/vscode-textile-preview/projects/1).
-
-All existing bugs/enhancements are already tagged to create the following roadmap : BETA, RELEASE 1.0.0, then FUTURE.
+All [bugs and enhancements](https://github.com/GehDoc/vscode-textile-preview/issues) are tagged to create the following roadmap, materialized through GitHub Projects :
+* Road to the first [BETA](https://github.com/GehDoc/vscode-textile-preview/projects/1) :  
+  Create/stabilize the build system, and advertise this extension to the world.
+* Road to the first [RELEASE 1.0.0](https://github.com/GehDoc/vscode-textile-preview/projects/1) :  
+  Fix bugs, and improve documentation and community guidelines.
+* then FUTURE :  
+  Implement missing features (see above), keep in sync with VSCode updates, ...  
+  All remaining ToDOs and issues will be triaged and planned after the first release, in new GitHub projects to track progress fir future release.
 
 ## Support this project
 
 You can support this project by :
-* reporting any bug / suggestion to [GitHub repository](https://github.com/GehDoc/vscode-textile-preview).
+* reporting any bug / suggestion to [GitHub repository issues](https://github.com/GehDoc/vscode-textile-preview/issues).
 * giving feedback and rating through [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview).
 
 ## License
