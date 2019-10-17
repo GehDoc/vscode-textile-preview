@@ -20,9 +20,14 @@ To switch between views, press (<kbd>Ctrl+Shift+V</kbd>) in the editor. You can 
 
 ## Features
 
-To see the full list of features and interactions, you can read the documentation of the [Visual Studio Code's Markdown preview](https://code.visualstudio.com/docs/languages/markdown#_markdown-preview).
+This extension is entirely based on the Markdown preview provided by Visual Studio Code, and tries to offer the same functionalities :
+* you can view Textile source and its HTML preview side by side, with synchronised scrolling;
+* you can include images, from local or network, with manageable security of the preview's content;
+* the preview supports VSCode light and dark themes;
+* the extension is translated to the 9 VScode core languages;
+* ...
 
-This extension is entirely based on the Markdown preview provided by Visual Studio Code, and tries to offer the same functionalities.
+To see the full list of features and interactions, you can read the documentation of the [Visual Studio Code's Markdown preview](https://code.visualstudio.com/docs/languages/markdown#_markdown-preview).
 
 ### Missing features
 
