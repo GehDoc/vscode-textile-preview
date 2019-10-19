@@ -334,7 +334,8 @@
 		"watch": "tsc -watch -p ./",
 		"build-dev": "gulp build-dev",
 		"build": "gulp build",
-		"clean": "gulp clean"
+		"clean": "gulp clean",
+		"travis-test": "gulp build-dev && node ./out/test/runTest.js"
 	},
 	"dependencies": {
 		"vscode-nls": "^4.0.0"
