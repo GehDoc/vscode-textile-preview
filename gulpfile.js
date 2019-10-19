@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 const gulp = require('gulp');
-const path = require('path');
+//const path = require('path');
 
 const ts = require('gulp-typescript');
 const typescript = require('typescript');
@@ -38,11 +38,13 @@ const languages = [
 
 const cleanTask = function() {
 	return del(['out/**', 'dist/**', 'package.nls.*.json', 'vscode-textile-preview*.vsix', 'media/index.js', 'media/pre.js']);
-}
+};
 
+/*
 const internalCompileTask = function() {
 	return doCompile(false);
 };
+*/
 
 const internalNlsCompileTask = function() {
 	return doCompile(true);
@@ -111,7 +113,7 @@ gulp.task('default', buildTask);
 
 gulp.task('clean', cleanTask);
 
-gulp.task('compile', gulp.series(cleanTask, internalCompileTask));
+//gulp.task('compile', gulp.series(cleanTask, internalCompileTask));
 
 gulp.task('build-dev', buildDevTask);
 
