@@ -67,10 +67,10 @@ module.exports = function withDefaults(/**@type WebpackConfig*/extConfig) {
 		// yes, really source maps
 		devtool: 'source-map',
 		plugins: [
+			new NLSBundlePlugin(id),
 			new CopyWebpackPlugin([
 				{ from: './out/nls.*.json', to: '[name].json' }
-			]),
-			new NLSBundlePlugin(id)
+			])
 		],
 	};
 
