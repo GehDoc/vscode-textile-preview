@@ -335,7 +335,7 @@
 		"build-dev": "gulp build-dev",
 		"build": "gulp build",
 		"clean": "gulp clean",
-		"travis-test": "gulp build-dev && node ./out/test/runTest.js"
+		"travis-test": "node ./out/test/runTest.js"
 	},
 	"dependencies": {
 		"vscode-nls": "^4.0.0"
