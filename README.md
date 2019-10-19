@@ -2,8 +2,8 @@
 
 [![Marketplace Version](https://vsmarketplacebadge.apphb.com/version-short/GehDoc.vscode-textile-preview.svg)](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview "View this project on Visual Studio Code Marketplace")
 [![Installs](https://vsmarketplacebadge.apphb.com/installs/GehDoc.vscode-textile-preview.svg)](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview "The number of unique installations")
-[![Issue resolution](https://isitmaintained.com/badge/resolution/GehDoc/vscode-textile-preview.svg)](http://isitmaintained.com/project/GehDoc/vscode-textile-preview "Average time to resolve an issue")
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3273/badge)](https://bestpractices.coreinfrastructure.org/projects/3273)
+[![Build Status](https://travis-ci.org/GehDoc/vscode-textile-preview.svg?branch=master)](https://travis-ci.org/GehDoc/vscode-textile-preview)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3273/badge)](https://bestpractices.coreinfrastructure.org/projects/3273)  
 
 Full featured document live preview for the [Textile](https://en.wikipedia.org/wiki/Textile_(markup_language)) markup language.
 
