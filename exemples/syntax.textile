@@ -70,3 +70,8 @@ ABBR(Abbreviation)
 	1 TAB
 			2 TABs
 </pre>
+
+<pre><code class="javascript">
+// "CODE" tag inside "PRE"
+document.write('help');
+</code></pre>
