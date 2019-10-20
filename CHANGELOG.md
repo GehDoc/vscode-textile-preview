@@ -8,9 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [UNRELEASED]
 ### Fixed
 - [INTERNAL] Build process was broken (I was using a patched version of vscode-nls-dev)
+- [CSS] Fix : #23, #27
 
 ## Added
 - [INTERNAL] Add Travis CI, to launch test suite after each push to the repository : Linux & OS X
+
+## Changed
+- [CSS] Splitted to ease future updates
 
 
 ## [0.3.0] - 2019-10-17
