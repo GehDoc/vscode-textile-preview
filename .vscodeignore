@@ -26,6 +26,7 @@ webpack.config.js
 PERSONAL-NOTES.md
 media/textile-mark_logo.svg
 media/readme/**
+media/advertise/**
 
 # mandatory
 node_modules/**
