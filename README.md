@@ -63,6 +63,7 @@ All [bugs and enhancements](https://github.com/GehDoc/vscode-textile-preview/iss
 You can support this project by :
 * reporting any bug / suggestion to [GitHub repository issues](https://github.com/GehDoc/vscode-textile-preview/issues).
 * giving feedback and rating through [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview).
+* financially sponsoring my project [here](http://www.leetchi.com/c/vscode-textile-language-features), or through the GitHub ❤ sponsor button on [the project's repository](https://github.com/GehDoc/vscode-textile-preview/).
 
 ## License
 
