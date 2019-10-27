@@ -10,22 +10,28 @@ h3. level 3 heading
 
 h4. level 4 heading
 
-bq. this is blockquoted text
+bq. this is blockquoted text...
+With a seconde line.
 
 fn1. footnote 1
 
-fn2. footnote 2
+fn2. footnote 2,
+with a second line.
 
 This text references a footnote[1]
 
-# numbered list item 1
-## numbered list sub-item 1
+# numbered list item 1,
+with a second line.
+## numbered list sub-item 1,
+with a second line.
 ## numbered list sub-item 2
 # numbered list item 2
 # numbered list item 3
 
-* bulleted list first item
-** bulleted list first sub-item
+* bulleted list first item,
+with a second line.
+** bulleted list first sub-item,
+with a second line.
 ** bulleted list second sub-item
 * bulleted list second item
 * bulleted list 3rd item
@@ -61,9 +67,16 @@ p<>. justified text paragraph
 
 "link text":https://github.com/GehDoc/vscode-textile-preview
 
-!../media/textile-mark_logo.png(the alt text)!
+!../media/textile-mark_logo.png(Offline image)!
+
+!https://raw.githubusercontent.com/GehDoc/vscode-textile-preview/master/media/textile-mark_logo.png(Online image)!
 
 ABBR(Abbreviation)
+
+- Word 1 := Definition 1.
+- Word 2 := Beginning of
+a multi-lines
+definition =:
 
 <pre>
 // Pre-formatted text
