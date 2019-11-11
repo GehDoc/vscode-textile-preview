@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update to vscode-1.40.0
 
 
-## [0.3.1] - 2017-10-20
+## [0.3.1] - 2019-10-20
 ### Fixed
 - [INTERNAL] Build process was broken (I was using a patched version of vscode-nls-dev)
 - [CSS] Fix : #23, #27
