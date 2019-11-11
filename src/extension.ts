@@ -75,7 +75,7 @@ function registerTextileLanguageFeatures(
 
 	return vscode.Disposable.from(
 		vscode.languages.setLanguageConfiguration('textile', {
-			wordPattern: new RegExp('(\\p{Alphabetic}|\\p{Number})+', 'ug'),
+			wordPattern: new RegExp('(\\p{Alphabetic}|\\p{Number}|\\p{Nonspacing_Mark})+', 'ug'),
 		}),
 		/* FIXME : activate
 		vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider),

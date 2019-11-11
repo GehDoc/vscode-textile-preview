@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [DOC] Add sponsorship link on GitHub and on README.md
 
+### Fixed
+- [INTERNAL] git update process was broken
+
+### Changed
+- Update to vscode-1.40.0
+
 
 ## [0.3.1] - 2017-10-20
 ### Fixed
