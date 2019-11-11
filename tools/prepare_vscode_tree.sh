@@ -122,11 +122,15 @@ function github_DL() {
 	if [ -d "$package" ]; then
 		cd "$package"
 		git fetch
+		if [ $? -ne 0 ]; then
+			fatal_error "cannot fetch $package"
+		fi
 	else
 		git clone "https://github.com/Microsoft/$package.git"
-	fi
-	if [ $? -ne 0 ]; then
-		fatal_error "cannot fetch $package"
+		if [ $? -ne 0 ]; then
+			fatal_error "cannot clone $package"
+		fi
+		cd "$package"
 	fi
 	# Checkout to specific tag
 	if [ ! -z "$2" ]; then
