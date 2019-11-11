@@ -28,7 +28,6 @@ function process_dir_src() {
 	# unsafe
 	rm -rf $out_dir
 	mkdir -p $out_dir
-	echo `pwd`
 	if [ $? -ne 0 ]; then
 		fatal_error "cannot mkdir $out_dir"
 	fi
