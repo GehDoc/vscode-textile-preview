@@ -4,7 +4,7 @@
 # vscode and vscode-loc are fecthed from their GitHub repo, into ./tools/tmp/
 # Then, all needed files are processed and copied to ./tools/tmp/out/
 
-VSCODE_VERSION_GIT_TAG=1.39.1
+VSCODE_VERSION_GIT_TAG=1.40.0
 
 function fatal_error() {
 	msg=$1
@@ -122,7 +122,7 @@ function github_DL() {
 	cd ./tools/tmp/
 	if [ -d "$package" ]; then
 		cd "$package"
-		git pull
+		git fetch
 	else
 		git clone "https://github.com/Microsoft/$package.git"
 	fi
