@@ -364,7 +364,7 @@
 		"typescript": "^3.3.1",
 		"vsce": "^1.67.1",
 		"vscode-nls-dev": "^3.3.0",
-		"vscode-test": "^1.2.0",
+		"vscode-test": "^1.2.3",
 		"webpack": "^4.20.2",
 		"webpack-cli": "^3.3.8"
 	}
