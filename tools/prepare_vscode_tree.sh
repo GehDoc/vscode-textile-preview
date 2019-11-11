@@ -132,6 +132,11 @@ function github_DL() {
 	# Checkout to specific tag
 	if [ ! -z "$2" ]; then
 		git checkout tags/$2
+	else
+		git pull
+	fi
+	if [ $? -ne 0 ]; then
+		fatal_error "cannot update $package"
 	fi
 	cd $OLD_PWD
 }
