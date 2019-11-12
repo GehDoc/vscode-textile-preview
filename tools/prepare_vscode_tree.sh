@@ -43,28 +43,37 @@ function process_dir_src() {
 	for file in $elements; do
 		echo " - Processing $file"
 
-		# files will be copied to $DEST_DIR
-		mkdir -p $DEST_DIR/$(dirname ${file})
-	
+		# files will be copied to $DEST_DIR with their directory
+		# but, file from ../ will be copied at the root $DEST_DIR
+		dirname=$(dirname ${file})
+		if [ "$dirname" != ".." ]; then
+			mkdir -p $DEST_DIR/$dirname
+			destfile=$DEST_DIR/$file
+		else
+			destfile=$DEST_DIR/$(basename $file)
+		fi
+
 		extension="${file##*.}"
 		if [ "$extension" = "js" ] || [ "$extension" = "json" ] || [ "$extension" = "ts" ] || [ "$extension" = "css" ]; then
 			# replace markdown by textile
-			sed -e "s/markdown/textile/g" $file > $DEST_DIR/$file
-			sed -i -e "s/Markdown/Textile/g" $DEST_DIR/$file
-			sed -i -e "s/MDDocument/TextileDocument/g" $DEST_DIR/$file
-			sed -i -e "s/'.md'/'.textile'/g" $DEST_DIR/$file
-			sed -i -e 's/`.md`/`.textile`/g' $DEST_DIR/$file
+			sed -e "s/markdown/textile/g" $file > $destfile
+			sed -i -e "s/Markdown/Textile/g" $destfile
+			sed -i -e "s/MDDocument/TextileDocument/g" $destfile
+			sed -i -e "s/'.md'/'.textile'/g" $destfile
+			sed -i -e 's/`.md`/`.textile`/g' $destfile
 		else
 			# just copy other kind of files
-			cp $file $DEST_DIR/$file
+			cp $file $destfile
 		fi
 
 		# rename files named "markdown..." to "textile..."
-		if echo $file | egrep -iq "markdown[a-z]*.[a-z]+$" ; then
-			target="${file/markdown/textile}"
-			mv $DEST_DIR/$file $DEST_DIR/$target
+		# don't bother with files from "../", there is no such case now
+		if [ "$dirname" != ".." ]; then
+			if echo $file | egrep -iq "markdown[a-z]*.[a-z]+$" ; then
+				target="${file/markdown/textile}"
+				mv $destfile $DEST_DIR/$target
+			fi
 		fi
-
 		let processed++
 	done
 
@@ -150,7 +159,7 @@ echo "Processing src"
 # Download from github : https://github.com/Microsoft/vscode
 github_DL "vscode" $VSCODE_VERSION_GIT_TAG
 
-process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools/tmp/out/ './src/*.* ./src/*/*.* ./media/*.* ./*.json ./*.js ./preview-src/*.* ./schemas/package.schema.json'
+process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools/tmp/out/  '../shared.tsconfig.json ./src/*.* ./src/*/*.* ./media/*.* ./*.json ./*.js ./preview-src/*.* ./schemas/package.schema.json'
 
 
 # -----------
