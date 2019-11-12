@@ -362,7 +362,7 @@
 		"glob": "^7.1.4",
 		"ts-loader": "^4.0.1",
 		"typescript": "^3.3.1",
-		"vsce": "^1.67.1",
+		"vsce": "^1.69.0",
 		"vscode-nls-dev": "^3.3.0",
 		"vscode-test": "^1.2.3",
 		"webpack": "^4.20.2",
