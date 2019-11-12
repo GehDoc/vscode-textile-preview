@@ -52,7 +52,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 ## Roadmap
 
 All [bugs and enhancements](https://github.com/GehDoc/vscode-textile-preview/issues) are tagged to create the following roadmap, materialized through GitHub Projects :
-* Road to the first [RELEASE 1.0.0](https://github.com/GehDoc/vscode-textile-preview/projects/1) :  
+* Road to the first [RELEASE 1.0.0](https://github.com/GehDoc/vscode-textile-preview/projects/3) :  
   Fix bugs, and improve documentation and community guidelines.
 * then FUTURE :  
   Implement missing features (see above), keep in sync with VSCode updates, ...  
