@@ -88,3 +88,7 @@ definition =:
 // "CODE" tag inside "PRE"
 document.write('help');
 </code></pre>
+
+bc.
+// "CODE" tag inside "bc."
+document.write('help');
