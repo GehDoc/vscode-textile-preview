@@ -71,7 +71,16 @@ function process_dir_src() {
 		if [ "$dirname" != ".." ]; then
 			if echo $file | egrep -iq "markdown[a-z]*.[a-z]+$" ; then
 				target="${file/markdown/textile}"
-				mv $destfile $DEST_DIR/$target
+
+				if [ "$target" = "./media/textile.css" ]; then
+					# main CSS file should be splitted in 2
+					target_end="./media/textile-theming.css"
+					{ sed -n '/body.wordWrap pre {/q;p'; cat > $DEST_DIR/$target_end; } <$destfile >$DEST_DIR/$target
+					sed -i '1ibody.wordWrap pre {' $DEST_DIR/$target_end
+					rm $destfile
+				else
+					mv $destfile $DEST_DIR/$target
+				fi
 			fi
 		fi
 		let processed++
