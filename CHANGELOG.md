@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [UNRELEASED]
+### Added
+- [INTERNAL] split markdown.css in the tool to import sources from vscode
+
+
 ## [0.3.2] - 2019-11-11
 ### Added
 - [DOC] Add sponsorship link on GitHub and on README.md
