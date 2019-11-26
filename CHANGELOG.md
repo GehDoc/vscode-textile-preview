@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [INTERNAL] split markdown.css in the tool to import sources from vscode
 
+### Changed
+- [CSS] harmonize ```<pre>``` style with markdown preview
+
 
 ## [0.3.2] - 2019-11-11
 ### Added

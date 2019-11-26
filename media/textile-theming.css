@@ -7,14 +7,13 @@ body.wordWrap pre {
 	white-space: pre-wrap;
 }
 
-/* FIXME : see that if highlighting of source-code is implemented later.
+/* FIXME : adapt this, if highlighting of source-code is implemented later. */
 pre:not(.hljs),
 pre.hljs code > div {
 	padding: 16px;
 	border-radius: 3px;
 	overflow: auto;
 }
-*/
 
 pre code {
 	color: var(--vscode-editor-foreground);
