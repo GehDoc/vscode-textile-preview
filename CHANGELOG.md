@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [DEPENDENCIES] Update webpack
 
+### Changed
+- [INTERNAL] Prepare update to vscode 1.41.0
+- [I18N] Update to latest vscode-loc
+
 
 ## [0.3.3] - 2019-12-09
 ### Added
