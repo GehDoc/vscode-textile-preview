@@ -11,7 +11,7 @@ const suite = 'Integration Textile Tests';
 
 const options: Mocha.MochaOptions = {
 	ui: 'tdd',
-	useColors: true,
+	useColors: (!process.env.BUILD_ARTIFACTSTAGINGDIRECTORY && process.platform !== 'win32'),
 	timeout: 60000
 };
 

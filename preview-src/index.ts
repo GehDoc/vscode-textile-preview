@@ -177,6 +177,3 @@ window.addEventListener('scroll', throttle(() => {
 	}
 }, 50));
 
-function escapeRegExp(text: string) {
-	return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-}

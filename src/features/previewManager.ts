@@ -7,19 +7,61 @@ import * as vscode from 'vscode';
 import { Logger } from '../logger';
 import { TextileContributionProvider } from '../textileExtensions';
 import { disposeAll, Disposable } from '../util/dispose';
-import { TextileFileTopmostLineMonitor } from '../util/topmostLineMonitor';
-import { TextilePreview, PreviewSettings } from './preview';
+import { TopmostLineMonitor } from '../util/topmostLineMonitor';
+import { DynamicTextilePreview } from './preview';
 import { TextilePreviewConfigurationManager } from './previewConfig';
 import { TextileContentProvider } from './previewContentProvider';
 
+export interface DynamicPreviewSettings {
+	readonly resourceColumn: vscode.ViewColumn;
+	readonly previewColumn: vscode.ViewColumn;
+	readonly locked: boolean;
+}
 
-export class TextilePreviewManager extends Disposable implements vscode.WebviewPanelSerializer {
+class PreviewStore extends Disposable {
+
+	private readonly _previews = new Set<DynamicTextilePreview>();
+
+	public dispose(): void {
+		super.dispose();
+		for (const preview of this._previews) {
+			preview.dispose();
+		}
+		this._previews.clear();
+	}
+
+	[Symbol.iterator](): Iterator<DynamicTextilePreview> {
+		return this._previews[Symbol.iterator]();
+	}
+
+	public get(resource: vscode.Uri, previewSettings: DynamicPreviewSettings): DynamicTextilePreview | undefined {
+		for (const preview of this._previews) {
+			if (preview.matchesResource(resource, previewSettings.previewColumn, previewSettings.locked)) {
+				return preview;
+			}
+		}
+		return undefined;
+	}
+
+	public add(preview: DynamicTextilePreview) {
+		this._previews.add(preview);
+	}
+
+	public delete(preview: DynamicTextilePreview) {
+		this._previews.delete(preview);
+	}
+}
+
+export class TextilePreviewManager extends Disposable implements vscode.WebviewPanelSerializer /* FIXME : proposedapi : , vscode.WebviewEditorProvider */ {
 	private static readonly textilePreviewActiveContextKey = 'textilePreviewFocus';
 
-	private readonly _topmostLineMonitor = new TextileFileTopmostLineMonitor();
+	private readonly _topmostLineMonitor = new TopmostLineMonitor();
 	private readonly _previewConfigurations = new TextilePreviewConfigurationManager();
-	private readonly _previews: TextilePreview[] = [];
-	private _activePreview: TextilePreview | undefined = undefined;
+
+	private readonly _dynamicPreviews = this._register(new PreviewStore());
+	private readonly _staticPreviews = this._register(new PreviewStore());
+
+	private _activePreview: DynamicTextilePreview | undefined = undefined;
 
 	public constructor(
 		private readonly _contentProvider: TextileContentProvider,
@@ -27,46 +69,48 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 		private readonly _contributions: TextileContributionProvider
 	) {
 		super();
-		this._register(vscode.window.registerWebviewPanelSerializer(TextilePreview.viewType, this));
-	}
-
-	public dispose(): void {
-		super.dispose();
-		disposeAll(this._previews);
+		this._register(vscode.window.registerWebviewPanelSerializer(DynamicTextilePreview.viewType, this));
+		// FIXME : proposedapi : this._register(vscode.window.registerWebviewEditorProvider('vscode.textile.preview.editor', this));
 	}
 
 	public refresh() {
-		for (const preview of this._previews) {
+		for (const preview of this._dynamicPreviews) {
+			preview.refresh();
+		}
+		for (const preview of this._staticPreviews) {
 			preview.refresh();
 		}
 	}
 
 	public updateConfiguration() {
-		for (const preview of this._previews) {
+		for (const preview of this._dynamicPreviews) {
+			preview.updateConfiguration();
+		}
+		for (const preview of this._staticPreviews) {
 			preview.updateConfiguration();
 		}
 	}
 
-	public preview(
+	public openDynamicPreview(
 		resource: vscode.Uri,
-		previewSettings: PreviewSettings
+		settings: DynamicPreviewSettings
 	): void {
-		let preview = this.getExistingPreview(resource, previewSettings);
+		let preview = this._dynamicPreviews.get(resource, settings);
 		if (preview) {
-			preview.reveal(previewSettings.previewColumn);
+			preview.reveal(settings.previewColumn);
 		} else {
-			preview = this.createNewPreview(resource, previewSettings);
+			preview = this.createNewDynamicPreview(resource, settings);
 		}
 
 		preview.update(resource);
 	}
 
 	public get activePreviewResource() {
-		return this._activePreview && this._activePreview.resource;
+		return this._activePreview?.resource;
 	}
 
 	public get activePreviewResourceColumn() {
-		return this._activePreview && this._activePreview.resourceColumn;
+		return this._activePreview?.resourceColumn;
 	}
 
 	public toggleLock() {
@@ -75,7 +119,7 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 			preview.toggleLock();
 
 			// Close any previews that are now redundant, such as having two dynamic previews in the same editor group
-			for (const otherPreview of this._previews) {
+			for (const otherPreview of this._dynamicPreviews) {
 				if (otherPreview !== preview && preview.matches(otherPreview)) {
 					otherPreview.dispose();
 				}
@@ -87,35 +131,52 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 		webview: vscode.WebviewPanel,
 		state: any
 	): Promise<void> {
-		const preview = await TextilePreview.revive(
+		const resource = vscode.Uri.parse(state.resource);
+		const locked = state.locked;
+		const line = state.line;
+		const resourceColumn = state.resourceColumn;
+
+		const preview = await DynamicTextilePreview.revive(
+			{ resource, locked, line, resourceColumn },
 			webview,
-			state,
 			this._contentProvider,
 			this._previewConfigurations,
 			this._logger,
 			this._topmostLineMonitor,
 			this._contributions);
 
-		this.registerPreview(preview);
+		this.registerDynamicPreview(preview);
 	}
 
-	private getExistingPreview(
-		resource: vscode.Uri,
-		previewSettings: PreviewSettings
-	): TextilePreview | undefined {
-		return this._previews.find(preview =>
-			preview.matchesResource(resource, previewSettings.previewColumn, previewSettings.locked));
+	/* FIXME : proposedapi : 
+	public async resolveWebviewEditor(
+		input: { readonly resource: vscode.Uri; },
+		webview: vscode.WebviewPanel
+	): Promise<vscode.WebviewEditorCapabilities> {
+		const preview = DynamicTextilePreview.revive(
+			{ resource: input.resource, locked: false, resourceColumn: vscode.ViewColumn.One },
+			webview,
+			this._contentProvider,
+			this._previewConfigurations,
+			this._logger,
+			this._topmostLineMonitor,
+			this._contributions);
+		this.registerStaticPreview(preview);
+		return {};
 	}
+	*/
 
-	private createNewPreview(
+	private createNewDynamicPreview(
 		resource: vscode.Uri,
-		previewSettings: PreviewSettings
-	): TextilePreview {
-		const preview = TextilePreview.create(
-			resource,
+		previewSettings: DynamicPreviewSettings
+	): DynamicTextilePreview {
+		const preview = DynamicTextilePreview.create(
+			{
+				resource,
+				resourceColumn: previewSettings.resourceColumn,
+				locked: previewSettings.locked,
+			},
 			previewSettings.previewColumn,
-			previewSettings.resourceColumn,
-			previewSettings.locked,
 			this._contentProvider,
 			this._previewConfigurations,
 			this._logger,
@@ -124,34 +185,48 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 
 		this.setPreviewActiveContext(true);
 		this._activePreview = preview;
-		return this.registerPreview(preview);
+		return this.registerDynamicPreview(preview);
 	}
 
-	private registerPreview(
-		preview: TextilePreview
-	): TextilePreview {
-		this._previews.push(preview);
+	private registerDynamicPreview(preview: DynamicTextilePreview): DynamicTextilePreview {
+		this._dynamicPreviews.add(preview);
 
 		preview.onDispose(() => {
-			const existing = this._previews.indexOf(preview);
-			if (existing === -1) {
-				return;
-			}
+			this._dynamicPreviews.delete(preview);
+		});
 
-			this._previews.splice(existing, 1);
+		this.trackActive(preview);
+
+		preview.onDidChangeViewState(() => {
+			// Remove other dynamic previews in our column
+			disposeAll(Array.from(this._dynamicPreviews).filter(otherPreview => preview !== otherPreview && preview.matches(otherPreview)));
+		});
+		return preview;
+	}
+
+	private registerStaticPreview(preview: DynamicTextilePreview): DynamicTextilePreview {
+		this._staticPreviews.add(preview);
+
+		preview.onDispose(() => {
+			this._staticPreviews.delete(preview);
+		});
+
+		this.trackActive(preview);
+		return preview;
+	}
+
+	private trackActive(preview: DynamicTextilePreview): void {
+		preview.onDidChangeViewState(({ webviewPanel }) => {
+			this.setPreviewActiveContext(webviewPanel.active);
+			this._activePreview = webviewPanel.active ? preview : undefined;
+		});
+
+		preview.onDispose(() => {
 			if (this._activePreview === preview) {
 				this.setPreviewActiveContext(false);
 				this._activePreview = undefined;
 			}
 		});
-
-		preview.onDidChangeViewState(({ webviewPanel }) => {
-			disposeAll(this._previews.filter(otherPreview => preview !== otherPreview && preview!.matches(otherPreview)));
-			this.setPreviewActiveContext(webviewPanel.active);
-			this._activePreview = webviewPanel.active ? preview : undefined;
-		});
-
-		return preview;
 	}
 
 	private setPreviewActiveContext(value: boolean) {

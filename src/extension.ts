@@ -73,9 +73,11 @@ function registerTextileLanguageFeatures(
 		{ language: 'textile', scheme: 'untitled' }
 	];
 
+	const charPattern = '(\\p{Alphabetic}|\\p{Number}|\\p{Nonspacing_Mark})';
+
 	return vscode.Disposable.from(
 		vscode.languages.setLanguageConfiguration('textile', {
-			wordPattern: new RegExp('(\\p{Alphabetic}|\\p{Number}|\\p{Nonspacing_Mark})+', 'ug'),
+			wordPattern: new RegExp(`${charPattern}((${charPattern}|[_])?${charPattern})*`, 'ug'),
 		}),
 		/* FIXME : activate
 		vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider),

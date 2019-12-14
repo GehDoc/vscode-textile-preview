@@ -184,7 +184,7 @@ export class TextileEngine {
 		md.renderer.rules[ruleName] = (tokens: any, idx: number, options: any, env: any, self: any) => {
 			const token = tokens[idx];
 			if (token.map && token.map.length) {
-				token.attrSet('data-line', this.firstLine + token.map[0]);
+				token.attrSet('data-line', token.map[0]);
 				token.attrJoin('class', 'code-line');
 			}
 
@@ -249,8 +249,11 @@ export class TextileEngine {
 					if (uri.path[0] === '/') {
 						const root = vscode.workspace.getWorkspaceFolder(this.currentDocument!);
 						if (root) {
-							uri = uri.with({
-								path: path.join(root.uri.fsPath, uri.path),
+							const fileUri = vscode.Uri.file(path.join(root.uri.fsPath, uri.fsPath));
+							uri = fileUri.with({
+								scheme: uri.scheme,
+								fragment: uri.fragment,
+								query: uri.query,
 							});
 						}
 					}

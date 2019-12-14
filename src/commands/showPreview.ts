@@ -6,9 +6,8 @@
 import * as vscode from 'vscode';
 
 import { Command } from '../commandManager';
-import { TextilePreviewManager } from '../features/previewManager';
+import { TextilePreviewManager, DynamicPreviewSettings } from '../features/previewManager';
 // disabled : import { TelemetryReporter } from '../telemetryReporter';
-import { PreviewSettings } from '../features/preview';
 
 interface ShowPreviewSettings {
 	readonly sideBySide?: boolean;
@@ -39,7 +38,7 @@ async function showPreview(
 	}
 
 	const resourceColumn = (vscode.window.activeTextEditor && vscode.window.activeTextEditor.viewColumn) || vscode.ViewColumn.One;
-	webviewManager.preview(resource, {
+	webviewManager.openDynamicPreview(resource, {
 		resourceColumn: resourceColumn,
 		previewColumn: previewSettings.sideBySide ? resourceColumn + 1 : resourceColumn,
 		locked: !!previewSettings.locked
@@ -63,7 +62,7 @@ export class ShowPreviewCommand implements Command {
 		*/
 	) { }
 
-	public execute(mainUri?: vscode.Uri, allUris?: vscode.Uri[], previewSettings?: PreviewSettings) {
+	public execute(mainUri?: vscode.Uri, allUris?: vscode.Uri[], previewSettings?: DynamicPreviewSettings) {
 		for (const uri of Array.isArray(allUris) ? allUris : [mainUri]) {
 			showPreview(this.webviewManager, /* disabled : this.telemetryReporter, */ uri, {
 				sideBySide: false,
@@ -83,7 +82,7 @@ export class ShowPreviewToSideCommand implements Command {
 		*/
 	) { }
 
-	public execute(uri?: vscode.Uri, previewSettings?: PreviewSettings) {
+	public execute(uri?: vscode.Uri, previewSettings?: DynamicPreviewSettings) {
 		showPreview(this.webviewManager, /* disabled : this.telemetryReporter, */ uri, {
 			sideBySide: true,
 			locked: previewSettings && previewSettings.locked
