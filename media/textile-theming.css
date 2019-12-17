@@ -12,7 +12,6 @@ pre:not(.hljs),
 pre.hljs code > div {
 	padding: 16px;
 	border-radius: 3px;
-	overflow: auto;
 }
 
 pre code {

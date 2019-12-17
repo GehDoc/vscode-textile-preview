@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - vscode 1.41.0 fixes : #24, #32.
+- [CSS] "bc." highlighting on select/hover was broken
 
 
 ## [0.3.4] - 2019-12-12
