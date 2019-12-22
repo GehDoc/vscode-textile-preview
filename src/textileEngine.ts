@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 //import * as crypto from 'crypto';
-import TextileJS = require( '../libs/textile-js/textile' );
 //import * as path from 'path';
+import TextileJS = require( '../libs/textile-js/textile' );
 import * as vscode from 'vscode';
 import { TextileContributionProvider as TextileContributionProvider } from './textileExtensions';
 //import { Slugifier } from './slugify';
