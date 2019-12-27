@@ -71,7 +71,7 @@ p<>. justified text paragraph
 
 !../media/textile-mark_logo.png(Offline image)!
 
-!https://raw.githubusercontent.com/GehDoc/vscode-textile-preview/master/media/textile-mark_logo.png(Online image)!
+!https://raw.githubusercontent.com/GehDoc/vscode-textile-preview/master/media/textile-mark_logo.png(Online image)!:https://www.github.com/GehDoc/
 
 ABBR(Abbreviation)
 
