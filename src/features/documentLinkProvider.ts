@@ -83,16 +83,8 @@ function extractDocumentLink(
 }
 
 export default class LinkProvider implements vscode.DocumentLinkProvider {
-	// FIXME : adapt to Textile syntax
-	// markdow :
-	// private readonly linkPattern = /(\[((!\[[^\]]*?\]\(\s*)([^\s\(\)]+?)\s*\)\]|(?:\\\]|[^\]])*\])\(\s*)(([^\s\(\)]|\(\S*?\))+)\s*(".*?")?\)/g;
-	//
-	// From textile-js :
-	// 	var reLink = re.compile(/^"(?!\s)((?:[^"]|"(?![\s:])[^\n"]+"(?!:))+)"[:txcite:]/);
-	// 	exports.txcite = ':((?:[^\\s()]|\\([^\\s()]+\\)|[()])+?)(?=[!-\\.:-@\\[\\\\\\]-`{-~]+(?:$|\\s)|$|\\s)';
-	//^"(?!\s)((?:[^"]|"(?![\s:])[^\n"]+"(?!:))+)"[:txcite:]/
+	private readonly linkPattern = /("(?!\s)((?:[^"]|"(?![\s:])[^\n"]+"(?!:))+)":)((?:[^\s()]|\([^\s()]+\)|[()])+?)(?=[!-\.:-@\[\\\]-`{-~]+(?:$|\s)|$|\s)/g
 
-	private readonly linkPattern = /("[^"]*":)([^\s]+)/g; // FIXME : previously almost working for textile
 	private readonly referenceLinkPattern = /(\[((?:\\\]|[^\]])+)\]\[\s*?)([^\s\]]*?)\]/g; // FIXME : recreate for textile
 	private readonly definitionPattern = /^([\t ]*\[((?:\\\]|[^\]])+)\]:\s*)(\S+)/gm; // FIXME : recreate for textile
 
@@ -104,8 +96,8 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 		const text = document.getText();
 
 		return [
-			/* FIXME : activate
 			...this.providerInlineLinks(text, document, base),
+			/* FIXME : activate
 			...this.provideReferenceLinks(text, document, base)
 			*/
 		];
@@ -118,14 +110,19 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 	): vscode.DocumentLink[] {
 		const results: vscode.DocumentLink[] = [];
 		for (const match of matchAll(this.linkPattern, text)) {
-			const matchImage = match[4] && extractDocumentLink(document, base, match[3].length + 1, match[4], match.index);
-			if (matchImage) {
-				results.push(matchImage);
-			}
-			const matchLink = extractDocumentLink(document, base, match[1].length, match[5], match.index);
+			// -- Begin: Adapted to textile
+
+			// FIXME : add another regexp for textile ?
+			// const matchImage = match[4] && extractDocumentLink(document, base, match[3].length + 1, match[4], match.index);
+			// if (matchImage) {
+			// 	results.push(matchImage);
+			// }
+
+			const matchLink = extractDocumentLink(document, base, match[1].length, match[3], match.index);
 			if (matchLink) {
 				results.push(matchLink);
 			}
+			// -- End: Adapted to textile
 		}
 		return results;
 	}

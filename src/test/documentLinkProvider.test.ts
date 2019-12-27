@@ -43,9 +43,8 @@ suite('textile.DocumentLinkProvider', () => {
 		assert.strictEqual(links.length, 0);
 	});
 
-	/* FIXME : rewrite this for textile syntax
 	test('Should detect basic http links', () => {
-		const links = getLinksForFile('a [b](https://example.com) c');
+		const links = getLinksForFile('a "b":https://example.com c');
 		assert.strictEqual(links.length, 1);
 		const [link] = links;
 		assertRangeEqual(link.range, new vscode.Range(0, 6, 0, 25));
@@ -53,13 +52,13 @@ suite('textile.DocumentLinkProvider', () => {
 
 	test('Should detect basic workspace links', () => {
 		{
-			const links = getLinksForFile('a [b](./file) c');
+			const links = getLinksForFile('a "b":./file c');
 			assert.strictEqual(links.length, 1);
 			const [link] = links;
 			assertRangeEqual(link.range, new vscode.Range(0, 6, 0, 12));
 		}
 		{
-			const links = getLinksForFile('a [b](file.png) c');
+			const links = getLinksForFile('a "b":file.png c');
 			assert.strictEqual(links.length, 1);
 			const [link] = links;
 			assertRangeEqual(link.range, new vscode.Range(0, 6, 0, 14));
@@ -67,30 +66,31 @@ suite('textile.DocumentLinkProvider', () => {
 	});
 
 	test('Should detect links with title', () => {
-		const links = getLinksForFile('a [b](https://example.com "abc") c');
+		const links = getLinksForFile('a "b(abc)":https://example.com c');
 		assert.strictEqual(links.length, 1);
 		const [link] = links;
-		assertRangeEqual(link.range, new vscode.Range(0, 6, 0, 25));
+		assertRangeEqual(link.range, new vscode.Range(0, 11, 0, 30));
 	});
 
-	// #35245
+	/* FIXME : failing for textile syntax
+	// #35245 (vscode)
 	test('Should handle links with escaped characters in name', () => {
-		const links = getLinksForFile('a [b\\]](./file)');
+		const links = getLinksForFile('a "b\\"":./file');
 		assert.strictEqual(links.length, 1);
 		const [link] = links;
 		assertRangeEqual(link.range, new vscode.Range(0, 8, 0, 14));
 	});
-
+	*/
 
 	test('Should handle links with balanced parens', () => {
 		{
-			const links = getLinksForFile('a [b](https://example.com/a()c) c');
+			const links = getLinksForFile('a "b":https://example.com/a()c c');
 			assert.strictEqual(links.length, 1);
 			const [link] = links;
 			assertRangeEqual(link.range, new vscode.Range(0, 6, 0, 30));
 		}
 		{
-			const links = getLinksForFile('a [b](https://example.com/a(b)c) c');
+			const links = getLinksForFile('a "b":https://example.com/a(b)c c');
 			assert.strictEqual(links.length, 1);
 			const [link] = links;
 			assertRangeEqual(link.range, new vscode.Range(0, 6, 0, 31));
@@ -98,13 +98,14 @@ suite('textile.DocumentLinkProvider', () => {
 		}
 		{
 			// #49011
-			const links = getLinksForFile('[A link](http://ThisUrlhasParens/A_link(in_parens))');
+			const links = getLinksForFile('"A link":http://ThisUrlhasParens/A_link(in_parens)');
 			assert.strictEqual(links.length, 1);
 			const [link] = links;
 			assertRangeEqual(link.range, new vscode.Range(0, 9, 0, 50));
 		}
 	});
 
+	/* Disabled: Not relevant for textile
 	test('Should handle two links without space', () => {
 		const links = getLinksForFile('a ([test](test)[test2](test2)) c');
 		assert.strictEqual(links.length, 2);
@@ -112,7 +113,9 @@ suite('textile.DocumentLinkProvider', () => {
 		assertRangeEqual(link1.range, new vscode.Range(0, 10, 0, 14));
 		assertRangeEqual(link2.range, new vscode.Range(0, 23, 0, 28));
 	});
+	*/
 
+	/* FIXME : rewrite this for textile syntax
 	// #49238
 	test('should handle hyperlinked images', () => {
 		{
