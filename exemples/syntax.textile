@@ -65,7 +65,9 @@ p<>. justified text paragraph
 | a | table | row 1 |
 | a | table | row 2 |
 
-"link text":https://github.com/GehDoc/vscode-textile-preview
+"link text for URl":https://github.com/GehDoc/vscode-textile-preview
+
+"link text for local file(with tooltip)":./syntax.textile
 
 !../media/textile-mark_logo.png(Offline image)!
 
