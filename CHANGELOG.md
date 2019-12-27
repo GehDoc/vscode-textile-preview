@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [UNRELEASED]
+### Added
+- [SOURCE] Implement links and image extraction and activation
+
 ### Changed
 - Update to vscode 1.41.1
 
