@@ -69,6 +69,12 @@ p<>. justified text paragraph
 
 "link text for local file(with tooltip)":./syntax.textile
 
+This is "a link to Textpattern":txp, and "another link":txp to the same site.
+
+[txp]https://textpattern.com/
+
+This is a ["Markdow-style link":https://example.com].
+
 !../media/textile-mark_logo.png(Offline image)!
 
 !https://raw.githubusercontent.com/GehDoc/vscode-textile-preview/master/media/textile-mark_logo.png(Online image)!:https://www.github.com/GehDoc/
