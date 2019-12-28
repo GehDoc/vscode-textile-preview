@@ -86,6 +86,8 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 	private readonly linkPattern = /("(?!\s)((?:[^"]|"(?![\s:])[^\n"]+"(?!:))+)":)((?:[^\s()]|\([^\s()]+\)|[()])+?)(?=[!-\.:-@\[\\\]-`{-~]+(?:$|\s)|$|\s)/g
 	private readonly imagePattern = /!(?!\s)((?:\([^\)]+\)|\{[^\}]+\}|\\[[^\[\]]+\]|(?:<>|<|>|=)|[\(\)]+)*(?:\.[^\n\S]|\.(?:[^\.\/]))?)([^!\s]+?) ?(?:\(((?:[^\(\)]|\([^\(\)]+\))+)\))?!(?::([^\s]+?(?=[!-\.:-@\[\\\]-`{-~](?:$|\s)|\s|$)))?/g
 
+	private readonly imagePattern = /(!(?!\s)((?:\([^\)]+\)|\{[^\}]+\}|\\[[^\[\]]+\]|(?:<>|<|>|=)|[\(\)]+)*(?:\.[^\n\S]|\.(?:[^\.\/]))?)([^!\s]+?) ?(?:\(((?:[^\(\)]|\([^\(\)]+\))+)\))?!)(?::([^\s]+?(?=[!-\.:-@\[\\\]-`{-~](?:$|\s)|\s|$)))?/g
+
 	private readonly referenceLinkPattern = /(\[((?:\\\]|[^\]])+)\]\[\s*?)([^\s\]]*?)\]/g; // FIXME : recreate for textile
 	private readonly definitionPattern = /^([\t ]*\[((?:\\\]|[^\]])+)\]:\s*)(\S+)/gm; // FIXME : recreate for textile
 
@@ -118,11 +120,11 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 			}
 		}
 		for (const match of matchAll(this.imagePattern, text)) {
-			const matchImage = extractDocumentLink(document, base, match[1].length + 1, match[2], match.index);
+			const matchImage = extractDocumentLink(document, base, 1, match[3], match.index);
 			if (matchImage) {
 				results.push(matchImage);
 			}
-			const matchLink = match[4] && extractDocumentLink(document, base, match[1].length + 1 + match[2].length + (typeof match[3] === 'undefined' ? 0 : match[3].length + 2) + 2, match[4], match.index);
+			const matchLink = match[5] && extractDocumentLink(document, base, match[1].length + 1, match[5], match.index);
 			if (matchLink) {
 				results.push(matchLink);
 			}
