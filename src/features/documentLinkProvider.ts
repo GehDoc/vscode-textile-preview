@@ -83,9 +83,7 @@ function extractDocumentLink(
 }
 
 export default class LinkProvider implements vscode.DocumentLinkProvider {
-	private readonly linkPattern = /("(?!\s)((?:[^"]|"(?![\s:])[^\n"]+"(?!:))+)":)((?:[^\s()]|\([^\s()]+\)|[()])+?)(?=[!-\.:-@\[\\\]-`{-~]+(?:$|\s)|$|\s)/g
-	private readonly imagePattern = /!(?!\s)((?:\([^\)]+\)|\{[^\}]+\}|\\[[^\[\]]+\]|(?:<>|<|>|=)|[\(\)]+)*(?:\.[^\n\S]|\.(?:[^\.\/]))?)([^!\s]+?) ?(?:\(((?:[^\(\)]|\([^\(\)]+\))+)\))?!(?::([^\s]+?(?=[!-\.:-@\[\\\]-`{-~](?:$|\s)|\s|$)))?/g
-
+	private readonly linkPattern = /("(?!\s)((?:[^"]|"(?![\s:])[^\n"]+"(?!:))+)":)((?:[^\s()]|\([^\s()]+\)|[()])+?)(?=[!-\.:-@\[\\\]-`{-~]+(?:$|\s)|$|\s)|(\["([^\n]+?)":)((?:\[[a-z0-9]*\]|[^\]])+)\]/g
 	private readonly imagePattern = /(!(?!\s)((?:\([^\)]+\)|\{[^\}]+\}|\\[[^\[\]]+\]|(?:<>|<|>|=)|[\(\)]+)*(?:\.[^\n\S]|\.(?:[^\.\/]))?)([^!\s]+?) ?(?:\(((?:[^\(\)]|\([^\(\)]+\))+)\))?!)(?::([^\s]+?(?=[!-\.:-@\[\\\]-`{-~](?:$|\s)|\s|$)))?/g
 
 	private readonly referenceLinkPattern = /(\[((?:\\\]|[^\]])+)\]\[\s*?)([^\s\]]*?)\]/g; // FIXME : recreate for textile
@@ -114,9 +112,13 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 		const results: vscode.DocumentLink[] = [];
 		// -- Begin: Adapted to textile
 		for (const match of matchAll(this.linkPattern, text)) {
-			const matchLink = extractDocumentLink(document, base, match[1].length, match[3], match.index);
+			const matchLink = match[1] && extractDocumentLink(document, base, match[1].length, match[3], match.index);
 			if (matchLink) {
 				results.push(matchLink);
+			}
+			const matchLinkFenced = match[6] && extractDocumentLink(document, base, match[4].length, match[6], match.index);
+			if (matchLinkFenced) {
+				results.push(matchLinkFenced);
 			}
 		}
 		for (const match of matchAll(this.imagePattern, text)) {

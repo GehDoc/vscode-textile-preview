@@ -115,6 +115,13 @@ suite('textile.DocumentLinkProvider', () => {
 	});
 	*/
 
+	test('Should handle Markdown-style links', () => {
+		const links = getLinksForFile('a ["b":link with space] c');
+		assert.strictEqual(links.length, 1);
+		const [link1] = links;
+		assertRangeEqual(link1.range, new vscode.Range(0, 7, 0, 22));
+	});
+
 	// #49238 (vscode)
 	test('should handle hyperlinked images', () => {
 		{
