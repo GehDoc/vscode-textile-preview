@@ -131,6 +131,13 @@ suite('textile.DocumentLinkProvider', () => {
 			assertRangeEqual(link1.range, new vscode.Range(0,1,0,10));
 			assertRangeEqual(link2.range, new vscode.Range(0,22,0,41));
 		}
+		{
+			const links = getLinksForFile('!>image.jpg(alt text)!:https://example.com');
+			assert.strictEqual(links.length, 2);
+			const [link1, link2] = links;
+			assertRangeEqual(link1.range, new vscode.Range(0,2,0,11));
+			assertRangeEqual(link2.range, new vscode.Range(0,23,0,42));
+		}
 		/* Disabled: Not relevant for textile
 		{
 			const links = getLinksForFile('[![a]( whitespace.jpg )]( https://whitespace.com )');

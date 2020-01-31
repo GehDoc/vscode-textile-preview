@@ -122,7 +122,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 			}
 		}
 		for (const match of matchAll(this.imagePattern, text)) {
-			const matchImage = extractDocumentLink(document, base, 1, match[3], match.index);
+			const matchImage = extractDocumentLink(document, base, (match[2] ? match[2].length : 0) + 1, match[3], match.index);
 			if (matchImage) {
 				results.push(matchImage);
 			}
