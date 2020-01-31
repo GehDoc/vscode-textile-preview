@@ -110,7 +110,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 		base: string
 	): vscode.DocumentLink[] {
 		const results: vscode.DocumentLink[] = [];
-		// -- Begin: Adapted to textile
+		// -- Begin: Modified for textile
 		for (const match of matchAll(this.linkPattern, text)) {
 			const matchLink = match[1] && extractDocumentLink(document, base, match[1].length, match[3], match.index);
 			if (matchLink) {
@@ -131,7 +131,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 				results.push(matchLink);
 			}
 		}
-		// -- End: Adapted to textile
+		// -- End: Modified for textile
 		return results;
 	}
 	/* FIXME : activate
