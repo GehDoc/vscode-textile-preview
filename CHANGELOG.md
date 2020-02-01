@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Update to vscode 1.41.1
+- [DOC] Clarify features
 
 
 ## [0.3.5] - 20191218
