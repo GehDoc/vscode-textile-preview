@@ -22,8 +22,9 @@ To switch between views, press (<kbd>Ctrl+Shift+V</kbd>) in the editor. You can 
 This extension is entirely based on the Markdown preview provided by Visual Studio Code, and tries to offer the same functionalities :
 * you can view Textile source and its HTML preview side by side, with synchronised scrolling;
 * you can include images, from local or network, with manageable security of the preview's content;
-* the preview supports VSCode light and dark themes;
-* the extension is translated to the 9 VScode core languages;
+* you can click on links, in the source view and in the HTML preview;
+* the HTML preview supports VSCode light and dark themes;
+* the extension is translated into the 9 VScode core languages;
 * ...
 
 To see the full list of features and interactions, you can read the documentation of the [Visual Studio Code's Markdown preview](https://code.visualstudio.com/docs/languages/markdown#_markdown-preview).
@@ -32,6 +33,11 @@ To see the full list of features and interactions, you can read the documentatio
 
 For now, some features of the original Markdown preview have been disabled.
 
+Features to be implemented / triaged :
+* Paragraph folding;
+* Generation of table of content, and table of symbols;
+* Support 'linkify' option : Allow internal and external links to a paragraph header of a textile file.
+
 Features considered out of scope of this extension :
 * Snippets / Source syntax coloring : You have to use another extensions for these purpose.
 * Bloc-quote syntax coloring : Need another textile to HTML engine
@@ -39,11 +45,6 @@ Features considered out of scope of this extension :
 * Telemetry Reporter : Need a non free Azure account : https://www.npmjs.com/package/vscode-extension-telemetry
 * Add other translations than the 9 core languages listed there (unless requested) : https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
 
-Features to be implemented / triaged :
-* Make all links clickable in the source document (linkProvider)
-* Paragraph folding
-* Generation of table of content, and table of symbols
-* Support 'linkify' option
 
 ## Release Notes
 
