@@ -122,6 +122,16 @@ suite('textile.DocumentLinkProvider', () => {
 		assertRangeEqual(link1.range, new vscode.Range(0, 7, 0, 22));
 	});
 
+	test('Should handle link aliases', () => {
+		const links = getLinksForFile('a "b":example c\n[example]https://example.com');
+		assert.strictEqual(links.length, 2);
+		const [link1,link2] = links;
+		assertRangeEqual(link1.range, new vscode.Range(1, 10, 1, 29)); // aliases are pushed first
+		assert.strictEqual(link1.target?.scheme, "https");
+		assertRangeEqual(link2.range, new vscode.Range(0, 6, 0, 13));
+		assert.strictEqual(link2.target?.scheme, "command");
+	});
+
 	// #49238 (vscode)
 	test('should handle hyperlinked images', () => {
 		{

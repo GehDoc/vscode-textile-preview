@@ -69,17 +69,19 @@ p<>. justified text paragraph
 
 "link text for local file(with tooltip)":./syntax.textile
 
-This is "a link to Textpattern":txp, and "another link":txp to the same site.
+This is a ["Markdow-style link for local file":./syntax.textile].
 
-[txp]https://textpattern.com/
+This is "a link to main repo":vtp, "another link":vtp and a ["Markdow-style link":vtp] to the same site through on alias.
 
-This is a ["Markdow-style link":https://example.com].
+[vtp]https://github.com/GehDoc/vscode-textile-preview
 
 !../media/textile-mark_logo.png(Offline image)!
 
 !{border:1px solid #333; padding:5px;}../media/textile-mark_logo.png(Offline image with CSS)!
 
-!https://raw.githubusercontent.com/GehDoc/vscode-textile-preview/master/media/textile-mark_logo.png(Online image)!:https://www.github.com/GehDoc/
+!https://raw.githubusercontent.com/GehDoc/vscode-textile-preview/master/media/textile-mark_logo.png(Online image with link)!:https://www.github.com/GehDoc/
+
+!https://raw.githubusercontent.com/GehDoc/vscode-textile-preview/master/media/textile-mark_logo.png(Online image with link alias)!:vtp
 
 ABBR(Abbreviation)
 

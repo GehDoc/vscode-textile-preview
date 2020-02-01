@@ -82,12 +82,40 @@ function extractDocumentLink(
 	}
 }
 
+function getDocumentLink(
+	document: vscode.TextDocument,
+	definitions: Map<string, { link: string, linkRange: vscode.Range }>,
+	base: string,
+	pre: number,
+	link: string,
+	matchIndex: number | undefined
+): vscode.DocumentLink | undefined {
+	const refLink = definitions.get(link);
+	if (refLink) {
+		try {
+			const offset = (matchIndex || 0) + pre;
+			let linkStart = document.positionAt(offset);
+			let linkEnd = document.positionAt(offset + link.length);
+
+			return new vscode.DocumentLink(
+				new vscode.Range(linkStart, linkEnd),
+				vscode.Uri.parse(`command:_textile.moveCursorToPosition?${encodeURIComponent(JSON.stringify([refLink.linkRange.start.line, refLink.linkRange.start.character]))}`));
+		} catch (e) {
+			return undefined;
+		}
+	} else {
+		return extractDocumentLink(document, base, pre, link, matchIndex);
+	}
+}
+
 export default class LinkProvider implements vscode.DocumentLinkProvider {
 	private readonly linkPattern = /("(?!\s)((?:[^"]|"(?![\s:])[^\n"]+"(?!:))+)":)((?:[^\s()]|\([^\s()]+\)|[()])+?)(?=[!-\.:-@\[\\\]-`{-~]+(?:$|\s)|$|\s)|(\["([^\n]+?)":)((?:\[[a-z0-9]*\]|[^\]])+)\]/g
 	private readonly imagePattern = /(!(?!\s)((?:\([^\)]+\)|\{[^\}]+\}|\\[[^\[\]]+\]|(?:<>|<|>|=)|[\(\)]+)*(?:\.[^\n\S]|\.(?:[^\.\/]))?)([^!\s]+?) ?(?:\(((?:[^\(\)]|\([^\(\)]+\))+)\))?!)(?::([^\s]+?(?=[!-\.:-@\[\\\]-`{-~](?:$|\s)|\s|$)))?/g
 
+	/* Disabled : not relevant for textile
 	private readonly referenceLinkPattern = /(\[((?:\\\]|[^\]])+)\]\[\s*?)([^\s\]]*?)\]/g; // FIXME : recreate for textile
-	private readonly definitionPattern = /^([\t ]*\[((?:\\\]|[^\]])+)\]:\s*)(\S+)/gm; // FIXME : recreate for textile
+	*/
+	private readonly definitionPattern = /^\[([^\]]+)\]((?:https?:\/\/|\/)\S+)(?:\s*(?=\n)|$)/gm;
 
 	public provideDocumentLinks(
 		document: vscode.TextDocument,
@@ -98,7 +126,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 
 		return [
 			...this.providerInlineLinks(text, document, base),
-			/* FIXME : activate
+			/* Disabled : not relevant for textile
 			...this.provideReferenceLinks(text, document, base)
 			*/
 		];
@@ -111,12 +139,24 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 	): vscode.DocumentLink[] {
 		const results: vscode.DocumentLink[] = [];
 		// -- Begin: Modified for textile
+
+		// pasted from this.provideReferenceLinks
+		const definitions = this.getDefinitions(text, document);
+		for (const definition of definitions.values()) {
+			try {
+				const { uri } = parseLink(document, definition.link, base);
+				results.push(new vscode.DocumentLink(definition.linkRange, uri));
+			} catch (e) {
+				// noop
+			}
+		}
+
 		for (const match of matchAll(this.linkPattern, text)) {
-			const matchLink = match[1] && extractDocumentLink(document, base, match[1].length, match[3], match.index);
+			const matchLink = match[1] && getDocumentLink(document, definitions, base, match[1].length, match[3], match.index);
 			if (matchLink) {
 				results.push(matchLink);
 			}
-			const matchLinkFenced = match[6] && extractDocumentLink(document, base, match[4].length, match[6], match.index);
+			const matchLinkFenced = match[6] && getDocumentLink(document, definitions, base, match[4].length, match[6], match.index);
 			if (matchLinkFenced) {
 				results.push(matchLinkFenced);
 			}
@@ -126,7 +166,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 			if (matchImage) {
 				results.push(matchImage);
 			}
-			const matchLink = match[5] && extractDocumentLink(document, base, match[1].length + 1, match[5], match.index);
+			const matchLink = match[5] && getDocumentLink(document, definitions, base, match[1].length + 1, match[5], match.index);
 			if (matchLink) {
 				results.push(matchLink);
 			}
@@ -134,7 +174,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 		// -- End: Modified for textile
 		return results;
 	}
-	/* FIXME : activate
+	/* Disabled : not relevant for textile
 	private provideReferenceLinks(
 		text: string,
 		document: vscode.TextDocument,
@@ -184,18 +224,19 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 
 		return results;
 	}
+	*/
 
 	private getDefinitions(text: string, document: vscode.TextDocument) {
 		const out = new Map<string, { link: string, linkRange: vscode.Range }>();
 		for (const match of matchAll(this.definitionPattern, text)) {
-			const pre = match[1];
-			const reference = match[2];
-			const link = match[3].trim();
+			// -- Begin: Modified for textile
+			const reference = match[1];
+			const link = match[2].trim();
 
-			const offset = (match.index || 0) + pre.length;
+			const offset = (match.index || 0) + reference.length + 2;
 			const linkStart = document.positionAt(offset);
 			const linkEnd = document.positionAt(offset + link.length);
-
+			// -- End: Modified for textile
 			out.set(reference, {
 				link: link,
 				linkRange: new vscode.Range(linkStart, linkEnd)
@@ -203,5 +244,4 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 		}
 		return out;
 	}
-	*/
 }
