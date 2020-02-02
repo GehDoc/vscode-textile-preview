@@ -91,7 +91,7 @@ const doCompile = function (buildNls) {
 	}
 
 	return r.pipe(gulp.dest(outDest));
-}
+};
 
 const vscePublishTask = function() {
 	return vsce.publish();
