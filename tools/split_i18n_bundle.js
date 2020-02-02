@@ -23,25 +23,33 @@ if( process.argv.length != 5 ) {
 }
 
 // TODO : share this list with gulpfile
-// TODO (not sure) : i18n, replace "Textile Language Features" by "Textile Live Preview"
 //
 // Supported languages list :
 // lang => [
-//	dirname: directory's name for this lang files
-//	replacement : list of strings replacements, to transform markdown into textile :
-//		[ regexp, replacement string, count, i18n_dirname ]
+//	id : ID for gulpfile
+//	folderName : directory's name for this lang files
+//	replacements : list of strings replacements, to transform markdown into textile :
+//		[ regexp, replacement string, replacements count ],
+// 	transifexId : optional depending on the language, for gulpfile
+// ]
+//
+// For gulpfile, see :
+// - https://github.com/microsoft/vscode/blob/release/1.22/build/lib/i18n.ts
+// - https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
 //
 // Note : usually, 49 replacements
 const langs = {
 	'de':{
-		dirname: 'deu',
+		id: 'de',
+		folderName: 'deu',
 		replacements: [
 			[ /markdown/g, 'textile', 25 ],
 			[ /Markdown/g, 'Textile', 24 ],
 		]
 	},
 	'es':{
-		dirname: 'esn',
+		id: 'es',
+		folderName: 'esn',
 		replacements: [
 			// OK, count is 44
 			[ /markdown/g, 'textile', 29 ],
@@ -49,7 +57,8 @@ const langs = {
 		]
 	},
 	'fr':{
-		dirname: 'fra',
+		id: 'fr',
+		folderName: 'fra',
 		replacements: [
 			[ /markdown/g, 'textile', 28 ],
 			[ /Markdown/g, 'Textile', 20 ],
@@ -57,14 +66,16 @@ const langs = {
 		]
 	},
 	'it':{
-		dirname: 'ita',
+		id: 'it',
+		folderName: 'ita',
 		replacements: [
 			[ /markdown/g, 'textile', 41 ],
 			[ /Markdown/g, 'Textile', 8 ],
 		]
 	},
 	'ja':{
-		dirname: 'jpn',
+		id: 'ja',
+		folderName: 'jpn',
 		replacements: [
 			[ /markdown/g, 'textile', 25 ],
 			[ /マークダウン/g, 'Textile', 19 ],
@@ -72,7 +83,8 @@ const langs = {
 		]
 	},
 	'ko':{
-		dirname: 'kor',
+		id: 'ko',
+		folderName: 'kor',
 		replacements: [
 			[ /markdown/g, 'textile', 32 ],
 			[ /Markdown/g, 'Textile', 14 ],
@@ -80,25 +92,30 @@ const langs = {
 		]
 	},
 	'ru':{
-		dirname: 'rus',
+		id: 'ru',
+		folderName: 'rus',
 		replacements: [
 			[ /markdown/g, 'textile', 25 ],
 			[ /Markdown/g, 'Textile', 24 ],
 		]
 	},
-	'zh-hant':{ // Note: transifexId
-		dirname: 'cht',
+	'zh-hant':{
+		id: 'zh-tw',
+		folderName: 'cht',
 		replacements: [
 			[ /markdown/g, 'textile', 26 ],
 			[ /Markdown/g, 'Textile', 23 ],
-		]
+		],
+		transifexId: 'zh-hant'
 	},
-	'zh-hans':{ // Note: transifexId
-		dirname: 'chs',
+	'zh-hans':{
+		id: 'zh-cn',
+		folderName: 'chs',
 		replacements: [
 			[ /markdown/g, 'textile', 29 ],
 			[ /Markdown/g, 'Textile', 20 ],
-		]
+		],
+		transifexId: 'zh-hans'
 	},
 };
 
@@ -143,7 +160,7 @@ if( rawdata ) {
 		}
 
 		// Make directory
-		const filename = out_dir + '/' + langs[ lang ].dirname + '/' + local_filenameWOext + '.i18n.json';
+		const filename = out_dir + '/' + langs[ lang ].folderName + '/' + local_filenameWOext + '.i18n.json';
 		fs.mkdirSync( path.dirname( filename ), { recursive: true } );
 
 		// Create file
