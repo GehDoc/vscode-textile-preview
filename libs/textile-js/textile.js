@@ -846,11 +846,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (tag in allowedBlocktags) {
 	        if (m[3] || tag in singletons) {
 	          // single?
+	          var srcSlot = src.getSlot();
 	          src.advance(m[0]);
 	          if (/^\s*(\n|$)/.test(src)) {
 	            var elm = [tag];
-	            if (m[2]) {
-	              elm.push(parseHtmlAttr(m[2]));
+	            if (options.showOriginalLineNumber) {
+	              elm.push(addLineNumber(m[2] ? parseHtmlAttr(m[2]) : {}, options, charPosToLine, 0, srcSlot));
+	            } else {
+	              if (m[2]) {
+	                elm.push(parseHtmlAttr(m[2]));
+	              }
 	            }
 	            list.add(elm);
 	            src.skipWS();
@@ -858,6 +863,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	          }
 	        } else if (tag === 'pre') {
 	          var t = tokenize(src, { 'pre': 1, 'code': 1 }, tag);
+	          if (options.showOriginalLineNumber) {
+	            t[0].attr = addLineNumber(t[0].attr, options, charPosToLine, 0, src.getSlot());
+	          }
 	          var p = parseHtml(t, true);
 	          src.load().advance(p.sourceLength);
 	          if (/^\s*(\n|$)/.test(src)) {
@@ -868,6 +876,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        } else if (tag === 'notextile') {
 	          // merge all child elements
 	          var _t = tokenize(src, null, tag);
+	          // it's not possible to addLineNumber here (no tag)
 	          var s = 1; // start after open tag
 	          while (/^\s+$/.test(_t[s].src)) {
 	            s++; // skip whitespace
@@ -883,6 +892,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        } else {
 	          src.skipWS();
 	          var _t2 = tokenize(src, null, tag);
+	          var _srcSlot = src.getSlot();
 	          var _x = _t2.pop(); // this should be the end tag
 	          var _s = 1; // start after open tag
 	          while (_t2[_s] && /^[\n\r]+$/.test(_t2[_s].src)) {
@@ -894,8 +904,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            src.advance(_x.pos + _x.src.length);
 	            if (/^\s*(\n|$)/.test(src)) {
 	              var _elm = [tag];
-	              if (m[2]) {
-	                _elm.push(parseHtmlAttr(m[2]));
+	              if (options.showOriginalLineNumber) {
+	                _elm.push(addLineNumber(m[2] ? parseHtmlAttr(m[2]) : {}, options, charPosToLine, 0, _srcSlot));
+	              } else {
+	                if (m[2]) {
+	                  _elm.push(parseHtmlAttr(m[2]));
+	                }
 	              }
 	              if (tag === 'script' || tag === 'style') {
 	                _elm.push(_inner);
