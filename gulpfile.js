@@ -22,19 +22,10 @@ const inlineMap = true;
 const inlineSource = false;
 const outDest = 'out';
 
-// See : https://github.com/microsoft/vscode/blob/release/1.22/build/lib/i18n.ts
-// and : https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
-const languages = [
-	{ id: 'zh-tw', folderName: 'cht', transifexId: 'zh-hant' },
-	{ id: 'zh-cn', folderName: 'chs', transifexId: 'zh-hans' },
-	{ id: 'ja', folderName: 'jpn' },
-	{ id: 'ko', folderName: 'kor' },
-	{ id: 'de', folderName: 'deu' },
-	{ id: 'fr', folderName: 'fra' },
-	{ id: 'es', folderName: 'esn' },
-	{ id: 'ru', folderName: 'rus' },
-	{ id: 'it', folderName: 'ita' }
-];
+// Languages list. See :
+// - https://github.com/microsoft/vscode/blob/release/1.22/build/lib/i18n.ts
+// - and : https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
+const languages = new Map( Object.entries( require('./tools/languages.config.js') ) );
 
 const cleanTask = function() {
 	return del(['out/**', 'dist/**', 'package.nls.*.json', 'vscode-textile-preview*.vsix', 'media/index.js', 'media/pre.js']);
