@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [UNRELEASED]
 ### Fixed
-- Update textile-js to GehDoc/textile-js@5a32824bdc6e806615a0d45003f0d32e5c2bba48. Fixes #30 and #31.
+- [DEPENDENCIES] Update textile-js to GehDoc/textile-js@5a32824bdc6e806615a0d45003f0d32e5c2bba48. Fixes #30 and #31.
+
+### Changed
+- [INTERNAL] Share languages lists between tools. Closes #16.
 
 
 ## [0.3.6] - 20200201
