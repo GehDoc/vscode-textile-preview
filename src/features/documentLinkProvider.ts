@@ -108,6 +108,17 @@ function getDocumentLink(
 	}
 }
 
+// -- Begin: Added for textile
+function compareLinkRanges(a: vscode.DocumentLink, b: vscode.DocumentLink): number {
+	if( a.range.start.line < b.range.start.line ) {
+		return -1;
+	} else if( a.range.start.line > b.range.start.line ) {
+		return 1;
+	}
+	return a.range.start.character - b.range.start.character;
+}
+// -- End: Added for textile
+
 export default class LinkProvider implements vscode.DocumentLinkProvider {
 	private readonly linkPattern = /("(?!\s)((?:[^"]|"(?![\s:])[^\n"]+"(?!:))+)":)((?:[^\s()]|\([^\s()]+\)|[()])+?)(?=[!-\.:-@\[\\\]-`{-~]+(?:$|\s)|$|\s)|(\["([^\n]+?)":)((?:\[[a-z0-9]*\]|[^\]])+)\]/g
 	private readonly imagePattern = /(!(?!\s)((?:\([^\)]+\)|\{[^\}]+\}|\\[[^\[\]]+\]|(?:<>|<|>|=)|[\(\)]+)*(?:\.[^\n\S]|\.(?:[^\.\/]))?)([^!\s]+?) ?(?:\(((?:[^\(\)]|\([^\(\)]+\))+)\))?!)(?::([^\s]+?(?=[!-\.:-@\[\\\]-`{-~](?:$|\s)|\s|$)))?/g
@@ -171,9 +182,14 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 				results.push(matchLink);
 			}
 		}
+
+		// The array have to be sorted. If not, some tooltips are doubled !
+		results.sort(compareLinkRanges);
+
 		// -- End: Modified for textile
 		return results;
 	}
+
 	/* Disabled : not relevant for textile
 	private provideReferenceLinks(
 		text: string,

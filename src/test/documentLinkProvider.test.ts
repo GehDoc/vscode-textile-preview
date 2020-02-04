@@ -126,10 +126,10 @@ suite('textile.DocumentLinkProvider', () => {
 		const links = getLinksForFile('a "b":example c\n[example]https://example.com');
 		assert.strictEqual(links.length, 2);
 		const [link1,link2] = links;
-		assertRangeEqual(link1.range, new vscode.Range(1, 10, 1, 29)); // aliases are pushed first
-		assert.strictEqual(link1.target?.scheme, "https");
-		assertRangeEqual(link2.range, new vscode.Range(0, 6, 0, 13));
-		assert.strictEqual(link2.target?.scheme, "command");
+		assertRangeEqual(link1.range, new vscode.Range(0, 6, 0, 13));
+		assert.strictEqual(link1.target?.scheme, "command");
+		assertRangeEqual(link2.range, new vscode.Range(1, 10, 1, 29));
+		assert.strictEqual(link2.target?.scheme, "https");
 	});
 
 	// https://github.com/microsoft/vscode/issues/49238
