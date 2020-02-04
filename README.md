@@ -25,19 +25,18 @@ This extension is entirely based on the Markdown preview provided by Visual Stud
 * you can click on links, in the source view and in the HTML preview;
 * the HTML preview supports VSCode light and dark themes;
 * the extension is translated into the 9 VScode core languages;
-* ...
-
-To see the full list of features and interactions, you can read the documentation of the [Visual Studio Code's Markdown preview](https://code.visualstudio.com/docs/languages/markdown#_markdown-preview).
 
 ### Missing features
 
-For now, some features of the original Markdown preview have been disabled.
+For now, some features of the original Markdown preview have been disabled. 
+To see the full list of features and interactions, you can read the documentation of the [Visual Studio Code's Markdown preview](https://code.visualstudio.com/docs/languages/markdown#_markdown-preview).
 
-Features to be implemented / triaged :
+Features to be implemented :
 * Paragraph folding;
 * Generation of table of content, and table of symbols;
 * Support slugify : Allow internal and external links to a paragraph header of a textile file.
 * Support enabling/disabling linkify : Enable or disable conversion of URL-like text to links in the Textile preview. _Currently enabled_.
+* Speed optimization : enable token cache.
 
 Features considered out of scope of this extension :
 * Snippets / Source syntax coloring : You have to use another extensions for these purpose.
@@ -45,7 +44,6 @@ Features considered out of scope of this extension :
 * Support plugins, like mardown-it : Need antother textile to HTML engine
 * Telemetry Reporter : Need a non free Azure account : https://www.npmjs.com/package/vscode-extension-telemetry
 * Add other translations than the 9 core languages listed there (unless requested) : https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
-
 
 ## Release Notes
 
