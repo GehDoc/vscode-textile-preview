@@ -73,7 +73,7 @@ suite('textile.DocumentLinkProvider', () => {
 	});
 
 	/* FIXME : failing for textile syntax
-	// #35245 (vscode)
+	// https://github.com/microsoft/vscode/issues/35245
 	test('Should handle links with escaped characters in name', () => {
 		const links = getLinksForFile('a "b\\"":./file');
 		assert.strictEqual(links.length, 1);
@@ -97,7 +97,7 @@ suite('textile.DocumentLinkProvider', () => {
 
 		}
 		{
-			// #49011 (vscode)
+			// https://github.com/microsoft/vscode/issues/49011
 			const links = getLinksForFile('"A link":http://ThisUrlhasParens/A_link(in_parens)');
 			assert.strictEqual(links.length, 1);
 			const [link] = links;
@@ -132,7 +132,7 @@ suite('textile.DocumentLinkProvider', () => {
 		assert.strictEqual(link2.target?.scheme, "command");
 	});
 
-	// #49238 (vscode)
+	// https://github.com/microsoft/vscode/issues/49238
 	test('should handle hyperlinked images', () => {
 		{
 			const links = getLinksForFile('!image.jpg(alt text)!:https://example.com');
