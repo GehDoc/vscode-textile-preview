@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [UNRELEASED]
+## [0.3.7] - 20200204
 ### Fixed
 - [DEPENDENCIES] Update textile-js to GehDoc/textile-js@37dd69bab97778579cf60e27b5c3036682597730. Fixes #30, #31, and a problem of wrongly parsed block after some blank lines.
 - [DOC] Clarified feature list.
