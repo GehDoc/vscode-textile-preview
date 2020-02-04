@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [UNRELEASED]
 ### Fixed
-- [DEPENDENCIES] Update textile-js to GehDoc/textile-js@5a32824bdc6e806615a0d45003f0d32e5c2bba48. Fixes #30 and #31.
+- [DEPENDENCIES] Update textile-js to GehDoc/textile-js@37dd69bab97778579cf60e27b5c3036682597730. Fixes #30, #31, and a problem of wrongly parsed block after some blank lines.
 - [DOC] Clarified feature list.
 - [SOURCE] Some tooltips where doubled, because the list of extracted links wasn't sorted.
 
