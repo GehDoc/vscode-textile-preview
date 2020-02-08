@@ -41,7 +41,7 @@ body.showEditorSelection .code-line {
 }
 
 body.showEditorSelection *:not(tr).code-active-line:before,
-body.showEditorSelection *:not(tr).code-line:hover:before {
+body.showEditorSelection *:not(tr):not(.code-inactive-line).code-line:hover:before {
 	content: "";
 	display: block;
 	position: absolute;
@@ -64,7 +64,7 @@ body.showEditorSelection tr.code-line:hover td:first-child:before {
 }
 
 body.showEditorSelection li.code-active-line:before,
-body.showEditorSelection li.code-line:hover:before {
+body.showEditorSelection li:not(.code-inactive-line).code-line:hover:before {
 	/* because "-webkit-padding-start: 40px;" for <ul> */
 	left: calc(-40px + -12px);
 }
@@ -72,11 +72,11 @@ body.showEditorSelection li.code-line:hover:before {
 body.showEditorSelection blockquote.code-active-line:before,
 body.showEditorSelection blockquote.code-line:hover:before {
 	/*	because  "#text_preview blockquote" margin+border in textile-js.css */
-	left: calc(-.6em + -.4em + -12px);
+	/* important = because "*:not(tr):not(.code-inactive-line).code-line:hover:before" have higher priority */
+	left: calc(-.6em + -.4em + -12px) !important;
 }
 
-body.showEditorSelection blockquote > p.code-active-line:before,
-body.showEditorSelection blockquote > p.code-line:hover:before {
+body.showEditorSelection blockquote > p.code-active-line:before {
 	/*	because  "#text_preview blockquote" margin+border+padding in textile-js.css */
 	left: calc(-.6em + -.4em + -1em + -12px);
 }
@@ -87,13 +87,13 @@ body.showEditorSelection blockquote > p.code-line:hover:before {
 	border-left: 3px solid rgba(0, 0, 0, 0.15);
 }
 
-.vscode-light.showEditorSelection *:not(tr).code-line:hover:before,
+.vscode-light.showEditorSelection *:not(tr):not(.code-inactive-line).code-line:hover:before,
 .vscode-light.showEditorSelection tr.code-line:hover th:first-child:before,
 .vscode-light.showEditorSelection tr.code-line:hover td:first-child:before {
 	border-left: 3px solid rgba(0, 0, 0, 0.40);
 }
 
-.vscode-light.showEditorSelection *:not(tr).code-line .code-line:hover:before,
+.vscode-light.showEditorSelection *:not(tr):not(.code-inactive-line).code-line .code-line:hover:before,
 .vscode-light.showEditorSelection tr.code-line .code-line:hover th:first-child:before,
 .vscode-light.showEditorSelection tr.code-line .code-line:hover td:first-child:before {
 	border-left: none;
@@ -105,31 +105,31 @@ body.showEditorSelection blockquote > p.code-line:hover:before {
 	border-left: 3px solid rgba(255, 255, 255, 0.4);
 }
 
-.vscode-dark.showEditorSelection *:not(tr).code-line:hover:before,
+.vscode-dark.showEditorSelection *:not(tr):not(.code-inactive-line).code-line:hover:before,
 .vscode-dark.showEditorSelection tr.code-line:hover th:first-child:before,
 .vscode-dark.showEditorSelection tr.code-line:hover td:first-child:before {
 	border-left: 3px solid rgba(255, 255, 255, 0.60);
 }
 
-.vscode-dark.showEditorSelection *:not(tr).code-line .code-line:hover:before,
+.vscode-dark.showEditorSelection *:not(tr):not(.code-inactive-line).code-line .code-line:hover:before,
 .vscode-dark.showEditorSelection tr.code-line .code-line:hover th:first-child:before,
 .vscode-dark.showEditorSelection tr.code-line .code-line:hover td:first-child:before {
 	border-left: none;
 }
 
-.vscode-high-contrast.showEditorSelection .code-active-line:before,
+.vscode-high-contrast.showEditorSelection *:not(tr).code-active-line:before,
 .vscode-high-contrast.showEditorSelection tr.code-active-line th:first-child:before,
 .vscode-high-contrast.showEditorSelection tr.code-active-line td:first-child:before {
 	border-left: 3px solid rgba(255, 160, 0, 0.7);
 }
 
-.vscode-high-contrast.showEditorSelection .code-line:hover:before,
+.vscode-high-contrast.showEditorSelection *:not(tr):not(.code-inactive-line).code-line:hover:before,
 .vscode-high-contrast.showEditorSelection tr.code-line:hover th:first-child:before, 
 .vscode-high-contrast.showEditorSelection tr.code-line:hover td:first-child:before {
 	border-left: 3px solid rgba(255, 160, 0, 1);
 }
 
-.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before,
+.vscode-high-contrast.showEditorSelection *:not(tr):not(.code-inactive-line).code-line .code-line:hover:before,
 .vscode-high-contrast.showEditorSelection tr.code-line .code-line:hover th:first-child:before,
 .vscode-high-contrast.showEditorSelection tr.code-line .code-line:hover td:first-child:before {
 	border-left: none;

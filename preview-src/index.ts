@@ -50,6 +50,36 @@ onceDocumentLoaded(() => {
 			}
 		}, 0);
 	}
+	// Allow accurate hover on multi-levels LI
+	let root = document.getElementById('text_preview');
+	if(root) {
+		root.addEventListener('mouseenter', event => {
+			if (!event || !event.target) {
+				return;
+			}
+			let target = (event.target as Element).parentNode as Element;
+			while( target && target !== root ) {
+				if( target.nodeName === 'LI' ) {
+					target.className += ' code-inactive-line';
+				}
+				target = target.parentNode as Element;
+			}
+		}, true);
+		root.addEventListener('mouseleave', event => {
+			if (!event || !event.target) {
+				return;
+			}
+			let target = (event.target as Element).parentNode as Element;
+			while( target && target !== root ) {
+				if( target.nodeName === 'LI' ) {
+					target.className = target.className.replace(/[\t\r\n ]*\bcode-inactive-line\b/g, '');
+				}
+				target = target.parentNode as Element;
+			}
+		}, true);
+	} else {
+		throw new Error('No text_preview node.');
+	}
 });
 
 const onUpdateView = (() => {
