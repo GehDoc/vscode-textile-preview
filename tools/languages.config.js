@@ -43,8 +43,8 @@ module.exports = {
 		id: 'it',
 		folderName: 'ita',
 		replacements: [
-			[ /markdown/g, 'textile', 41 ],
-			[ /Markdown/g, 'Textile', 8 ],
+			[ /markdown/g, 'textile', 37 ],
+			[ /Markdown/g, 'Textile', 12 ],
 		]
 	},
 	'ja':{
