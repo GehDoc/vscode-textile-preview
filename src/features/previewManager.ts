@@ -52,7 +52,7 @@ class PreviewStore extends Disposable {
 	}
 }
 
-export class TextilePreviewManager extends Disposable implements vscode.WebviewPanelSerializer /* FIXME : proposedapi : , vscode.WebviewEditorProvider */ {
+export class TextilePreviewManager extends Disposable implements vscode.WebviewPanelSerializer /* FIXME : proposedapi : , vscode.WebviewCustomEditorProvider */ {
 	private static readonly textilePreviewActiveContextKey = 'textilePreviewFocus';
 
 	private readonly _topmostLineMonitor = new TopmostLineMonitor();
@@ -70,7 +70,7 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 	) {
 		super();
 		this._register(vscode.window.registerWebviewPanelSerializer(DynamicTextilePreview.viewType, this));
-		// FIXME : proposedapi : this._register(vscode.window.registerWebviewEditorProvider('vscode.textile.preview.editor', this));
+		// FIXME : proposedapi : this._register(vscode.window.registerWebviewCustomEditorProvider('vscode.textile.preview.editor', this));
 	}
 
 	public refresh() {
@@ -150,11 +150,11 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 
 	/* FIXME : proposedapi : 
 	public async resolveWebviewEditor(
-		input: { readonly resource: vscode.Uri; },
+		resource: vscode.Uri,
 		webview: vscode.WebviewPanel
-	): Promise<vscode.WebviewEditorCapabilities> {
+	): Promise<void> {
 		const preview = DynamicTextilePreview.revive(
-			{ resource: input.resource, locked: false, resourceColumn: vscode.ViewColumn.One },
+			{ resource, locked: false, resourceColumn: vscode.ViewColumn.One },
 			webview,
 			this._contentProvider,
 			this._previewConfigurations,
@@ -162,7 +162,6 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 			this._topmostLineMonitor,
 			this._contributions);
 		this.registerStaticPreview(preview);
-		return {};
 	}
 	*/
 

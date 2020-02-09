@@ -68,10 +68,7 @@ function registerTextileLanguageFeatures(
 	*/
 	engine: TextileEngine
 ): vscode.Disposable {
-	const selector: vscode.DocumentSelector = [
-		{ language: 'textile', scheme: 'file' },
-		{ language: 'textile', scheme: 'untitled' }
-	];
+	const selector: vscode.DocumentSelector = { language: 'textile', scheme: '*' };
 
 	const charPattern = '(\\p{Alphabetic}|\\p{Number}|\\p{Nonspacing_Mark})';
 

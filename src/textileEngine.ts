@@ -118,7 +118,9 @@ export class TextileEngine {
 				return md;
 			*/
 		}
+
 		const textile = await this.textile!;
+		// FIXME ? textile.set(config);
 		return textile;
 	}
 
@@ -132,6 +134,30 @@ export class TextileEngine {
 		}
 		return { text, offset };
 	}
+
+	/* FIXME : Update for textile
+	private tokenizeDocument(
+		document: SkinnyTextDocument,
+		config: TextileItConfig,
+		engine: TextileIt
+	): Token[] {
+		const cached = this._tokenCache.tryGetCached(document, config);
+		if (cached) {
+			return cached;
+		}
+
+		this.currentDocument = document.uri;
+		this._slugCount = new Map<string, number>();
+
+		const tokens = this.tokenizeString(document.getText(), engine);
+		this._tokenCache.update(document, config, tokens);
+		return tokens;
+	}
+
+	private tokenizeString(text: string, engine: TextileIt) {
+		return engine.parse(text.replace(UNICODE_NEWLINE_REGEX, ''), {});
+	}
+	*/
 
 	public async render(input: SkinnyTextDocument | string): Promise<string> {
 		this.currentDocument = typeof input === 'string' ? undefined : input.uri;
