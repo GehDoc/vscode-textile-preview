@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [PREVIEW] Allow accurate hover on multi-levels LI. Closes #5.
 - [CSS] small fix of high contrast theme.
 
+### Changed
+- Update to vscode 1.42.0
+
 
 ## [0.3.7] - 20200204
 ### Fixed
