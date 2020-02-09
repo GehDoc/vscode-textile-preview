@@ -82,6 +82,7 @@ function extractDocumentLink(
 	}
 }
 
+// -- Begin: Added for textile
 function getDocumentLink(
 	document: vscode.TextDocument,
 	definitions: Map<string, { link: string, linkRange: vscode.Range }>,
@@ -108,7 +109,6 @@ function getDocumentLink(
 	}
 }
 
-// -- Begin: Added for textile
 function compareLinkRanges(a: vscode.DocumentLink, b: vscode.DocumentLink): number {
 	if( a.range.start.line < b.range.start.line ) {
 		return -1;
