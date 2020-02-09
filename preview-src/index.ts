@@ -50,6 +50,7 @@ onceDocumentLoaded(() => {
 			}
 		}, 0);
 	}
+	// -- Begin: Modified for textile
 	// Allow accurate hover on multi-levels LI
 	let root = document.getElementById('text_preview');
 	if(root) {
@@ -80,6 +81,7 @@ onceDocumentLoaded(() => {
 	} else {
 		throw new Error('No text_preview node.');
 	}
+	// -- End: Modified for textile
 });
 
 const onUpdateView = (() => {
