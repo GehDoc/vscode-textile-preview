@@ -8,7 +8,7 @@ Full featured document live preview for the [Textile](https://en.wikipedia.org/w
 
 *Beta version !! See the [Roadmap](#roadmap).*
 
-Based on the source code of [Visual Studio Code's Markdown preview](https://github.com/microsoft/vscode/tree/master/extensions/markdown-language-features), it uses a modified version of [textile.js](https://github.com/GehDoc/textile-js) Textile to HTML parser in order to display live preview.
+Based on the source code of [Visual Studio Code's Markdown Language Features](https://github.com/microsoft/vscode/tree/master/extensions/markdown-language-features), it uses a modified version of [textile.js](https://github.com/GehDoc/textile-js) Textile to HTML parser in order to display live preview.
 
 ## Working with Textile
 
@@ -29,7 +29,7 @@ This extension is entirely based on the Markdown preview provided by Visual Stud
 ### Missing features
 
 For now, some features of the original Markdown preview have been disabled. 
-To see the full list of features and interactions, you can read the documentation of the [Visual Studio Code's Markdown preview](https://code.visualstudio.com/docs/languages/markdown#_markdown-preview).
+To see the full list of features and interactions, you can read the documentation of the [Visual Studio Code's Markdown Language Features](https://code.visualstudio.com/docs/languages/markdown#_markdown-preview).
 
 Features to be implemented :
 * Paragraph folding;
@@ -55,22 +55,27 @@ All [bugs and enhancements](https://github.com/GehDoc/vscode-textile-preview/iss
 * Road to the first [RELEASE 1.0.0](https://github.com/GehDoc/vscode-textile-preview/projects/3) :  
   Fix bugs, and improve documentation and community guidelines.
 * then FUTURE :  
-  Implement missing features (see above), keep in sync with VSCode updates, ...  
+  Implement missing features (see above), keep in sync with VSCode and Textile-JS updates, ...  
   All remaining ToDOs and issues will be triaged and planned after the first release, in new GitHub projects to track progress fir future release.
 
-## Support this project
+## Supporting
 
-You can support this project by :
-* reporting any bug / suggestion to [GitHub repository issues](https://github.com/GehDoc/vscode-textile-preview/issues).
-* giving feedback and rating through [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview).
-* financially sponsoring my project [here](http://www.leetchi.com/c/vscode-textile-language-features), or through the GitHub ❤ sponsor button on [the project's repository](https://github.com/GehDoc/vscode-textile-preview/).
+* Give feedback and rating through [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview).
+* Financially sponsor our project [here](http://www.leetchi.com/c/vscode-textile-language-features), or through the GitHub ❤ sponsor button on [the project's repository](https://github.com/GehDoc/vscode-textile-preview/).
+
+## Contributing
+
+* [Submit bugs and feature requests](https://github.com/GehDoc/vscode-textile-preview/issues), and help us verify as they are checked in.
+* Fix issues and contribute to the code.
+
+Before contributing, take the time to read [the contributing guide](CONTRIBUTING.md).
 
 ## License
 
 This project is licensed under the terms of the [MIT license](./LICENSE.txt).
 
 It is entirely based on :
-* [Visual Studio Code's Markdown preview](https://github.com/Microsoft/vscode/tree/master/extensions/markdown-language-features) under the terms of the [MIT license](LICENSES/vscode-LICENSE.txt).  
+* [Visual Studio Code's Markdown Language Features](https://github.com/Microsoft/vscode/tree/master/extensions/markdown-language-features) under the terms of the [MIT license](LICENSES/vscode-LICENSE.txt).  
 * and, the [Visual Studio Code Language Packs](https://github.com/microsoft/vscode-loc) under the terms of the [MIT license](LICENSES/vscode-loc-LICENSE.md).
 
 It includes a modified version of [textile-js](https://github.com/GehDoc/textile-js) under the terms of the [MIT license](LICENSES/textile-js-LICENSE.txt).
