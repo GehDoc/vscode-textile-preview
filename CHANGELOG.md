@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update to vscode 1.42.0
 
+### Added
+- Contributing guide. Closes #15.
+
 
 ## [0.3.7] - 20200204
 ### Fixed
