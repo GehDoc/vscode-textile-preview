@@ -120,6 +120,7 @@ function compareLinkRanges(a: vscode.DocumentLink, b: vscode.DocumentLink): numb
 // -- End: Added for textile
 
 export default class LinkProvider implements vscode.DocumentLinkProvider {
+	// -- Begin: Modified for textile
 	private readonly linkPattern = /("(?!\s)((?:[^"]|"(?![\s:])[^\n"]+"(?!:))+)":)((?:[^\s()]|\([^\s()]+\)|[()])+?)(?=[!-\.:-@\[\\\]-`{-~]+(?:$|\s)|$|\s)|(\["([^\n]+?)":)((?:\[[a-z0-9]*\]|[^\]])+)\]/g
 	private readonly imagePattern = /(!(?!\s)((?:\([^\)]+\)|\{[^\}]+\}|\\[[^\[\]]+\]|(?:<>|<|>|=)|[\(\)]+)*(?:\.[^\n\S]|\.(?:[^\.\/]))?)([^!\s]+?) ?(?:\(((?:[^\(\)]|\([^\(\)]+\))+)\))?!)(?::([^\s]+?(?=[!-\.:-@\[\\\]-`{-~](?:$|\s)|\s|$)))?/g
 
@@ -127,6 +128,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 	private readonly referenceLinkPattern = /(\[((?:\\\]|[^\]])+)\]\[\s*?)([^\s\]]*?)\]/g; // FIXME : recreate for textile
 	*/
 	private readonly definitionPattern = /^\[([^\]]+)\]((?:https?:\/\/|\/)\S+)(?:\s*(?=\n)|$)/gm;
+	// -- End: Modified for textile
 
 	public provideDocumentLinks(
 		document: vscode.TextDocument,

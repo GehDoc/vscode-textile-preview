@@ -75,6 +75,7 @@ export class TextileContentProvider {
 		const csp = this.getCsp(resourceProvider, sourceUri, nonce);
 
 		const body = await this.engine.render(textileDocument);
+		// Changed for Textile :
 		return `<!DOCTYPE html>
 			<html style="${escapeAttribute(this.getSettingsOverrideStyles(config))}">
 			<head>
@@ -103,6 +104,7 @@ export class TextileContentProvider {
 	): string {
 		const resourcePath = path.basename(resource.fsPath);
 		const body = localize('preview.notFound', '{0} cannot be found', resourcePath);
+		// Changed for Textile :
 		return `<!DOCTYPE html>
 			<html>
 			<body class="vscode-body">

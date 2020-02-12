@@ -27,7 +27,7 @@ export interface SkinnyTextDocument {
 	lineAt(line: number): SkinnyTextLine;
 	getText(): string;
 }
-/*
+/* FIXME : enable
 export class TableOfContentsProvider {
 	private toc?: TocEntry[];
 

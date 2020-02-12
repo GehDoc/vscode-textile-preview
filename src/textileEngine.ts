@@ -79,7 +79,8 @@ export class TextileEngine {
 	private async getEngine(config: TextileConfig): Promise<TextileJS> {
 		if (!this.textile) {
 			this.textile = import('../libs/textile-js/textile');
-			/*
+			/* Disabled for Textile :
+			.then(async textileIt => {
 				let md: TextileIt = textileIt(await getTextileOptions(() => md));
 
 				for (const plugin of this.contributionProvider.contributions.textileItPlugins.values()) {
@@ -116,6 +117,7 @@ export class TextileEngine {
 				this.addNamedHeaders(md);
 				this.addLinkRenderer(md);
 				return md;
+			});
 			*/
 		}
 
@@ -124,6 +126,7 @@ export class TextileEngine {
 		return textile;
 	}
 
+	// -- Begin: Keep for Textile
 	private stripFrontmatter(text: string): { text: string, offset: number } {
 		let offset = 0;
 		const frontMatterMatch = FrontMatterRegex.exec(text);
@@ -134,6 +137,7 @@ export class TextileEngine {
 		}
 		return { text, offset };
 	}
+	// -- End: Keep for Textile
 
 	/* FIXME : Update for textile
 	private tokenizeDocument(
@@ -160,6 +164,7 @@ export class TextileEngine {
 	*/
 
 	public async render(input: SkinnyTextDocument | string): Promise<string> {
+		// -- Begin: Changed for Textile
 		this.currentDocument = typeof input === 'string' ? undefined : input.uri;
 		const config = this.getConfig(this.currentDocument);
 		const engine = await this.getEngine(config);
@@ -180,6 +185,7 @@ export class TextileEngine {
 			lineOffset: offset,
 			breaks: config.breaks
 		});
+		// -- End: Changed for Textile
 	}
 
 	/* FIXME : not used for textile
