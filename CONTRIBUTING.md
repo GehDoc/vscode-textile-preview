@@ -73,7 +73,7 @@ If you can reproduce the same issue in Visual Studio Code by [editing a markdown
 ## Translations
 
 Translations are automatically imported from [Visual Studio Code language packs](https://github.com/microsoft/vscode-loc/) site, and adapted to Textile language Feature trough simples search and replace patterns.
-We will accept only simple corrections of the existing import tool (in the [./tools/](./tools/) project's subdirectory), and we will refuse any translation change or improvement.
+We will accept only simple corrections of the existing [import tool](#Update-to-latest-Visual-Studio-Code-sources-and-translations), and we will refuse any translation change or improvement.
 
 If you want to improve translations, please contribute to the [Visual Studio Code Community Localization Project](https://github.com/Microsoft/Localization/wiki/Visual-Studio-Code-Community-Localization-Project) instead.
 
@@ -91,6 +91,9 @@ If you want to improve translations, please contribute to the [Visual Studio Cod
 4. Open the folder in VS Code
 5. Open to the "Run and Debug" Window (Ctrl+Shift+D), and launch Tests or Extension.
 
+### Commit
+In order to keep the commit log understandable, please look at the commit history, to group files and write commit messages the same way.
+
 ### Test
 Before submitting Pull Requests, make sure you have :
 * no linting error
@@ -98,6 +101,19 @@ Before submitting Pull Requests, make sure you have :
 	* Open to the "Run and Debug" Window (Ctrl+Shift+D), and choose "Launch Tests" from the dropdown menu.
 	* or, check the Travis-CI build status, if enabled in your repository.
 
+### Update to latest Visual Studio Code sources and translations
+A shell script [./tools/prepare_vscode_tree.sh](./tools/prepare_vscode_tree.sh), will help you to update Textile Language Features source code, from VSCode Makdown Language Features source code. Ideally, this will be done every time [a new version of VSCode](https://github.com/microsoft/vscode/releases) is published.
+
+It doesn't accept any command line parameter. You can still configure :
+* the current VSCode release version, with the variable `VSCODE_VERSION_GIT_TAG`,
+* the list of supported languages, in the [./tools/languages.config.js](./tools/languages.config.js) file.
+
+The script will automatically :
+* Fetch [vscode](https://github.com/microsoft/vscode/) and [vscode-loc](https://github.com/microsoft/vscode-loc/) from their GitHub repo, into [./tools/tmp/](./tools/tmp/),
+* Replace 'Markdown' by 'Textile' in VSCode Markdown Language Features source tree, and validate the number of replacements (see [./tools/languages.config.js](./tools/languages.config.js)),
+* Then, all needed files are renamed if necessary and copied to [./tools/tmp/out/](./tools/tmp/out/) directory.
+
+Finally, you have to manually import the relevant change, by diffing the root directory with [./tools/tmp/out/](./tools/tmp/out/).
 
 ## Discussion etiquette
 
