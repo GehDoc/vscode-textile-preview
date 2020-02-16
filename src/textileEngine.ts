@@ -56,7 +56,7 @@ class TokenCache {
 }
 */
 
-const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/;
+const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/; // Keep for Textile
 
 export class TextileEngine {
 	private textile?: Promise<TextileJS>;
