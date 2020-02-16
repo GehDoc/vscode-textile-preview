@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# Replace Markdown by Textile in vscode markdown tree.
-# vscode and vscode-loc are fecthed from their GitHub repo, into ./tools/tmp/
+# Replace 'Markdown' by 'Textile' in VSCode Markdown Language Features tree.
+# vscode and vscode-loc are fetched from their GitHub repo, into ./tools/tmp/
 # Then, all needed files are processed and copied to ./tools/tmp/out/
 
 VSCODE_VERSION_GIT_TAG=1.42.0
@@ -14,7 +14,12 @@ function fatal_error() {
 
 function warning() {
 	msg=$1
-	echo -e "\e[01;31mWRN:\e[0m $1"
+	echo -e "\e[01;33mWRN:\e[0m $1"
+}
+
+function end_ok() {
+	echo -e "\e[01;32mDone !\e[0m"
+	exit 0
 }
 
 function process_dir_src() {
@@ -162,6 +167,7 @@ function github_DL() {
 	cd $OLD_PWD
 }
 
+
 # -----------
 echo "Processing src"
 
@@ -179,4 +185,6 @@ github_DL "vscode-loc"
 
 process_dir_i18n ./tools/tmp/vscode-loc/i18n/ ./tools/tmp/out/i18n/
 
-exit 0
+
+# -----------
+end_ok
