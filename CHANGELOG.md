@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [UNRELEASED]
+### Added
+- [DOC] clarify "textile" guards in the code source, and explain how-to use them in CONTRIBUTING.md
+
+### Changed
+- [INTERNAL] Clarify prepare_vscode_tree.sh feedbacks
+
+
 ## [0.3.8] - 20200210
 ### Fixed
 - [PREVIEW] Allow accurate hover on multi-levels LI. Closes #5.
