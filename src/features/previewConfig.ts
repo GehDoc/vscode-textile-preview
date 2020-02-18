@@ -37,7 +37,7 @@ export class TextilePreviewConfiguration {
 
 		this.scrollPreviewWithEditor = !!textileConfig.get<boolean>('preview.scrollPreviewWithEditor', true);
 		this.scrollEditorWithPreview = !!textileConfig.get<boolean>('preview.scrollEditorWithPreview', true);
-		this.lineBreaks = !!textileConfig.get<boolean>('preview.breaks', true); // Changed tu true for Textile
+		this.lineBreaks = !!textileConfig.get<boolean>('preview.breaks', true); // Changed for Textile
 		this.doubleClickToSwitchToEditor = !!textileConfig.get<boolean>('preview.doubleClickToSwitchToEditor', true);
 		this.markEditorSelection = !!textileConfig.get<boolean>('preview.markEditorSelection', true);
 

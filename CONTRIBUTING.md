@@ -96,7 +96,9 @@ As this extension share its code base with VSCode Mardown Language Features, it 
 * "Modified for textile",
 * "Disabled for textile",
 * "Keep for textile", when some code is removed from VSCode source tree, but should be kept for Texile,
-* or "Added for texile".
+* or, "Added for texile".
+
+You are free to add "FIXME" comments, when something should be fixed.
 
 ### Commit
 In order to keep the commit log understandable, you have to look first at the commit history to see how to group files and write commit messages the same way.
