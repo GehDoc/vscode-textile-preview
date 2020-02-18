@@ -105,7 +105,7 @@ suite('textile.DocumentLinkProvider', () => {
 		}
 	});
 
-	/* Disabled: Not relevant for textile
+	/* Disabled for textile : Not relevant
 	test('Should handle two links without space', () => {
 		const links = getLinksForFile('a ([test](test)[test2](test2)) c');
 		assert.strictEqual(links.length, 2);
@@ -148,7 +148,7 @@ suite('textile.DocumentLinkProvider', () => {
 			assertRangeEqual(link1.range, new vscode.Range(0,2,0,11));
 			assertRangeEqual(link2.range, new vscode.Range(0,23,0,42));
 		}
-		/* Disabled: Not relevant for textile
+		/* Disabled for textile : Not relevant
 		{
 			const links = getLinksForFile('[![a]( whitespace.jpg )]( https://whitespace.com )');
 			assert.strictEqual(links.length, 2);

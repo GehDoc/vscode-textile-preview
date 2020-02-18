@@ -25,7 +25,7 @@ import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector, Content
 
 
 export function activate(context: vscode.ExtensionContext) {
-	/* Disabled
+	/* Disabled for textile
 	const telemetryReporter = loadDefaultTelemetryReporter();
 	context.subscriptions.push(telemetryReporter);
 	*/
@@ -54,7 +54,7 @@ export function activate(context: vscode.ExtensionContext) {
 		*/
 		engine
 	));
-	context.subscriptions.push(registerTextileCommands(previewManager, /* disabled : telemetryReporter, */ cspArbiter, engine));
+	context.subscriptions.push(registerTextileCommands(previewManager, /* Disabled for textile : telemetryReporter, */ cspArbiter, engine));
 
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
 		logger.updateConfiguration();
@@ -89,16 +89,16 @@ function registerTextileLanguageFeatures(
 
 function registerTextileCommands(
 	previewManager: TextilePreviewManager,
-	// disabled : telemetryReporter: TelemetryReporter,
+	// Disabled for textile : telemetryReporter: TelemetryReporter,
 	cspArbiter: ContentSecurityPolicyArbiter,
 	engine: TextileEngine
 ): vscode.Disposable {
 	const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager);
 
 	const commandManager = new CommandManager();
-	commandManager.register(new commands.ShowPreviewCommand(previewManager /* disabled : , telemetryReporter */));
-	commandManager.register(new commands.ShowPreviewToSideCommand(previewManager /* disabled : , telemetryReporter */));
-	commandManager.register(new commands.ShowLockedPreviewToSideCommand(previewManager /* disabled : , telemetryReporter */));
+	commandManager.register(new commands.ShowPreviewCommand(previewManager /* Disabled for textile : , telemetryReporter */));
+	commandManager.register(new commands.ShowPreviewToSideCommand(previewManager /* Disabled for textile : , telemetryReporter */));
+	commandManager.register(new commands.ShowLockedPreviewToSideCommand(previewManager /* Disabled for textile : , telemetryReporter */));
 	commandManager.register(new commands.ShowSourceCommand(previewManager));
 	commandManager.register(new commands.RefreshPreviewCommand(previewManager, engine));
 	commandManager.register(new commands.MoveCursorToPositionCommand());

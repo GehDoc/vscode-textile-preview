@@ -91,8 +91,15 @@ If you want to improve translations, please contribute to the [Visual Studio Cod
 4. Open the folder in VS Code
 5. Open to the "Run and Debug" Window (Ctrl+Shift+D), and launch Tests or Extension.
 
+### While coding
+As this extension share its code base with VSCode Mardown Language Features, it is important to identify easily which parts have been changed. So, while coding, you should ensure to have comments around each modified source code block, either :
+* "Modified for textile",
+* "Disabled for textile",
+* "Keep for textile", when some code is removed from VSCode source tree, but should be kept for Texile,
+* or "Added for texile".
+
 ### Commit
-In order to keep the commit log understandable, please look at the commit history, to group files and write commit messages the same way.
+In order to keep the commit log understandable, you have to look first at the commit history to see how to group files and write commit messages the same way.
 
 ### Test
 Before submitting Pull Requests, make sure you have :
