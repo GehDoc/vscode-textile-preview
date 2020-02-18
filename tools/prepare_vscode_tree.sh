@@ -4,7 +4,7 @@
 # vscode and vscode-loc are fetched from their GitHub repo, into ./tools/tmp/
 # Then, all needed files are processed and copied to ./tools/tmp/out/
 
-VSCODE_VERSION_GIT_TAG=1.42.0
+VSCODE_VERSION_GIT_TAG=1.42.1
 
 function fatal_error() {
 	msg=$1
