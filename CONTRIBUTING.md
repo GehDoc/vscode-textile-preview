@@ -124,7 +124,7 @@ The script will automatically :
 * Replace 'Markdown' by 'Textile' in VSCode Markdown Language Features source tree, and validate the number of replacements (see [./tools/languages.config.js](./tools/languages.config.js)),
 * Then, all needed files are renamed if necessary and copied to [./tools/tmp/out/](./tools/tmp/out/) directory.
 
-Finally, you have to manually import the relevant change, by diffing the root directory with [./tools/tmp/out/](./tools/tmp/out/).
+Finally, you have to manually import the relevant changes, by diffing the root directory with [./tools/tmp/out/](./tools/tmp/out/).
 
 ## Discussion etiquette
 
