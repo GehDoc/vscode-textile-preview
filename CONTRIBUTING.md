@@ -110,6 +110,8 @@ Before submitting Pull Requests, make sure you have :
 	* Open to the "Run and Debug" Window (Ctrl+Shift+D), and choose "Launch Tests" from the dropdown menu.
 	* or, check the Travis-CI build status, if enabled in your repository.
 
+When you add new functionalities, the tests corresponding to this new functionality must be added to the test suite.
+
 ### Update to latest Visual Studio Code sources and translations
 A shell script [./tools/prepare_vscode_tree.sh](./tools/prepare_vscode_tree.sh), will help you to update Textile Language Features source code, from VSCode Makdown Language Features source code. Ideally, this will be done every time [a new version of VSCode](https://github.com/microsoft/vscode/releases) is published.
 
