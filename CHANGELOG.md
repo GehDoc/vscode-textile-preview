@@ -8,9 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [UNRELEASED]
 ### Added
 - [DOC] clarify "textile" guards in the code source, and explain how-to use them in CONTRIBUTING.md
+- [DOC] Tests are required.
 
 ### Changed
 - [INTERNAL] Clarify prepare_vscode_tree.sh feedbacks
+- Update to vscode 1.42.1
+- [PREVIEW] Init Textile-js options at the right place, and remove unused variable and comment.
 
 
 ## [0.3.8] - 20200210
