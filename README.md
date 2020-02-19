@@ -36,7 +36,6 @@ Features to be implemented :
 * Generation of table of content, and table of symbols;
 * Support slugify : Allow internal and external links to a paragraph header of a textile file.
 * Support enabling/disabling linkify : Enable or disable conversion of URL-like text to links in the Textile preview. _Currently enabled_.
-* Speed optimization : enable token cache.
 
 Features considered out of scope of this extension :
 * Snippets / Source syntax coloring : You have to use another extensions for these purpose.

@@ -5,14 +5,14 @@
 
 //import * as crypto from 'crypto';
 //import * as path from 'path';
-import TextileJS = require( '../libs/textile-js/textile' );
+import { TextileJS, Token } from '../libs/textile-js/textile';
 import * as vscode from 'vscode';
 import { TextileContributionProvider as TextileContributionProvider } from './textileExtensions';
 //import { Slugifier } from './slugify';
 import { SkinnyTextDocument } from './tableOfContentsProvider';
 //import { Schemes, isOfScheme } from './util/links';
 
-//const UNICODE_NEWLINE_REGEX = /\u2028|\u2029/g;
+const UNICODE_NEWLINE_REGEX = /\u2028|\u2029/g;
 
 // -- Begin : Changed for textile
 interface TextileConfig {
@@ -23,16 +23,15 @@ interface TextileConfig {
 }
 // -- End : Changed for textile
 
-/* FIXME : activate
 class TokenCache {
 	private cachedDocument?: {
 		readonly uri: vscode.Uri;
 		readonly version: number;
-		readonly config: TextileItConfig;
+		readonly config: TextileConfig;
 	};
 	private tokens?: Token[];
 
-	public tryGetCached(document: SkinnyTextDocument, config: TextileItConfig): Token[] | undefined {
+	public tryGetCached(document: SkinnyTextDocument, config: TextileConfig): Token[] | undefined {
 		if (this.cachedDocument
 			&& this.cachedDocument.uri.toString() === document.uri.toString()
 			&& this.cachedDocument.version === document.version
@@ -44,7 +43,7 @@ class TokenCache {
 		return undefined;
 	}
 
-	public update(document: SkinnyTextDocument, config: TextileItConfig, tokens: Token[]) {
+	public update(document: SkinnyTextDocument, config: TextileConfig, tokens: Token[]) {
 		this.cachedDocument = {
 			uri: document.uri,
 			version: document.version,
@@ -58,16 +57,15 @@ class TokenCache {
 		this.tokens = undefined;
 	}
 }
-*/
 
 const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/; // Keep for Textile
 
 export class TextileEngine {
 	private textile?: Promise<TextileJS>;
 
-	private currentDocument?: vscode.Uri;
-	//private _slugCount = new Map<string, number>();
-	//private _tokenCache = new TokenCache();
+	// Disabled for textile : private currentDocument?: vscode.Uri;
+	// FIXME : private _slugCount = new Map<string, number>();
+	private _tokenCache = new TokenCache();
 
 	public constructor(
 		private readonly contributionProvider: TextileContributionProvider,
@@ -142,60 +140,57 @@ export class TextileEngine {
 	}
 	// -- End: Keep for Textile
 
-	/* FIXME : Update for textile
+	/* FIXME : Update for textile */
 	private tokenizeDocument(
 		document: SkinnyTextDocument,
-		config: TextileItConfig,
-		engine: TextileIt
+		config: TextileConfig,
+		engine: TextileJS
 	): Token[] {
 		const cached = this._tokenCache.tryGetCached(document, config);
 		if (cached) {
 			return cached;
 		}
 
-		this.currentDocument = document.uri;
-		this._slugCount = new Map<string, number>();
+		// Disabled for textile : this.currentDocument = document.uri;
+		// FIXME : this._slugCount = new Map<string, number>();
 
 		const tokens = this.tokenizeString(document.getText(), engine);
 		this._tokenCache.update(document, config, tokens);
 		return tokens;
 	}
 
-	private tokenizeString(text: string, engine: TextileIt) {
-		return engine.parse(text.replace(UNICODE_NEWLINE_REGEX, ''), {});
-	}
-	*/
-
-	public async render(input: SkinnyTextDocument | string): Promise<string> {
-		// -- Begin: Changed for Textile
-		this.currentDocument = typeof input === 'string' ? undefined : input.uri;
-		const config = this.getConfig(this.currentDocument);
-		const engine = await this.getEngine(config);
-		let text = typeof input === 'string' ? input : input.getText();
-
+	private tokenizeString(text: string, engine: TextileJS) {
+		// -- Begin : Modified for textile
 		// Now, always strip frontMatter
 		const textileContent = this.stripFrontmatter(text);
-		let offset = textileContent.offset;
-		text = textileContent.text;
-
-		return engine.convert(text, {
-			lineOffset: offset
+		
+		return engine.tokenize(textileContent.text.replace(UNICODE_NEWLINE_REGEX, ''), {
+			lineOffset: textileContent.offset
 		});
+		// -- End : Modified for textile
+	}
+
+	public async render(input: SkinnyTextDocument | string): Promise<string> {
+		const config = this.getConfig(typeof input === 'string' ? undefined : input.uri);
+		const engine = await this.getEngine(config);
+
+		const tokens = typeof input === 'string'
+			? this.tokenizeString(input, engine)
+			: this.tokenizeDocument(input, config, engine);
+
+		// -- Begin: Changed for Textile
+		return tokens.map(engine.serialize).join('');
 		// -- End: Changed for Textile
 	}
 
-	/* FIXME : not used for textile
 	public async parse(document: SkinnyTextDocument): Promise<Token[]> {
 		const config = this.getConfig(document.uri);
 		const engine = await this.getEngine(config);
 		return this.tokenizeDocument(document, config, engine);
 	}
-	*/
 
 	public cleanCache(): void {
-		/* FIXME : activate
 		this._tokenCache.clean();
-		*/
 	}
 
 	private getConfig(resource?: vscode.Uri): TextileConfig {

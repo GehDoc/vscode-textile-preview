@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [DOC] clarify "textile" guards in the code source, and explain how-to use them in CONTRIBUTING.md
 - [DOC] Tests are required.
+- [PREVIEW] Activate tokens caching
 
 ### Changed
 - [INTERNAL] Clarify prepare_vscode_tree.sh feedbacks
