@@ -62,6 +62,7 @@ function process_dir_src() {
 		if [ "$extension" = "js" ] || [ "$extension" = "json" ] || [ "$extension" = "ts" ] || [ "$extension" = "css" ]; then
 			# replace markdown by textile
 			sed -e "s/markdown/textile/g" $file > $destfile
+			sed -i -e "s/MarkdownIt/TextileJS/g" $destfile
 			sed -i -e "s/Markdown/Textile/g" $destfile
 			sed -i -e "s/MDDocument/TextileDocument/g" $destfile
 			sed -i -e "s/'.md'/'.textile'/g" $destfile

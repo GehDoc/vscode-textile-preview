@@ -15,7 +15,7 @@ import { SkinnyTextDocument } from './tableOfContentsProvider';
 const UNICODE_NEWLINE_REGEX = /\u2028|\u2029/g;
 
 // -- Begin : Changed for textile
-interface TextileConfig {
+interface TextileJSConfig {
 	readonly breaks: boolean;
 	readonly linkify: boolean;
 	readonly showOriginalLineNumber: boolean;
@@ -27,11 +27,11 @@ class TokenCache {
 	private cachedDocument?: {
 		readonly uri: vscode.Uri;
 		readonly version: number;
-		readonly config: TextileConfig;
+		readonly config: TextileJSConfig;
 	};
 	private tokens?: Token[];
 
-	public tryGetCached(document: SkinnyTextDocument, config: TextileConfig): Token[] | undefined {
+	public tryGetCached(document: SkinnyTextDocument, config: TextileJSConfig): Token[] | undefined {
 		if (this.cachedDocument
 			&& this.cachedDocument.uri.toString() === document.uri.toString()
 			&& this.cachedDocument.version === document.version
@@ -43,7 +43,7 @@ class TokenCache {
 		return undefined;
 	}
 
-	public update(document: SkinnyTextDocument, config: TextileConfig, tokens: Token[]) {
+	public update(document: SkinnyTextDocument, config: TextileJSConfig, tokens: Token[]) {
 		this.cachedDocument = {
 			uri: document.uri,
 			version: document.version,
@@ -77,12 +77,12 @@ export class TextileEngine {
 		});
 	}
 
-	private async getEngine(config: TextileConfig): Promise<TextileJS> {
+	private async getEngine(config: TextileJSConfig): Promise<TextileJS> {
 		if (!this.textile) {
 			this.textile = import('../libs/textile-js/textile');
 			/* Disabled for Textile :
 			.then(async textileIt => {
-				let md: TextileIt = textileIt(await getTextileOptions(() => md));
+				let md: TextileJS = textileIt(await getTextileOptions(() => md));
 
 				for (const plugin of this.contributionProvider.contributions.textileItPlugins.values()) {
 					try {
@@ -140,10 +140,9 @@ export class TextileEngine {
 	}
 	// -- End: Keep for Textile
 
-	/* FIXME : Update for textile */
 	private tokenizeDocument(
 		document: SkinnyTextDocument,
-		config: TextileConfig,
+		config: TextileJSConfig,
 		engine: TextileJS
 	): Token[] {
 		const cached = this._tokenCache.tryGetCached(document, config);
@@ -193,7 +192,7 @@ export class TextileEngine {
 		this._tokenCache.clean();
 	}
 
-	private getConfig(resource?: vscode.Uri): TextileConfig {
+	private getConfig(resource?: vscode.Uri): TextileJSConfig {
 		const config = vscode.workspace.getConfiguration('textile', resource);
 		// -- Begin : Changed for textile
 		return {

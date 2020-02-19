@@ -72,7 +72,7 @@ export namespace TextileContributions {
 		const previewStyles = getContributedStyles(contributions, extension);
 		const previewScripts = getContributedScripts(contributions, extension);
 		const previewResourceRoots = previewStyles.length || previewScripts.length ? [vscode.Uri.file(extension.extensionPath)] : [];
-		const textileItPlugins = getContributedTextileItPlugins(contributions, extension);
+		const textileItPlugins = getContributedTextileJSPlugins(contributions, extension);
 
 		return {
 			previewScripts,
@@ -82,15 +82,15 @@ export namespace TextileContributions {
 		};
 	}
 
-	function getContributedTextileItPlugins(
+	function getContributedTextileJSPlugins(
 		contributes: any,
 		extension: vscode.Extension<any>
 	): Map<string, Thenable<(md: any) => any>> {
 		const map = new Map<string, Thenable<(md: any) => any>>();
 		if (contributes['textile.textileItPlugins']) {
 			map.set(extension.id, extension.activate().then(() => {
-				if (extension.exports && extension.exports.extendTextileIt) {
-					return (md: any) => extension.exports.extendTextileIt(md);
+				if (extension.exports && extension.exports.extendTextileJS) {
+					return (md: any) => extension.exports.extendTextileJS(md);
 				}
 				return (md: any) => md;
 			}));
