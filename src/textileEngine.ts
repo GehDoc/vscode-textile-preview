@@ -61,7 +61,6 @@ const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/; // Keep for Textile
 export class TextileEngine {
 	private textile?: Promise<TextileJS>;
 
-	private firstLine?: number;
 	private currentDocument?: vscode.Uri;
 	//private _slugCount = new Map<string, number>();
 	//private _tokenCache = new TokenCache();
@@ -174,9 +173,6 @@ export class TextileEngine {
 		const textileContent = this.stripFrontmatter(text);
 		let offset = textileContent.offset;
 		text = textileContent.text;
-
-		this.firstLine = offset; // FIXME : non utilisé, et
-		//this._slugCount = new Map<string, number>();
 
 		// FIXME : process config.linkify here
 		return engine.convert(text, {
