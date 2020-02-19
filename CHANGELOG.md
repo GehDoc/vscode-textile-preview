@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [INTERNAL] Clarify prepare_vscode_tree.sh feedbacks
 - Update to vscode 1.42.1
 - [PREVIEW] Init Textile-js options at the right place, and remove unused variable and comment.
+- Update textile-js to GehDoc/textile-js@34e3fdff0de965d858b161bce5bc5f30ba4067ec , to allow implementation of tokens caching.
 
 
 ## [0.3.8] - 20200210
