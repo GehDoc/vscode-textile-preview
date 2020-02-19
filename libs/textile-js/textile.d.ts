@@ -4,6 +4,7 @@
 
 interface TextileJS {
 	convert(text: string, options: undefined | object): string;
+	setOptions(options: object): object;
 }
 
 export = TextileJS;

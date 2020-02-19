@@ -14,10 +14,14 @@ import { SkinnyTextDocument } from './tableOfContentsProvider';
 
 //const UNICODE_NEWLINE_REGEX = /\u2028|\u2029/g;
 
+// -- Begin : Changed for textile
 interface TextileConfig {
 	readonly breaks: boolean;
 	readonly linkify: boolean;
+	readonly showOriginalLineNumber: boolean;
+	readonly cssClassOriginalLineNumber: string;
 }
+// -- End : Changed for textile
 
 /* FIXME : activate
 class TokenCache {
@@ -121,7 +125,7 @@ export class TextileEngine {
 		}
 
 		const textile = await this.textile!;
-		// FIXME ? textile.set(config);
+		textile.setOptions(config); // Changed for texile
 		return textile;
 	}
 
@@ -174,12 +178,8 @@ export class TextileEngine {
 		let offset = textileContent.offset;
 		text = textileContent.text;
 
-		// FIXME : process config.linkify here
 		return engine.convert(text, {
-			showOriginalLineNumber: true,
-			cssClassOriginalLineNumber: 'code-line',
-			lineOffset: offset,
-			breaks: config.breaks
+			lineOffset: offset
 		});
 		// -- End: Changed for Textile
 	}
@@ -200,10 +200,14 @@ export class TextileEngine {
 
 	private getConfig(resource?: vscode.Uri): TextileConfig {
 		const config = vscode.workspace.getConfiguration('textile', resource);
+		// -- Begin : Changed for textile
 		return {
 			breaks: config.get<boolean>('preview.breaks', false),
-			linkify: config.get<boolean>('preview.linkify', true)
+			linkify: config.get<boolean>('preview.linkify', true),
+			showOriginalLineNumber: true,
+			cssClassOriginalLineNumber: 'code-line'
 		};
+		// -- End : Changed for textile
 	}
 
 	/* FIXME : not used for textile
