@@ -17,7 +17,7 @@ const UNICODE_NEWLINE_REGEX = /\u2028|\u2029/g;
 // -- Begin : Changed for textile
 interface TextileJSConfig {
 	readonly breaks: boolean;
-	readonly linkify: boolean;
+	/* Disabled for Textile : readonly linkify: boolean; */
 	readonly showOriginalLineNumber: boolean;
 	readonly cssClassOriginalLineNumber: string;
 }
@@ -36,7 +36,7 @@ class TokenCache {
 			&& this.cachedDocument.uri.toString() === document.uri.toString()
 			&& this.cachedDocument.version === document.version
 			&& this.cachedDocument.config.breaks === config.breaks
-			&& this.cachedDocument.config.linkify === config.linkify
+			/* Disabled for Textile : && this.cachedDocument.config.linkify === config.linkify */
 		) {
 			return this.tokens;
 		}
@@ -197,7 +197,7 @@ export class TextileEngine {
 		// -- Begin : Changed for textile
 		return {
 			breaks: config.get<boolean>('preview.breaks', false),
-			linkify: config.get<boolean>('preview.linkify', true),
+			/* Disabled for Textile : linkify: config.get<boolean>('preview.linkify', true), */
 			showOriginalLineNumber: true,
 			cssClassOriginalLineNumber: 'code-line'
 		};

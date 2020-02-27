@@ -34,15 +34,17 @@ To see the full list of features and interactions, you can read the documentatio
 Features to be implemented :
 * Paragraph folding;
 * Generation of table of content, and table of symbols;
-* Support slugify : Allow internal and external links to a paragraph header of a textile file.
-* Support enabling/disabling linkify : Enable or disable conversion of URL-like text to links in the Textile preview. _Currently enabled_.
+* Support slugify : Allow internal and external links to a paragraph header of a textile file;
+* Blockquote syntax coloring.
 
 Features considered out of scope of this extension :
 * Snippets / Source syntax coloring : You have to use another extensions for these purpose.
-* Bloc-quote syntax coloring : Need another textile to HTML engine
 * Support plugins, like mardown-it : Need antother textile to HTML engine
 * Telemetry Reporter : Need a non free Azure account : https://www.npmjs.com/package/vscode-extension-telemetry
-* Add other translations than the 9 core languages listed there (unless requested) : https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
+
+Maybe implemented, if requested :
+* Add other translations than the 9 core languages listed there : https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
+* Support enabling/disabling 'linkify' = Enable or disable conversion of URL-like text to links in the Textile preview.
 
 ## Release Notes
 

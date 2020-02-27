@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [PREVIEW] Init Textile-js options at the right place, and remove unused variable and comment.
 - Update textile-js to GehDoc/textile-js@34e3fdff0de965d858b161bce5bc5f30ba4067ec , to allow implementation of tokens caching.
 - Update textile-js to GehDoc/textile-js@242ba1197c469fb99f3ab276004b82b7aca83a0d , to get library versioning and fresh sources (updated webpack).
+- [OPTIONS] Disable 'linkify' option (wasn't working). Progress on #3
 
 
 ## [0.3.8] - 20200210

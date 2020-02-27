@@ -222,12 +222,6 @@
 					"description": "%textile.preview.breaks.desc%",
 					"scope": "resource"
 				},
-				"textile.preview.linkify": {
-					"type": "boolean",
-					"default": true,
-					"description": "%textile.preview.linkify%",
-					"scope": "resource"
-				},
 				"textile.preview.fontFamily": {
 					"type": "string",
 					"default": "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'Ubuntu', 'Droid Sans', sans-serif",
