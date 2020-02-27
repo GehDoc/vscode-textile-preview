@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [DOC] clarify "textile" guards in the code source, and explain how-to use them in CONTRIBUTING.md
 - [DOC] Tests are required.
+- [DOC] CONTRIBUTING : announce our modified Textile.js web live editor
 - [PREVIEW] Activate tokens caching
 
 ### Changed
