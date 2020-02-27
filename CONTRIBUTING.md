@@ -62,13 +62,13 @@ The two relevant projects are :
 
 #### Visual Studio Code Markdown Language Feature
 
-If you can reproduce the same issue in Visual Studio Code by [editing a markdown file](https://code.visualstudio.com/docs/languages/markdown#_markdown-preview), then you can submit the same issue to [Visual Studio Code repository](https://github.com/microsoft/vscode/).
+If you can reproduce the same issue in Visual Studio Code by [editing a markdown file](https://code.visualstudio.com/docs/languages/markdown#_markdown-preview), then you can submit the same issue to [Visual Studio Code repository](https://github.com/microsoft/vscode/issues).
 
 #### Textile.js 
 
-*Not ready now:* We use a modified version of textile.js library, and no live demo is available to easily test our version at that time.
-* original repository: https://github.com/borgar/textile-js
-* our modified version repository: https://github.com/GehDoc/textile-js
+We maintain a [modified textile.js library](https://github.com/GehDoc/textile-js), and a [textile live web editor](https://gehdoc.github.io/textile-js/) is available to easily test your markups.
+
+If you can reproduce the same issue in the [textile live web editor](https://gehdoc.github.io/textile-js/) by copy / pasting your Textile source to it, then you can submit the same issue to our [modified textile.js library repository](https://github.com/GehDoc/textile-js/issues).
 
 ## Translations
 
