@@ -1,13 +1,16 @@
 /* From http://borgar.github.io/textile-js/app.css
- * with some colors removed
+ * with some colors/sizes removed
  */
 
 #text_preview {
   padding: 0 1em 4px 1em;
   /* color: #444; */
+  /* Disabled : allow more coherence and dynamic setting via options
   font-size: 13px;
   line-height: 1.4;
+  */
 }
+/* Disabled : allow more coherence and dynamic setting via options
 #text_preview h1 {
   line-height: 1.1;
   font-size: 2em;
@@ -32,6 +35,7 @@
   line-height: 1.24;
   font-size: 1em;
 }
+*/
 /*
 #text_preview code {
   background: #f4f4f4;

@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update textile-js to GehDoc/textile-js@242ba1197c469fb99f3ab276004b82b7aca83a0d , to get library versioning and fresh sources (updated webpack).
 - [OPTIONS] Disable 'linkify' option (wasn't working). Progress on #3
 
+### Fixed
+- [PREVIEW] Use font-size and line-height from VSCode's parameters. Progess on #3
+
 
 ## [0.3.8] - 20200210
 ### Fixed
