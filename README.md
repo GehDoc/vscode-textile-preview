@@ -73,7 +73,7 @@ Before contributing, take the time to read [the contributing guide](CONTRIBUTING
 This project is licensed under the terms of the [MIT license](./LICENSE.txt).
 
 It is entirely based on :
-* [Visual Studio Code's Markdown Language Features](https://github.com/Microsoft/vscode/tree/master/extensions/markdown-language-features) under the terms of the [MIT license](LICENSES/vscode-LICENSE.txt).  
+* [Visual Studio Code's Markdown Language Features](https://github.com/Microsoft/vscode/tree/master/extensions/markdown-language-features) under the terms of the [MIT license](LICENSES/vscode-LICENSE.txt).
 * and, the [Visual Studio Code Language Packs](https://github.com/microsoft/vscode-loc) under the terms of the [MIT license](LICENSES/vscode-loc-LICENSE.md).
 
 It includes a modified version of [textile-js](https://github.com/GehDoc/textile-js) under the terms of the [MIT license](LICENSES/textile-js-LICENSE.txt).
