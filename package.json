@@ -2,10 +2,9 @@
 	"name": "vscode-textile-preview",
 	"displayName": "%displayName%",
 	"description": "%description%",
-	"version": "0.3.8",
+	"version": "1.0.0",
 	"icon": "media/textile-mark_logo.png",
 	"publisher": "GehDoc",
-	"preview": true,
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/GehDoc/vscode-textile-preview.git"

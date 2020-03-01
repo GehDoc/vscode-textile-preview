@@ -6,8 +6,6 @@
 
 Full featured document live preview and rich language support, for the [Textile markup language](https://textile-lang.com/).
 
-*Beta version !! See the [Roadmap](#roadmap).*
-
 Based on the source code of [Visual Studio Code's Markdown Language Features](https://github.com/microsoft/vscode/tree/master/extensions/markdown-language-features), it uses [a modified version of textile.js Textile parser](https://github.com/GehDoc/textile-js) in order to display the live preview.
 
 ## Working with Textile
@@ -52,12 +50,9 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 ## Roadmap
 
-All [bugs and enhancements](https://github.com/GehDoc/vscode-textile-preview/issues) are tagged to create the following roadmap, materialized through GitHub Projects :
-* Road to the first [RELEASE 1.0.0](https://github.com/GehDoc/vscode-textile-preview/projects/3) :  
-  Fix bugs, and improve documentation and community guidelines.
-* then FUTURE :  
-  Implement missing features (see above), keep in sync with VSCode and Textile-JS updates, ...  
-  All remaining ToDOs and issues will be triaged and planned after the first release, in new GitHub projects to track progress fir future release.
+All [bugs and enhancements](https://github.com/GehDoc/vscode-textile-preview/issues) are tagged. Mostly :
+*  Implement missing features (see above), keep in sync with VSCode and Textile-JS updates, ...  
+*  All remaining ToDOs and issues will be triaged and planned soon, now that the first release has been made available.
 
 ## Supporting
 
