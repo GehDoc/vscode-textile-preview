@@ -6,21 +6,7 @@
 
 VSCODE_VERSION_GIT_TAG=1.42.1
 
-function fatal_error() {
-	msg=$1
-	echo -e "\e[01;31mERR:\e[0m $1"
-	exit -1
-}
-
-function warning() {
-	msg=$1
-	echo -e "\e[01;33mWRN:\e[0m $1"
-}
-
-function end_ok() {
-	echo -e "\e[01;32mDone !\e[0m"
-	exit 0
-}
+. $(dirname $0)/log.sh
 
 function process_dir_src() {
 	dir=$1

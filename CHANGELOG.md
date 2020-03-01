@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [DOC] Tests are required.
 - [DOC] CONTRIBUTING : announce our modified Textile.js web live editor
 - [PREVIEW] Activate tokens caching
+- [INTERNAL] Add script to convert screencast formats (WEBM to GIF)
 
 ### Changed
 - [INTERNAL] Clarify prepare_vscode_tree.sh feedbacks
