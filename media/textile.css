@@ -63,10 +63,16 @@ body.showEditorSelection tr.code-line:hover td:first-child:before {
 	height: 2em;
 }
 
-body.showEditorSelection li.code-active-line:before,
-body.showEditorSelection li:not(.code-inactive-line).code-line:hover:before {
-	/* because "-webkit-padding-start: 40px;" for <ul> */
+body.showEditorSelection ol > li.code-active-line:before,
+body.showEditorSelection ol > li:not(.code-inactive-line).code-line:hover:before {
+	/* because "-webkit-padding-start: 40px;" for <ol> */
 	left: calc(-40px + -12px);
+}
+
+body.showEditorSelection ul > li.code-active-line:before,
+body.showEditorSelection ul > li:not(.code-inactive-line).code-line:hover:before {
+	/* because "-webkit-padding-start: 28px;" for <ul> */
+	left: calc(-28px + -12px);
 }
 
 body.showEditorSelection blockquote.code-active-line:before,
