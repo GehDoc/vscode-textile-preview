@@ -77,13 +77,13 @@ body.showEditorSelection ul > li:not(.code-inactive-line).code-line:hover:before
 
 body.showEditorSelection blockquote.code-active-line:before,
 body.showEditorSelection blockquote.code-line:hover:before {
-	/*	because  "#text_preview blockquote" margin+border in textile-js.css */
-	/* important = because "*:not(tr):not(.code-inactive-line).code-line:hover:before" have higher priority */
+	/* because "#text_preview blockquote" margin+border in textile-js.css */
+	/* !important = because "*:not(tr):not(.code-inactive-line).code-line:hover:before" have higher priority */
 	left: calc(-.6em + -.4em + -12px) !important;
 }
 
 body.showEditorSelection blockquote > p.code-active-line:before {
-	/*	because  "#text_preview blockquote" margin+border+padding in textile-js.css */
+	/* because "#text_preview blockquote" margin+border+padding in textile-js.css */
 	left: calc(-.6em + -.4em + -1em + -12px);
 }
 
