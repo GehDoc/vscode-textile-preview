@@ -15,11 +15,7 @@ const testFileName = vscode.Uri.file('test.md');
 suite('textile.engine', () => {
 	suite('rendering', () => {
 		const input = 'h1. hello\n\nworld!';
-		/* FIXME : maybe 'slugify' plugin ?
-		const output = '<h1 id="hello" data-line="0" class="code-line">hello</h1>\n'
-			+ '<p data-line="2" class="code-line">world!</p>\n';
-		*/
-		const output = '<h1 data-line="0" class="code-line">hello</h1>\n'
+		const output = '<h1 data-line="0" class="code-line" id="hello">hello</h1>\n'
 			+ '<p data-line="2" class="code-line">world!</p>';
 
 		test('Renders a document', async () => {

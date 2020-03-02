@@ -8,7 +8,7 @@
 import { TextileJS, Token } from '../libs/textile-js/textile';
 import * as vscode from 'vscode';
 import { TextileContributionProvider as TextileContributionProvider } from './textileExtensions';
-//import { Slugifier } from './slugify';
+import { Slugifier, Slug } from './slugify';
 import { SkinnyTextDocument } from './tableOfContentsProvider';
 //import { Schemes, isOfScheme } from './util/links';
 
@@ -64,12 +64,12 @@ export class TextileEngine {
 	private textile?: Promise<TextileJS>;
 
 	// Disabled for textile : private currentDocument?: vscode.Uri;
-	// FIXME : private _slugCount = new Map<string, number>();
+	private _slugCount = new Map<string, number>();
 	private _tokenCache = new TokenCache();
 
 	public constructor(
 		private readonly contributionProvider: TextileContributionProvider,
-		/* FIXME activate : private readonly slugifier: Slugifier,*/
+		private readonly slugifier: Slugifier,
 	) {
 		contributionProvider.onContributionsChanged(() => {
 			// Textile plugin contributions may have changed
@@ -140,6 +140,38 @@ export class TextileEngine {
 	}
 	// -- End: Keep for Textile
 
+	// -- Begin: Added for Textile
+	private applyTokenHooks(ml: Token[]): Token[] {
+		if ( Array.isArray( ml ) ) {
+
+			this.addNamedHeaders( ml );
+
+			for ( let i = 0, l = ml.length; i < l; i++ ) {
+				if ( Array.isArray( ml[i] ) ) {
+					this.applyTokenHooks( ml[i] );
+				}
+			}
+		}
+		return ml;
+	};
+  
+	private isTokenAttribute(element: any): boolean {
+		return !!element && ('object' === typeof element) && !Array.isArray(element);
+	}
+
+	private reduceTokenString(jsonml: Token[]) :string {
+		let res = '';
+		for( let i = 1, l = jsonml.length; i < l; i++) {
+			if (typeof( jsonml[i] ) === 'string') {
+				res += jsonml[i];
+			} else if (Array.isArray(jsonml[i])) {
+				res += this.reduceTokenString(jsonml[i]);
+			}
+		}
+		return res;
+	}
+	// -- End: Added for Textile
+
 	private tokenizeDocument(
 		document: SkinnyTextDocument,
 		config: TextileJSConfig,
@@ -151,7 +183,7 @@ export class TextileEngine {
 		}
 
 		// Disabled for textile : this.currentDocument = document.uri;
-		// FIXME : this._slugCount = new Map<string, number>();
+		this._slugCount = new Map<string, number>();
 
 		const tokens = this.tokenizeString(document.getText(), engine);
 		this._tokenCache.update(document, config, tokens);
@@ -163,9 +195,9 @@ export class TextileEngine {
 		// Now, always strip frontMatter
 		const textileContent = this.stripFrontmatter(text);
 		
-		return engine.tokenize(textileContent.text.replace(UNICODE_NEWLINE_REGEX, ''), {
+		return this.applyTokenHooks( engine.tokenize(textileContent.text.replace(UNICODE_NEWLINE_REGEX, ''), {
 			lineOffset: textileContent.offset
-		});
+		}));
 		// -- End : Modified for textile
 	}
 
@@ -204,7 +236,7 @@ export class TextileEngine {
 		// -- End : Changed for textile
 	}
 
-	/* FIXME : not used for textile
+	/* FIXME
 	private addLineNumberRenderer(md: any, ruleName: string): void {
 		const original = md.renderer.rules[ruleName];
 		md.renderer.rules[ruleName] = (tokens: any, idx: number, options: any, env: any, self: any) => {
@@ -309,32 +341,41 @@ export class TextileEngine {
 				|| /^data:image\/.*?;/.test(link);
 		};
 	}
+*/
 
-	private addNamedHeaders(md: any): void {
-		const original = md.renderer.rules.heading_open;
-		md.renderer.rules.heading_open = (tokens: any, idx: number, options: any, env: any, self: any) => {
-			const title = tokens[idx + 1].children.reduce((acc: string, t: any) => acc + t.content, '');
-			let slug = this.slugifier.fromHeading(title);
+	// -- Begin : Changed for textile
+	private addNamedHeaders(tokens: Token[]): void {
+		switch( tokens[0] ) {
+			case 'h1':
+			case 'h2':
+			case 'h3':
+			case 'h4':
+			case 'h5':
+			case 'h6':
+				const title = this.reduceTokenString( tokens );
+				let slug = this.slugifier.fromHeading(title);
 
-			if (this._slugCount.has(slug.value)) {
-				const count = this._slugCount.get(slug.value)!;
-				this._slugCount.set(slug.value, count + 1);
-				slug = this.slugifier.fromHeading(slug.value + '-' + (count + 1));
-			} else {
-				this._slugCount.set(slug.value, 0);
-			}
-
-			tokens[idx].attrs = tokens[idx].attrs || [];
-			tokens[idx].attrs.push(['id', slug.value]);
-
-			if (original) {
-				return original(tokens, idx, options, env, self);
-			} else {
-				return self.renderToken(tokens, idx, options, env, self);
-			}
-		};
+				if (this._slugCount.has(slug.value)) {
+					const count = this._slugCount.get(slug.value)!;
+					this._slugCount.set(slug.value, count + 1);
+					slug = this.slugifier.fromHeading(slug.value + '-' + (count + 1));
+				} else {
+					this._slugCount.set(slug.value, 0);
+				}
+				if (!this.isTokenAttribute(tokens[1])) {
+					const name = tokens.shift();
+					tokens.unshift({});
+					tokens.unshift(name||'');
+				}
+				tokens[1]['id'] = slug.value;
+				break;
+			default:
+				break;
+		}
 	}
+	// -- End : Changed for textile
 
+	/* FIXME ?
 	private addLinkRenderer(md: any): void {
 		const old_render = md.renderer.rules.link_open || ((tokens: any, idx: number, options: any, _env: any, self: any) => {
 			return self.renderToken(tokens, idx, options);

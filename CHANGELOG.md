@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [CSS] Fix highlight on hover for <UL>. Progress on #18.
 
+### Added
+- [PREVIEW] Add initial and dirty support for link ID generation trough slugify
+
 
 ## [1.0.0] - 20200301
 ### Added

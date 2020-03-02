@@ -21,7 +21,7 @@ import { TextileEngine } from './textileEngine';
 import { getTextileExtensionContributions } from './textileExtensions';
 import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector, ContentSecurityPolicyArbiter } from './security';
 //import { loadDefaultTelemetryReporter, TelemetryReporter } from './telemetryReporter';
-//import { githubSlugifier } from './slugify';
+import { githubSlugifier } from './slugify';
 
 
 export function activate(context: vscode.ExtensionContext) {
@@ -34,11 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(contributions);
 
 	const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
-	const engine = new TextileEngine(contributions
-		/* FIXME activate ? Need changes inside textile-js :
-			, githubSlugifier
-		*/
-	);
+	const engine = new TextileEngine(contributions, githubSlugifier);
 	const logger = new Logger();
 
 	const contentProvider = new TextileContentProvider(engine, context, cspArbiter, contributions, logger);
