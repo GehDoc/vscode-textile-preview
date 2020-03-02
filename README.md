@@ -1,9 +1,9 @@
 # Textile Language Features
 
-[![Marketplace Version](https://vsmarketplacebadge.apphb.com/version-short/GehDoc.vscode-textile-preview.svg)](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview "View this project on Visual Studio Code Marketplace")
+[![Marketplace Version](https://badgen.net/vs-marketplace/v/GehDoc.vscode-textile-preview?logo=visual-studio-code&label=VS%20marketplace)](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview "View this project on Visual Studio Code Marketplace")
+[![Latest Version](https://badgen.net/github/release/GehDoc/vscode-textile-preview?icon=github)](https://github.com/GehDoc/vscode-textile-preview/releases "View releases on GitHub")
 [![Build Status](https://travis-ci.org/GehDoc/vscode-textile-preview.svg?branch=master)](https://travis-ci.org/GehDoc/vscode-textile-preview)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3273/badge)](https://bestpractices.coreinfrastructure.org/projects/3273)  
-
 Full featured document live preview and rich language support, for the [Textile markup language](https://textile-lang.com/).
 
 Based on the source code of [Visual Studio Code's Markdown Language Features](https://github.com/microsoft/vscode/tree/master/extensions/markdown-language-features), it uses [a modified version of textile.js Textile parser](https://github.com/GehDoc/textile-js) in order to display the live preview.
