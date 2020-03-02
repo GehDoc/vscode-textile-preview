@@ -3,6 +3,9 @@
 	"compilerOptions": {
 		"outDir": "./dist/",
 		"jsx": "react",
-		"noUnusedLocals": true
+		"noUnusedLocals": true,
+		"lib": [
+			"dom"
+		]
 	}
 }
