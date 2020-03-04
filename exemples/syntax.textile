@@ -69,9 +69,11 @@ p<>. justified text paragraph
 
 "link text for local file(with tooltip)":./syntax.textile
 
-"Link text to heading":#level-4-heading
+"Link text to local heading":#level-4-heading
 
 This is a ["Markdow-style link for local file":./syntax.textile].
+
+This is a ["Markdow-style link to heading of a local file":./syntax.textile#level-4-heading].
 
 This is "a link to main repo":vtp, "another link":vtp and a ["Markdow-style link":vtp] to the same site through on alias.
 

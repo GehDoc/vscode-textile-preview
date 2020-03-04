@@ -5,7 +5,7 @@
 
 //import * as crypto from 'crypto';
 //import * as path from 'path';
-import { TextileJS, Token } from '../libs/textile-js/textile';
+import { TextileJS, Token, Options as TextileJSOptions } from '../libs/textile-js/textile';
 import * as vscode from 'vscode';
 import { TextileContributionProvider as TextileContributionProvider } from './textileExtensions';
 import { Slugifier, Slug } from './slugify';
@@ -14,24 +14,15 @@ import { SkinnyTextDocument } from './tableOfContentsProvider';
 
 const UNICODE_NEWLINE_REGEX = /\u2028|\u2029/g;
 
-// -- Begin : Changed for textile
-interface TextileJSConfig {
-	readonly breaks: boolean;
-	/* Disabled for Textile : readonly linkify: boolean; */
-	readonly showOriginalLineNumber: boolean;
-	readonly cssClassOriginalLineNumber: string;
-}
-// -- End : Changed for textile
-
 class TokenCache {
 	private cachedDocument?: {
 		readonly uri: vscode.Uri;
 		readonly version: number;
-		readonly config: TextileJSConfig;
+		readonly config: TextileJSOptions;
 	};
 	private tokens?: Token[];
 
-	public tryGetCached(document: SkinnyTextDocument, config: TextileJSConfig): Token[] | undefined {
+	public tryGetCached(document: SkinnyTextDocument, config: TextileJSOptions): Token[] | undefined {
 		if (this.cachedDocument
 			&& this.cachedDocument.uri.toString() === document.uri.toString()
 			&& this.cachedDocument.version === document.version
@@ -43,7 +34,7 @@ class TokenCache {
 		return undefined;
 	}
 
-	public update(document: SkinnyTextDocument, config: TextileJSConfig, tokens: Token[]) {
+	public update(document: SkinnyTextDocument, config: TextileJSOptions, tokens: Token[]) {
 		this.cachedDocument = {
 			uri: document.uri,
 			version: document.version,
@@ -77,11 +68,10 @@ export class TextileEngine {
 		});
 	}
 
-	private async getEngine(config: TextileJSConfig): Promise<TextileJS> {
+	private async getEngine(config: TextileJSOptions): Promise<TextileJS> {
 		if (!this.textile) {
-			this.textile = import('../libs/textile-js/textile');
-			/* Disabled for Textile :
-			.then(async textileIt => {
+			this.textile = import('../libs/textile-js/textile').then(async textile => {
+				/* -- Begin : changed for Textile :
 				let md: TextileJS = textileIt(await getTextileOptions(() => md));
 
 				for (const plugin of this.contributionProvider.contributions.textileItPlugins.values()) {
@@ -110,16 +100,23 @@ export class TextileEngine {
 				for (const renderName of ['paragraph_open', 'heading_open', 'image', 'code_block', 'fence', 'blockquote_open', 'list_item_open']) {
 					this.addLineNumberRenderer(md, renderName);
 				}
+				*/
 
-				this.addImageStabilizer(md);
-				this.addFencedRenderer(md);
-				this.addLinkNormalizer(md);
-				this.addLinkValidator(md);
-				this.addNamedHeaders(md);
-				this.addLinkRenderer(md);
-				return md;
+				// hooks are set only once : don't add them to config member parameter
+				const localConfig :TextileJSOptions = {
+					hooks: []
+				};
+				// FIXME ? this.addImageStabilizer(md);
+				// disabled for textile : this.addFencedRenderer(md);
+				// FIXME ? this.addLinkNormalizer(md);
+				// FIXME ? this.addLinkValidator(md);
+				this.addNamedHeaders(textile, localConfig);
+				// disabled for textile : this.addLinkRenderer(md);
+				textile.setOptions( localConfig );
+				// -- End : changed for textile
+
+				return textile;
 			});
-			*/
 		}
 
 		const textile = await this.textile!;
@@ -141,22 +138,8 @@ export class TextileEngine {
 	// -- End: Keep for Textile
 
 	// -- Begin: Added for Textile
-	private applyTokenHooks(ml: Token[]): Token[] {
-		if ( Array.isArray( ml ) ) {
-
-			this.addNamedHeaders( ml );
-
-			for ( let i = 0, l = ml.length; i < l; i++ ) {
-				if ( Array.isArray( ml[i] ) ) {
-					this.applyTokenHooks( ml[i] );
-				}
-			}
-		}
-		return ml;
-	};
-  
-	private isTokenAttribute(element: any): boolean {
-		return !!element && ('object' === typeof element) && !Array.isArray(element);
+	public async jsonmlUtils() :Promise<TextileJS["jsonmlUtils"]> {
+		return (await this.textile!).jsonmlUtils;
 	}
 
 	private reduceTokenString(jsonml: Token[]) :string {
@@ -174,7 +157,7 @@ export class TextileEngine {
 
 	private tokenizeDocument(
 		document: SkinnyTextDocument,
-		config: TextileJSConfig,
+		config: TextileJSOptions,
 		engine: TextileJS
 	): Token[] {
 		const cached = this._tokenCache.tryGetCached(document, config);
@@ -195,9 +178,9 @@ export class TextileEngine {
 		// Now, always strip frontMatter
 		const textileContent = this.stripFrontmatter(text);
 		
-		return this.applyTokenHooks( engine.tokenize(textileContent.text.replace(UNICODE_NEWLINE_REGEX, ''), {
+		return engine.tokenize(textileContent.text.replace(UNICODE_NEWLINE_REGEX, ''), {
 			lineOffset: textileContent.offset
-		}));
+		});
 		// -- End : Modified for textile
 	}
 
@@ -224,7 +207,7 @@ export class TextileEngine {
 		this._tokenCache.clean();
 	}
 
-	private getConfig(resource?: vscode.Uri): TextileJSConfig {
+	private getConfig(resource?: vscode.Uri): TextileJSOptions {
 		const config = vscode.workspace.getConfiguration('textile', resource);
 		// -- Begin : Changed for textile
 		return {
@@ -344,34 +327,37 @@ export class TextileEngine {
 */
 
 	// -- Begin : Changed for textile
-	private addNamedHeaders(tokens: Token[]): void {
-		switch( tokens[0] ) {
-			case 'h1':
-			case 'h2':
-			case 'h3':
-			case 'h4':
-			case 'h5':
-			case 'h6':
-				const title = this.reduceTokenString( tokens );
-				let slug = this.slugifier.fromHeading(title);
-
-				if (this._slugCount.has(slug.value)) {
-					const count = this._slugCount.get(slug.value)!;
-					this._slugCount.set(slug.value, count + 1);
-					slug = this.slugifier.fromHeading(slug.value + '-' + (count + 1));
-				} else {
-					this._slugCount.set(slug.value, 0);
-				}
-				if (!this.isTokenAttribute(tokens[1])) {
-					const name = tokens.shift();
-					tokens.unshift({});
-					tokens.unshift(name||'');
-				}
-				tokens[1]['id'] = slug.value;
-				break;
-			default:
-				break;
+	private addNamedHeaders(textile: TextileJS, config: TextileJSOptions): void {
+		if ( !config.hooks ) {
+			config.hooks = [];
 		}
+		config.hooks.push(
+			 [(tokens: Token[]) => {
+				switch( tokens[0] ) {
+					case 'h1':
+					case 'h2':
+					case 'h3':
+					case 'h4':
+					case 'h5':
+					case 'h6':
+						const title = this.reduceTokenString( tokens );
+						let slug = this.slugifier.fromHeading(title);
+
+						if (this._slugCount.has(slug.value)) {
+							const count = this._slugCount.get(slug.value)!;
+							this._slugCount.set(slug.value, count + 1);
+							slug = this.slugifier.fromHeading(slug.value + '-' + (count + 1));
+						} else {
+							this._slugCount.set(slug.value, 0);
+						}
+						textile.jsonmlUtils.addAttributes( tokens, { 'id': slug.value } );
+						break;
+					default:
+						break;
+				}
+				return tokens;
+			}]
+		);
 	}
 	// -- End : Changed for textile
 

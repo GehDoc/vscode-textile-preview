@@ -20,7 +20,8 @@ To switch between views, press (<kbd>Ctrl+Shift+V</kbd>) in the editor. You can 
 This extension is entirely based on the Markdown preview provided by Visual Studio Code, and tries to offer the same functionalities :
 * you can view Textile source and its HTML preview side by side, with synchronised scrolling;
 * you can include images, from local or network, with manageable security of the preview's content;
-* you can click on links, in the source view and in the HTML preview;
+* you can click on links, in the source view and in the HTML preview.  
+Internal and external links to a paragraph header of a textile file are supported (slugify);
 * the HTML preview supports VSCode light and dark themes;
 * the extension is translated into the 9 VScode core languages;
 
@@ -31,8 +32,7 @@ To see the full list of features and interactions, you can read the documentatio
 
 Features to be implemented :
 * Paragraph folding;
-* Generation of table of content, and table of symbols;
-* Support slugify : Allow internal and external links to a paragraph header of a textile file;
+* Generation of table of symbols;
 * Blockquote syntax coloring.
 
 Features considered out of scope of this extension :
