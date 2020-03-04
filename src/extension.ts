@@ -11,11 +11,11 @@ nls.config({ messageFormat: nls.MessageFormat.bundle, bundleFormat: nls.BundleFo
 import { CommandManager } from './commandManager';
 import * as commands from './commands/index';
 import LinkProvider from './features/documentLinkProvider';
-//import TextileDocumentSymbolProvider from './features/documentSymbolProvider';
+import TextileDocumentSymbolProvider from './features/documentSymbolProvider';
 //import TextileFoldingProvider from './features/foldingProvider';
 import { TextileContentProvider } from './features/previewContentProvider';
 import { TextilePreviewManager } from './features/previewManager';
-//import TextileWorkspaceSymbolProvider from './features/workspaceSymbolProvider';
+import TextileWorkspaceSymbolProvider from './features/workspaceSymbolProvider';
 import { Logger } from './logger';
 import { TextileEngine } from './textileEngine';
 import { getTextileExtensionContributions } from './textileExtensions';
@@ -38,16 +38,12 @@ export function activate(context: vscode.ExtensionContext) {
 	const logger = new Logger();
 
 	const contentProvider = new TextileContentProvider(engine, context, cspArbiter, contributions, logger);
-	/* FIXME : activate
 	const symbolProvider = new TextileDocumentSymbolProvider(engine);
-	*/
 	const previewManager = new TextilePreviewManager(contentProvider, logger, contributions);
 	context.subscriptions.push(previewManager);
 
 	context.subscriptions.push(registerTextileLanguageFeatures(
-		/* FIXME : activate
 		symbolProvider,
-		*/
 		engine
 	));
 	context.subscriptions.push(registerTextileCommands(previewManager, /* Disabled for textile : telemetryReporter, */ cspArbiter, engine));
@@ -59,9 +55,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function registerTextileLanguageFeatures(
-	/* FIXME : activate
 	symbolProvider: TextileDocumentSymbolProvider,
-	*/
 	engine: TextileEngine
 ): vscode.Disposable {
 	const selector: vscode.DocumentSelector = { language: 'textile', scheme: '*' };
@@ -72,14 +66,12 @@ function registerTextileLanguageFeatures(
 		vscode.languages.setLanguageConfiguration('textile', {
 			wordPattern: new RegExp(`${charPattern}((${charPattern}|[_])?${charPattern})*`, 'ug'),
 		}),
-		/* FIXME : activate
 		vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider),
-		*/
-		vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider())
+		vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider()),
 		/* FIXME : activate
 		vscode.languages.registerFoldingRangeProvider(selector, new TextileFoldingProvider(engine)),
-		vscode.languages.registerWorkspaceSymbolProvider(new TextileWorkspaceSymbolProvider(symbolProvider))
 		*/
+		vscode.languages.registerWorkspaceSymbolProvider(new TextileWorkspaceSymbolProvider(symbolProvider))
 	);
 }
 

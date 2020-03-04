@@ -328,10 +328,7 @@ export class TextileEngine {
 
 	// -- Begin : Changed for textile
 	private addNamedHeaders(textile: TextileJS, config: TextileJSOptions): void {
-		if ( !config.hooks ) {
-			config.hooks = [];
-		}
-		config.hooks.push(
+		config.hooks!.push(
 			 [(tokens: Token[]) => {
 				switch( tokens[0] ) {
 					case 'h1':

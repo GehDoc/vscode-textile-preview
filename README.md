@@ -22,6 +22,7 @@ This extension is entirely based on the Markdown preview provided by Visual Stud
 * you can include images, from local or network, with manageable security of the preview's content;
 * you can click on links, in the source view and in the HTML preview.  
 Internal and external links to a paragraph header of a textile file are supported (slugify);
+* you can see the document headers structure in the outline view;
 * the HTML preview supports VSCode light and dark themes;
 * the extension is translated into the 9 VScode core languages;
 
@@ -32,7 +33,6 @@ To see the full list of features and interactions, you can read the documentatio
 
 Features to be implemented :
 * Paragraph folding;
-* Generation of table of symbols;
 * Blockquote syntax coloring.
 
 Features considered out of scope of this extension :

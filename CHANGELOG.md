@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [PREVIEW] Add support for link ID generation trough slugify. Closes #20.
 - [PREVIEW] Add support TOC generation trough slugify. Progress on #4.
+- [SOURCE] Add support for document and workspace symbol. Progress on #4.
 
 
 ## [1.0.0] - 20200301
