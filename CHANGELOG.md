@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [UNRELEASED]
 ### Fixed
-- [CSS] Fix highlight on hover for <UL>. Progress on #18.
+- [CSS] Fix highlight on hover for `<UL>`. Progress on #18.
 
 ### Changed
 - Update textile-js to GehDoc/textile-js@ae69c7a1d7b60aa417a0856801fe739a219d1fd7 , to benefit of pre-rendering hook and jsonml functions.
