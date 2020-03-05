@@ -87,9 +87,11 @@ suite('textile.DocumentSymbolProvider', () => {
 
 	test('Should handle line separator in file. Issue #63749', async () => {
 		const symbols = await getSymbolsForFile(`h1. A
+
 - foo 
 
 h1. B
+
 - bar`);
 		assert.strictEqual(symbols.length, 2);
 		assert.strictEqual(symbols[0].name, 'h1. A');
