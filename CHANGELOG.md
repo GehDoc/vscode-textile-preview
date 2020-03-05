@@ -5,9 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [UNRELEASED]
+## [1.1.0-dev] - 20200305
 ### Fixed
 - [CSS] Fix highlight on hover for `<UL>`. Progress on #18.
+- [INTERNAL] Reduces diffs with Markdown Language Features.
 
 ### Changed
 - Update textile-js to GehDoc/textile-js@ae69c7a1d7b60aa417a0856801fe739a219d1fd7 , to benefit of pre-rendering hook and jsonml functions.
