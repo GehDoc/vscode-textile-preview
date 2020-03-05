@@ -116,10 +116,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [INTERNAL] Build process was broken (I was using a patched version of vscode-nls-dev)
 - [CSS] Fix : #23, #27
 
-## Added
+### Added
 - [INTERNAL] Add Travis CI, to launch test suite after each push to the repository : Linux & OS X
 
-## Changed
+### Changed
 - [CSS] Splitted to ease future updates
 
 
@@ -148,7 +148,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [DOC] Add more stats
 
-## Fixed
+### Fixed
 - [INTERNAL] Reactivate src processing, in the tool to import sources from vscode
 - [INTERNAL] Improve src processing, in the tool to import sources from vscode
 - [CSS] corrections // vscode
