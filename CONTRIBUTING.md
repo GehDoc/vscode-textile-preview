@@ -93,7 +93,7 @@ If you want to improve translations, please contribute to the [Visual Studio Cod
 
 ### While coding
 As this extension share its code base with VSCode Mardown Language Features, it is important to identify easily which parts have been changed. So, while coding, you should ensure to have comments around each modified source code block, either :
-* "Modified for textile",
+* "Modified for textile" or "Changed for textile",
 * "Disabled for textile",
 * "Keep for textile", when some code is removed from VSCode source tree, but should be kept for Texile,
 * or, "Added for texile".

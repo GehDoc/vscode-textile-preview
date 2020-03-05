@@ -42,10 +42,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const previewManager = new TextilePreviewManager(contentProvider, logger, contributions);
 	context.subscriptions.push(previewManager);
 
-	context.subscriptions.push(registerTextileLanguageFeatures(
-		symbolProvider,
-		engine
-	));
+	context.subscriptions.push(registerTextileLanguageFeatures(symbolProvider, engine));
 	context.subscriptions.push(registerTextileCommands(previewManager, /* Disabled for textile : telemetryReporter, */ cspArbiter, engine));
 
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {

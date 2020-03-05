@@ -52,6 +52,7 @@ function process_dir_src() {
 			sed -i -e "s/Markdown/Textile/g" $destfile
 			sed -i -e "s/MDDocument/TextileDocument/g" $destfile
 			sed -i -e "s/'.md'/'.textile'/g" $destfile
+			sed -i -e "s/\*.md'/\*.textile'/g" $destfile
 			sed -i -e 's/`.md`/`.textile`/g' $destfile
 		else
 			# just copy other kind of files

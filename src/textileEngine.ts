@@ -5,7 +5,7 @@
 
 //import * as crypto from 'crypto';
 //import * as path from 'path';
-import { TextileJS, Token, Options as TextileJSOptions } from '../libs/textile-js/textile';
+import { TextileJS, Token, Options as TextileJSConfig } from '../libs/textile-js/textile';
 import * as vscode from 'vscode';
 import { TextileContributionProvider as TextileContributionProvider } from './textileExtensions';
 import { Slugifier, Slug } from './slugify';
@@ -14,15 +14,22 @@ import { SkinnyTextDocument } from './tableOfContentsProvider';
 
 const UNICODE_NEWLINE_REGEX = /\u2028|\u2029/g;
 
+/* Disabled for textile : already defined in textile lib
+interface TextileJSConfig {
+	readonly breaks: boolean;
+	readonly linkify: boolean;
+}
+*/
+
 class TokenCache {
 	private cachedDocument?: {
 		readonly uri: vscode.Uri;
 		readonly version: number;
-		readonly config: TextileJSOptions;
+		readonly config: TextileJSConfig;
 	};
 	private tokens?: Token[];
 
-	public tryGetCached(document: SkinnyTextDocument, config: TextileJSOptions): Token[] | undefined {
+	public tryGetCached(document: SkinnyTextDocument, config: TextileJSConfig): Token[] | undefined {
 		if (this.cachedDocument
 			&& this.cachedDocument.uri.toString() === document.uri.toString()
 			&& this.cachedDocument.version === document.version
@@ -34,7 +41,7 @@ class TokenCache {
 		return undefined;
 	}
 
-	public update(document: SkinnyTextDocument, config: TextileJSOptions, tokens: Token[]) {
+	public update(document: SkinnyTextDocument, config: TextileJSConfig, tokens: Token[]) {
 		this.cachedDocument = {
 			uri: document.uri,
 			version: document.version,
@@ -68,7 +75,7 @@ export class TextileEngine {
 		});
 	}
 
-	private async getEngine(config: TextileJSOptions): Promise<TextileJS> {
+	private async getEngine(config: TextileJSConfig): Promise<TextileJS> {
 		if (!this.textile) {
 			this.textile = import('../libs/textile-js/textile').then(async textile => {
 				/* -- Begin : changed for Textile :
@@ -103,7 +110,7 @@ export class TextileEngine {
 				*/
 
 				// hooks are set only once : don't add them to config member parameter
-				const localConfig :TextileJSOptions = {
+				const localConfig :TextileJSConfig = {
 					hooks: []
 				};
 				// FIXME ? this.addImageStabilizer(md);
@@ -157,7 +164,7 @@ export class TextileEngine {
 
 	private tokenizeDocument(
 		document: SkinnyTextDocument,
-		config: TextileJSOptions,
+		config: TextileJSConfig,
 		engine: TextileJS
 	): Token[] {
 		const cached = this._tokenCache.tryGetCached(document, config);
@@ -207,7 +214,7 @@ export class TextileEngine {
 		this._tokenCache.clean();
 	}
 
-	private getConfig(resource?: vscode.Uri): TextileJSOptions {
+	private getConfig(resource?: vscode.Uri): TextileJSConfig {
 		const config = vscode.workspace.getConfiguration('textile', resource);
 		// -- Begin : Changed for textile
 		return {
@@ -327,7 +334,7 @@ export class TextileEngine {
 */
 
 	// -- Begin : Changed for textile
-	private addNamedHeaders(textile: TextileJS, config: TextileJSOptions): void {
+	private addNamedHeaders(textile: TextileJS, config: TextileJSConfig): void {
 		config.hooks!.push(
 			 [(tokens: Token[]) => {
 				switch( tokens[0] ) {

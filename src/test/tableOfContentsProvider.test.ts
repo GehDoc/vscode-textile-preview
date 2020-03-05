@@ -32,7 +32,7 @@ suite('textile.TableOfContentsProvider', () => {
 		assert.strictEqual(await provider.lookup('b'), undefined);
 	});
 
-	// -- Begin : modified for textile
+	// -- Begin : changed for textile
 	test('Lookup should return basic #header', async () => {
 		const doc = new InMemoryDocument(testFileName, `h1. a\n\nx\n\nh1. c`);
 		const provider = new TableOfContentsProvider(createNewTextileEngine(), doc);
@@ -133,5 +133,5 @@ h2. Заголовок`);
 			assert.strictEqual(entry!.line, 4);
 		}
 	});
-	// -- End : modified for textile
+	// -- End : changed for textile
 });

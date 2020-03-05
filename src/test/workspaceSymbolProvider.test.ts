@@ -21,6 +21,7 @@ suite('textile.WorkspaceSymbolProvider', () => {
 		assert.deepEqual(await provider.provideWorkspaceSymbols(''), []);
 	});
 
+	// -- Begin : changed for textile
 	test('Should return symbols from workspace with one textile file', async () => {
 		const testFileName = vscode.Uri.file('test.textile');
 
@@ -98,6 +99,7 @@ suite('textile.WorkspaceSymbolProvider', () => {
 		const newSymbols = await provider.provideWorkspaceSymbols('');
 		assert.strictEqual(newSymbols.length, 3);
 	});
+	// -- End : changed for textile
 });
 
 

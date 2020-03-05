@@ -27,6 +27,7 @@ suite('textile.DocumentSymbolProvider', () => {
 		assert.strictEqual(symbols.length, 0);
 	});
 
+	// -- Begin : changed for textile
 	test('Should not return anything for document with no headers', async () => {
 		const symbols = await getSymbolsForFile('a\n\na');
 		assert.strictEqual(symbols.length, 0);
@@ -97,5 +98,6 @@ h1. B
 		assert.strictEqual(symbols[0].name, 'h1. A');
 		assert.strictEqual(symbols[1].name, 'h1. B');
 	});
+	// -- End : changed for textile
 });
 
