@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [INTERNAL] Include shared.webpack config to diffs.
 - Update to vscode 1.43.0
+- [INTERNAL] fix npm security alerts
 
 
 ## [1.1.0-dev] - 20200305
