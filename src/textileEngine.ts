@@ -8,7 +8,7 @@
 import { TextileJS, Token, Options as TextileJSConfig } from '../libs/textile-js/textile';
 import * as vscode from 'vscode';
 import { TextileContributionProvider as TextileContributionProvider } from './textileExtensions';
-import { Slugifier, Slug } from './slugify';
+import { Slugifier } from './slugify';
 import { SkinnyTextDocument } from './tableOfContentsProvider';
 //import { Schemes, isOfScheme } from './util/links';
 

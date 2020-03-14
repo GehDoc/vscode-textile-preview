@@ -20,6 +20,7 @@ module.exports = function withDefaults(/**@type WebpackConfig*/extConfig) {
 	const pkgPath = path.join(__dirname, folderName, 'package.json');
 	const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
 	const id = `${pkg.publisher}.${pkg.name}`;
+
 	/** @type WebpackConfig */
 	let defaultConfig = {
 		mode: 'none', // this leaves the source code as close as possible to the original (when packaging we set this to 'production')
@@ -40,7 +41,7 @@ module.exports = function withDefaults(/**@type WebpackConfig*/extConfig) {
 					// * rewrite nls-calls
 					loader: 'vscode-nls-dev/lib/webpack-loader',
 					options: {
-						base: './src/'
+						base: path.join(extConfig.context, 'src')
 					}
 				}, {
 					// configure TypeScript loader:
@@ -48,7 +49,7 @@ module.exports = function withDefaults(/**@type WebpackConfig*/extConfig) {
 					loader: 'ts-loader',
 					options: {
 						compilerOptions: {
-							"sourceMap": true,
+							'sourceMap': true,
 						}
 					}
 				}]
@@ -62,12 +63,13 @@ module.exports = function withDefaults(/**@type WebpackConfig*/extConfig) {
 			// packaging depends on that and this must always be like it
 			filename: '[name].js',
 			path: path.join(extConfig.context, 'dist'),
-			libraryTarget: "commonjs",
+			libraryTarget: 'commonjs',
 		},
 		// yes, really source maps
 		devtool: 'source-map',
 		plugins: [
 			new NLSBundlePlugin(id),
+			// @ts-ignore
 			new CopyWebpackPlugin([
 				{ from: './out/nls.*.json', to: '[name].json' }
 			])

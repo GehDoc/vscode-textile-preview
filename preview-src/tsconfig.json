@@ -5,7 +5,9 @@
 		"jsx": "react",
 		"noUnusedLocals": true,
 		"lib": [
-			"dom"
+			"es2018",
+			"DOM",
+			"DOM.Iterable"
 		]
 	}
 }
