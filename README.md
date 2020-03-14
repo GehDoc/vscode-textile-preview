@@ -23,7 +23,7 @@ This extension is entirely based on the Markdown preview provided by Visual Stud
 * click on links, in the source view and in the HTML preview.  
 Internal and external links to a paragraph header of a textile file are supported (slugify);
 * see the document headers structure in the outline view;
-* fold paragraphs from their headline, or fromh `#region` and `#endregion` HTML comments.
+* fold paragraphs from their headline, or from `<!-- #region -->` and `<!-- #endregion -->` HTML comments.
 
 And also :
 * the HTML preview supports VSCode light and dark themes;
