@@ -89,6 +89,8 @@ This is "a link to main repo":vtp, "another link":vtp and a ["Markdow-style link
 
 ABBR(Abbreviation)
 
+<!-- #region Exemple of foldable region through HTML comments -->
+
 - Word 1 := Definition 1.
 - Word 2 := Beginning of
 a multi-lines
@@ -104,6 +106,8 @@ definition =:
 // "CODE" tag inside "PRE"
 document.write('help');
 </code></pre>
+
+<!-- #endregion Exemple of foldable region through HTML comments -->
 
 bc.
 // Comment inside "bc."

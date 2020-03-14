@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [UNRELEASED]
 ### Fixed
+- [INTERNAL] fix npm security alerts
+- Update textile-js to , to get HTML comments line-numbering, and a fix for `<LI>`
+
+### Changed
 - [INTERNAL] Include shared.webpack config to diffs.
 - Update to vscode 1.43.0
-- [INTERNAL] fix npm security alerts
+
+### Added
+- [SOURCE] Code folding. Progress on #4
 
 
 ## [1.1.0-dev] - 20200305
