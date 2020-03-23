@@ -77,6 +77,7 @@ We will accept only simple corrections of the existing [import tool](#Update-to-
 
 If you want to improve translations, please contribute to the [Visual Studio Code Community Localization Project](https://github.com/Microsoft/Localization/wiki/Visual-Studio-Code-Community-Localization-Project) instead.
 
+_Please note :_ An exception to this rule was made for the default description of the package.
 
 ## Contributing fixes
 
