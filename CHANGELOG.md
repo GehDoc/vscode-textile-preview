@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [UNRELEASED]
 ### Change
 - [DOC] Update
+- Update to vscode 1.43.0
+- [INTERNAL] update dependencies
 
 
 ## [1.1.1-dev] - 20200314
