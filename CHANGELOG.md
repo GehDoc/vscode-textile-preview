@@ -6,9 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [UNRELEASED]
-### Change
+### Changed
 - [DOC] Update
-- Update to vscode 1.43.0
+- Update to vscode 1.43.1
 - [INTERNAL] update dependencies
 
 
