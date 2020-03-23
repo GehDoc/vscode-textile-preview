@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [1.1.1-dev] - 20200314
+
 ### Fixed
 - [INTERNAL] fix npm security alerts
 - Update textile-js to , to get HTML comments line-numbering, and a fix for `<LI>`
