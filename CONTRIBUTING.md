@@ -12,6 +12,10 @@ We're interested in your feedback for the future of this extension :
 Have you identified a reproducible problem ? Have a feature request ?
 Here's how you can make reporting your issue as effective as possible.
 
+### Security issue ?
+
+If you believe you have discovered a vulnerability in Textile Language Features, or have a security incident to report, follow the instructions in [./SECURITY.md](./SECURITY.md).
+
 ### Look for an existing issue
 
 Before you create a new issue, please do a search in [open issues](https://github.com/GehDoc/vscode-textile-preview/issues) to see if the issue or feature request has already been filed.
