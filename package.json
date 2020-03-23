@@ -2,7 +2,7 @@
 	"name": "vscode-textile-preview",
 	"displayName": "%displayName%",
 	"description": "%description%",
-	"version": "1.0.1",
+	"version": "1.1.1",
 	"icon": "media/textile-mark_logo.png",
 	"publisher": "GehDoc",
 	"repository": {
@@ -340,7 +340,7 @@
 		"@types/vscode": "^1.38.0",
 		"copy-webpack-plugin": "^5.1.0",
 		"del": "^4.1.1",
-		"eslint": "^4.18.2",
+		"eslint": "6.8.0",
 		"event-stream": "^4.0.1",
 		"gulp": "^4.0.2",
 		"gulp-filter": "^5.1.0",
@@ -350,7 +350,7 @@
 		"@types/mocha": "^5.2.0",
 		"merge-options": "^1.0.1",
 		"mocha": "^5.2.0",
-		"mocha-junit-reporter": "^1.17.0",
+		"mocha-junit-reporter": "^1.23.0",
 		"mocha-multi-reporters": "^1.1.7",
 		"glob": "^7.1.4",
 		"ts-loader": "^6.2.1",
@@ -358,7 +358,7 @@
 		"vsce": "^1.69.0",
 		"vscode-nls-dev": "^3.3.0",
 		"vscode-test": "^1.2.3",
-		"webpack": "^4.41.2",
+		"webpack": "^4.42.0",
 		"webpack-cli": "^3.3.8"
 	}
 }

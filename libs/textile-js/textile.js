@@ -1,4 +1,4 @@
-// [textile-js | https://github.com/GehDoc/textile-js]  Build version: 2.0.103 - 2020-02-27T09:57:15+0100  
+// [textile-js | https://github.com/GehDoc/textile-js]  Build version: 2.0.104 - 2020-03-14T17:28:10+0100  
  (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -236,17 +236,17 @@ module.exports = function ribbon(feed) {
 /* 2 */
 /***/ (function(module, exports) {
 
-var reClassid = /^\(([^\(\)\n]+)\)/;
+var reClassid = /^\(([^()\n]+)\)/;
 var rePaddingL = /^(\(+)/;
 var rePaddingR = /^(\)+)/;
 var reAlignBlock = /^(<>|<|>|=)/;
 var reAlignImg = /^(<|>|=)/;
-var reVAlign = /^(~|\^|\-)/;
+var reVAlign = /^(~|\^|-)/;
 var reColSpan = /^\\(\d+)/;
 var reRowSpan = /^\/(\d+)/;
-var reStyles = /^\{([^\}]*)\}/;
+var reStyles = /^\{([^}]*)\}/;
 var reCSS = /^\s*([^:\s]+)\s*:\s*(.+)\s*$/;
-var reLang = /^\[([^\[\]\n]+)\]/;
+var reLang = /^\[([^[\]\n]+)\]/;
 var pbaAlignLookup = {
   '<': 'left',
   '=': 'center',
@@ -694,7 +694,8 @@ var builder = __webpack_require__(9);
 var re = __webpack_require__(0);
 
 var _require = __webpack_require__(2),
-    parseAttr = _require.parseAttr;
+    parseAttr = _require.parseAttr,
+    addLineNumber = _require.addLineNumber;
 
 var _require2 = __webpack_require__(12),
     parseGlyph = _require2.parseGlyph;
@@ -728,17 +729,17 @@ var phraseConvert = {
   '^': 'sup',
   '@': 'code'
 };
-var rePhrase = /^([\[\{]?)(__?|\*\*?|\?\?|[\-\+\^~@%])/;
-var reImage = re.compile(/^!(?!\s)([:txattr:](?:\.[^\n\S]|\.(?:[^\.\/]))?)([^!\s]+?) ?(?:\(((?:[^\(\)]|\([^\(\)]+\))+)\))?!(?::([^\s]+?(?=[!-\.:-@\[\\\]-`{-~](?:$|\s)|\s|$)))?/);
-var reImageFenced = re.compile(/^\[!(?!\s)([:txattr:](?:\.[^\n\S]|\.(?:[^\.\/]))?)([^!\s]+?) ?(?:\(((?:[^\(\)]|\([^\(\)]+\))+)\))?!(?::([^\s]+?(?=[!-\.:-@\[\\\]-`{-~](?:$|\s)|\s|$)))?\]/); // NB: there is an exception in here to prevent matching "TM)"
+var rePhrase = /^([[{]?)(__?|\*\*?|\?\?|[-+^~@%])/;
+var reImage = re.compile(/^!(?!\s)([:txattr:](?:\.[^\n\S]|\.(?:[^./]))?)([^!\s]+?) ?(?:\(((?:[^()]|\([^()]+\))+)\))?!(?::([^\s]+?(?=[!-.:-@[\\\]-`{-~](?:$|\s)|\s|$)))?/);
+var reImageFenced = re.compile(/^\[!(?!\s)([:txattr:](?:\.[^\n\S]|\.(?:[^./]))?)([^!\s]+?) ?(?:\(((?:[^()]|\([^()]+\))+)\))?!(?::([^\s]+?(?=[!-.:-@[\\\]-`{-~](?:$|\s)|\s|$)))?\]/); // NB: there is an exception in here to prevent matching "TM)"
 
 var reCaps = re.compile(/^((?!TM\)|tm\))[[:ucaps:]](?:[[:ucaps:]\d]{1,}(?=\()|[[:ucaps:]\d]{2,}))(?:\((.*?)\))?(?=\W|$)/);
 var reLink = re.compile(/^"(?!\s)((?:[^"]|"(?![\s:])[^\n"]+"(?!:))+)"[:txcite:]/);
 var reLinkFenced = /^\["([^\n]+?)":((?:\[[a-z0-9]*\]|[^\]])+)\]/;
-var reLinkTitle = /\s*\(((?:\([^\(\)]*\)|[^\(\)])+)\)$/;
+var reLinkTitle = /\s*\(((?:\([^()]*\)|[^()])+)\)$/;
 var reFootnote = /^\[(\d+)(!?)\]/;
 
-function parsePhrase(src, options) {
+function parsePhrase(src, options, charPosToLine) {
   src = ribbon(src);
   var list = builder();
   var m;
@@ -812,7 +813,7 @@ function parsePhrase(src, options) {
         if (code) {
           list.add([phraseType, m[1]]);
         } else {
-          list.add([phraseType, pba].concat(parsePhrase(m[1], options)));
+          list.add([phraseType, pba].concat(parsePhrase(m[1], options, charPosToLine)));
         }
 
         continue;
@@ -847,8 +848,15 @@ function parsePhrase(src, options) {
 
 
     if (m = testComment(src)) {
+      var elm = ['!'];
+
+      if (options.showOriginalLineNumber) {
+        elm.push(addLineNumber({}, options, charPosToLine, 0, src.getSlot()));
+      }
+
+      elm.push(m[1]);
+      list.add(elm);
       src.advance(m[0]);
-      list.add(['!', m[1]]);
       continue;
     } // html tag
     // TODO: this seems to have a lot of overlap with block tags... DRY?
@@ -883,7 +891,7 @@ function parsePhrase(src, options) {
             list.merge(parseHtml(tokenize(m[1])));
             continue;
           } else {
-            element = element.concat(parsePhrase(m[1], options));
+            element = element.concat(parsePhrase(m[1], options, charPosToLine));
           }
 
           list.add(element);
@@ -950,7 +958,7 @@ function parsePhrase(src, options) {
         pba.title = title[1];
       }
 
-      list.add(['a', pba].concat(parsePhrase(inner.replace(/^(\.?\s*)/, ''), options)));
+      list.add(['a', pba].concat(parsePhrase(inner.replace(/^(\.?\s*)/, ''), options, charPosToLine)));
       continue;
     } // no match, move by all "uninteresting" chars
 
@@ -1081,10 +1089,64 @@ function toHTML(jsonml) {
   }
 }
 
+function applyHooks(ml) {
+  var hooks = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
+  if (Array.isArray(ml) && Array.isArray(hooks) && hooks.length) {
+    for (var i = 0, l = hooks.length; i < l; i++) {
+      var hook = hooks[i];
+      hook[0](ml, hook[1]);
+    }
+
+    for (var _i = 0, _l = ml.length; _i < _l; _i++) {
+      if (Array.isArray(ml[_i])) {
+        applyHooks(ml[_i], hooks);
+      }
+    }
+  }
+
+  return ml;
+}
+
+function isNode(ml) {
+  return Array.isArray(ml) && typeof ml[0] === 'string';
+}
+
+;
+
+function isAttributes(mlPart) {
+  return _typeof(mlPart) === 'object' && !Array.isArray(mlPart);
+}
+
+;
+
+function hasAttributes(ml) {
+  if (!isNode(ml)) {
+    throw new Error('Not a jsonML node');
+  }
+
+  return isAttributes(ml[1]);
+}
+
+;
+
+function addAttributes(ml, newAttr) {
+  if (hasAttributes(ml)) {
+    return Object.assign(ml[1], newAttr);
+  } else {
+    var attr = Object.assign({}, newAttr);
+    ml.splice(1, 0, attr);
+    return attr;
+  }
+}
+
+;
 module.exports = {
   reIndent: reIndent,
   toHTML: toHTML,
-  escape: escape
+  escape: escape,
+  applyHooks: applyHooks,
+  addAttributes: addAttributes
 };
 
 /***/ }),
@@ -1100,7 +1162,9 @@ var ribbon = __webpack_require__(1);
 
 var re = __webpack_require__(0);
 
-var fixLinks = __webpack_require__(11);
+var fixLink = __webpack_require__(11);
+
+var jsonml = __webpack_require__(7);
 
 var _require = __webpack_require__(3),
     parseHtml = _require.parseHtml,
@@ -1158,7 +1222,7 @@ var reBlockNormal = re.compile(/^(.*?)($|\r?\n(?=[:txlisthd:])|\r?\n(?:\s*\n|$)+
 var reBlockExtended = re.compile(/^(.*?)($|\r?\n(?=[:txlisthd:])|\r?\n+(?=[:txblocks:][:txattr:]\.))/, 's');
 var reBlockNormalPre = re.compile(/^(.*?)($|\r?\n(?:\s*\n|$)+)/, 's');
 var reBlockExtendedPre = re.compile(/^(.*?)($|\r?\n+(?=[:txblocks:][:txattr:]\.))/, 's');
-var reRuler = /^(\-\-\-+|\*\*\*+|___+)(\r?\n\s+|$)/;
+var reRuler = /^(---+|\*\*\*+|___+)(\r?\n\s+|$)/;
 var reLinkRef = re.compile(/^\[([^\]]+)\]((?:https?:\/\/|\/)\S+)(?:\s*\n|$)/);
 var reFootnoteDef = /^fn\d+$/;
 var reCleanBegin = /^( *\r?\n)+/;
@@ -1180,20 +1244,20 @@ function extend(target) {
   return target;
 }
 
-function paragraph(s, tag, pba, linebreak, options) {
+function paragraph(s, tag, pba, linebreak, options, charPosToLine) {
   tag = tag || 'p';
   var out = [];
   s.split(/(?:\r?\n){2,}/).forEach(function (bit, i) {
     if (tag === 'p' && /^\s/.test(bit)) {
       // no-paragraphs
       bit = bit.replace(/\r?\n[\t ]/g, ' ').trim();
-      out = out.concat(parsePhrase(bit, options));
+      out = out.concat(parsePhrase(bit, options, charPosToLine));
     } else {
       if (linebreak && i) {
         out.push(linebreak);
       }
 
-      out.push(pba ? [tag, pba].concat(parsePhrase(bit, options)) : [tag].concat(parsePhrase(bit, options)));
+      out.push(pba ? [tag, pba].concat(parsePhrase(bit, options, charPosToLine)) : [tag].concat(parsePhrase(bit, options, charPosToLine)));
     }
   });
   return out;
@@ -1254,7 +1318,13 @@ function parseFlow(src, options, lineOffset) {
       src.advance(garbage[0].length);
     }
 
-    src.save(); // link_ref -- this goes first because it shouldn't trigger a linebreak
+    src.save(); // Further fix for #52 : Nothing more should be done, if we have reached end of stream.
+    // This removes a useless empty <P> at the end of the generated tree.
+
+    if (!src.valueOf()) {
+      break;
+    } // link_ref -- this goes first because it shouldn't trigger a linebreak
+
 
     if (m = reLinkRef.exec(src)) {
       if (!linkRefs) {
@@ -1338,10 +1408,10 @@ function parseFlow(src, options, lineOffset) {
           pba.id = 'fn' + fnid;
           list.add(['p', pba, ['a', {
             'href': '#fnr' + fnid
-          }, ['sup', fnid]], ' '].concat(parsePhrase(m[1], options)));
+          }, ['sup', fnid]], ' '].concat(parsePhrase(m[1], options, charPosToLine)));
         } else {
           // heading | paragraph
-          list.merge(paragraph(m[1], blockType, pba, '\n', options));
+          list.merge(paragraph(m[1], blockType, pba, '\n', options, charPosToLine));
         }
 
         continue;
@@ -1352,8 +1422,15 @@ function parseFlow(src, options, lineOffset) {
 
 
     if (m = testComment(src)) {
+      var elm = ['!'];
+
+      if (options.showOriginalLineNumber) {
+        elm.push(addLineNumber({}, options, charPosToLine, 0, src.getSlot()));
+      }
+
+      elm.push(m[1]);
+      list.add(elm);
       src.advance(m[0] + (/(?:\s*\n+)+/.exec(src) || [])[0]);
-      list.add(['!', m[1]]);
       continue;
     } // block HTML
 
@@ -1368,17 +1445,17 @@ function parseFlow(src, options, lineOffset) {
           src.advance(m[0]);
 
           if (/^\s*(\n|$)/.test(src)) {
-            var elm = [tag];
+            var _elm = [tag];
 
             if (options.showOriginalLineNumber) {
-              elm.push(addLineNumber(m[2] ? parseHtmlAttr(m[2]) : {}, options, charPosToLine, 0, srcSlot));
+              _elm.push(addLineNumber(m[2] ? parseHtmlAttr(m[2]) : {}, options, charPosToLine, 0, srcSlot));
             } else {
               if (m[2]) {
-                elm.push(parseHtmlAttr(m[2]));
+                _elm.push(parseHtmlAttr(m[2]));
               }
             }
 
-            list.add(elm);
+            list.add(_elm);
             src.skipWS();
             continue;
           }
@@ -1447,38 +1524,38 @@ function parseFlow(src, options, lineOffset) {
             src.advance(_x.pos + _x.src.length);
 
             if (/^\s*(\n|$)/.test(src)) {
-              var _elm = [tag];
+              var _elm2 = [tag];
 
               if (options.showOriginalLineNumber) {
-                _elm.push(addLineNumber(m[2] ? parseHtmlAttr(m[2]) : {}, options, charPosToLine, 0, _srcSlot));
+                _elm2.push(addLineNumber(m[2] ? parseHtmlAttr(m[2]) : {}, options, charPosToLine, 0, _srcSlot));
               } else {
                 if (m[2]) {
-                  _elm.push(parseHtmlAttr(m[2]));
+                  _elm2.push(parseHtmlAttr(m[2]));
                 }
               }
 
               if (tag === 'script' || tag === 'style') {
-                _elm.push(_inner);
+                _elm2.push(_inner);
               } else {
                 var innerHTML = _inner.replace(/^\n+/, '').replace(/\s*$/, '');
 
                 var isBlock = /\n\r?\n/.test(innerHTML) || tag === 'ol' || tag === 'ul';
                 var innerElm = isBlock ? parseFlow(innerHTML, options) : parsePhrase(innerHTML, extend({}, options, {
                   breaks: false
-                }));
+                }), charPosToLine);
 
                 if (isBlock || /^\n/.test(_inner)) {
-                  _elm.push('\n');
+                  _elm2.push('\n');
                 }
 
                 if (isBlock || /\s$/.test(_inner)) {
                   innerElm.push('\n');
                 }
 
-                _elm = _elm.concat(innerElm);
+                _elm2 = _elm2.concat(innerElm);
               }
 
-              list.add(_elm);
+              list.add(_elm2);
               src.skipWS(); // skip tailing whitespace
 
               continue;
@@ -1520,11 +1597,17 @@ function parseFlow(src, options, lineOffset) {
 
 
     m = reBlockNormal.exec(src);
-    list.merge(paragraph(m[1], 'p', addLineNumber({}, options, charPosToLine, 0, src.getSlot()), '\n', options));
+    list.merge(paragraph(m[1], 'p', addLineNumber({}, options, charPosToLine, 0, src.getSlot()), '\n', options, charPosToLine));
     src.advance(m[0]);
   }
 
-  return linkRefs ? fixLinks(list.get(), linkRefs) : list.get();
+  var hooks = linkRefs ? [[fixLink, linkRefs]] : [];
+
+  if (options.hooks && Array.isArray(options.hooks)) {
+    hooks = hooks.concat(options.hooks);
+  }
+
+  return jsonml.applyHooks(list.get(), hooks); // return linkRefs ? fixLinks( list.get(), linkRefs ) : list.get();
 }
 
 exports.parseFlow = parseFlow;
@@ -1580,20 +1663,19 @@ module.exports = function builder(initArr) {
 */
 var merge = __webpack_require__(6);
 
-var _require = __webpack_require__(7),
-    toHTML = _require.toHTML;
+var jsonmlUtils = __webpack_require__(7);
 
-var _require2 = __webpack_require__(8),
-    parseFlow = _require2.parseFlow;
+var _require = __webpack_require__(8),
+    parseFlow = _require.parseFlow;
 
-var _require3 = __webpack_require__(3),
-    parseHtml = _require3.parseHtml;
+var _require2 = __webpack_require__(3),
+    parseHtml = _require2.parseHtml;
 
 function textile(txt, opt) {
   // get a throw-away copy of options
   opt = merge(merge({}, textile.defaults), opt || {}); // run the converter
 
-  return parseFlow(txt, opt, opt.lineOffset).map(toHTML).join('');
+  return parseFlow(txt, opt, opt.lineOffset).map(jsonmlUtils.toHTML).join('');
 }
 
 ;
@@ -1607,7 +1689,9 @@ textile.defaults = {
   // line number offset of the first char of input text, for showOriginalLineNumber option
   'lineOffset': 0,
   // by default, don't set a special CSS class name to each HTML element mapped to an original line number
-  'cssClassOriginalLineNumber': ''
+  'cssClassOriginalLineNumber': '',
+  // functions to apply to each JsonML node before rendering to HTML
+  'hooks': []
 };
 
 textile.setOptions = textile.setoptions = function (opt) {
@@ -1630,7 +1714,8 @@ textile.jsonml = function (txt, opt) {
   return ['html'].concat(textile.tokenize(txt, opt));
 };
 
-textile.serialize = toHTML;
+textile.serialize = jsonmlUtils.toHTML;
+textile.jsonmlUtils = jsonmlUtils;
 
 /***/ }),
 /* 11 */
@@ -1640,7 +1725,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 // recurse the tree and swap out any "href" attributes
 // this uses the context as the replace dictionary so it can be fed to Array#map
-module.exports = function fixLinks(ml, dict) {
+module.exports = function fixLink(ml, dict) {
   if (Array.isArray(ml)) {
     if (ml[0] === 'a') {
       // found a link
@@ -1648,12 +1733,6 @@ module.exports = function fixLinks(ml, dict) {
 
       if (_typeof(attr) === 'object' && 'href' in attr && attr.href in dict) {
         attr.href = dict[attr.href];
-      }
-    }
-
-    for (var i = 0, l = ml.length; i < l; i++) {
-      if (Array.isArray(ml[i])) {
-        fixLinks(ml[i], dict);
       }
     }
   }
@@ -1669,19 +1748,19 @@ module.exports = function fixLinks(ml, dict) {
 var re = __webpack_require__(0);
 
 var reApostrophe = /(\w)'(\w)/g;
-var reArrow = /([^\-]|^)->/;
-var reClosingDQuote = re.compile(/([^\s\[\(])"(?=$|\s|[:punct:])/g);
-var reClosingSQuote = re.compile(/([^\s\[\(])'(?=$|\s|[:punct:])/g);
+var reArrow = /([^-]|^)->/;
+var reClosingDQuote = re.compile(/([^\s[(])"(?=$|\s|[:punct:])/g);
+var reClosingSQuote = re.compile(/([^\s[(])'(?=$|\s|[:punct:])/g);
 var reCopyright = /(\b ?|\s|^)(?:\(C\)|\[C\])/gi;
-var reDimsign = /([\d\.,]+['"]? ?)x( ?)(?=[\d\.,]['"]?)/g;
-var reDoublePrime = re.compile(/(\d*[\.,]?\d+)"(?=\s|$|[:punct:])/g);
+var reDimsign = /([\d.,]+['"]? ?)x( ?)(?=[\d.,]['"]?)/g;
+var reDoublePrime = re.compile(/(\d*[.,]?\d+)"(?=\s|$|[:punct:])/g);
 var reEllipsis = /([^.]?)\.{3}/g;
 var reEmdash = /(^|[\s\w])--([\s\w]|$)/g;
 var reEndash = / - /g;
 var reOpenDQuote = /"/g;
 var reOpenSQuote = /'/g;
 var reRegistered = /(\b ?|\s|^)(?:\(R\)|\[R\])/gi;
-var reSinglePrime = re.compile(/(\d*[\.,]?\d+)'(?=\s|$|[:punct:])/g);
+var reSinglePrime = re.compile(/(\d*[.,]?\d+)'(?=\s|$|[:punct:])/g);
 var reTrademark = /(\b ?|\s|^)(?:\((?:TM|tm)\)|\[(?:TM|tm)\])/g;
 
 exports.parseGlyph = function parseGlyph(src) {
@@ -1693,7 +1772,7 @@ exports.parseGlyph = function parseGlyph(src) {
   return src.replace(reArrow, '$1&#8594;').replace(reDimsign, '$1&#215;$2').replace(reEllipsis, '$1&#8230;').replace(reEmdash, '$1&#8212;$2').replace(reEndash, ' &#8211; ').replace(reTrademark, '$1&#8482;').replace(reRegistered, '$1&#174;').replace(reCopyright, '$1&#169;') // double quotes
   .replace(reDoublePrime, '$1&#8243;').replace(reClosingDQuote, '$1&#8221;').replace(reOpenDQuote, '&#8220;') // single quotes
   .replace(reSinglePrime, '$1&#8242;').replace(reApostrophe, '$1&#8217;$2').replace(reClosingSQuote, '$1&#8217;').replace(reOpenSQuote, '&#8216;') // fractions and degrees
-  .replace(/[\(\[]1\/4[\]\)]/, '&#188;').replace(/[\(\[]1\/2[\]\)]/, '&#189;').replace(/[\(\[]3\/4[\]\)]/, '&#190;').replace(/[\(\[]o[\]\)]/, '&#176;').replace(/[\(\[]\+\/\-[\]\)]/, '&#177;');
+  .replace(/[([]1\/4[\])]/, '&#188;').replace(/[([]1\/2[\])]/, '&#189;').replace(/[([]3\/4[\])]/, '&#190;').replace(/[([]o[\])]/, '&#176;').replace(/[([]\+\/-[\])]/, '&#177;');
 };
 
 /***/ }),
@@ -1719,7 +1798,7 @@ var _require3 = __webpack_require__(5),
 
 re.pattern.txlisthd = txlisthd;
 var reList = re.compile(/^((?:[:txlisthd:][^\0]*?(?:\r?\n|$))+)(\s*\n|$)/, 's');
-var reItem = re.compile(/^([#\*]+)([^\0]+?)(\n(?=[:txlisthd:])|$)/, 's');
+var reItem = re.compile(/^([#*]+)([^\0]+?)(\n(?=[:txlisthd:])|$)/, 's');
 
 function listPad(n) {
   var s = '\n';
@@ -1740,7 +1819,7 @@ function parseList(src, options, charOffset, charPosToLine) {
     var removedSrc = src.match(/(^|\r?\n)[\t ]+/);
 
     if (removedSrc && removedSrc[0]) {
-      charOffset++;
+      charOffset++; // += removedSrc[0].length;
     }
   }
 
@@ -1839,8 +1918,9 @@ function parseList(src, options, charOffset, charPosToLine) {
       par.att++;
     }
 
-    Array.prototype.push.apply(par.li, parsePhrase(m[2].trim(), options));
-    src.advance(m[0]);
+    Array.prototype.push.apply(par.li, parsePhrase(m[2].trim(), options, charPosToLine));
+    src.advance(m[0]); //    console.log( item, charPosToLine[ charOffset + src.getPos() ], ':', pba, charOffset );
+
     currIndex[destLevel] = (currIndex[destLevel] || 0) + 1;
   } // remember indexes for continuations next time
 
@@ -1903,18 +1983,18 @@ function parseDefList(src, options, charOffset, charPosToLine) {
 
   while (m = reItem.exec(src)) {
     // add terms
-    terms = m[1].split(/(?:^|\n)\- /);
+    terms = m[1].split(/(?:^|\n)- /);
     var localCharOffset = terms[0].length;
     terms = terms.slice(1);
     var separators = [];
 
     if (options.showOriginalLineNumber) {
-      separators = m[1].match(/(?:^|\n)\- /g).slice(1);
+      separators = m[1].match(/(?:^|\n)- /g).slice(1);
     }
 
     while (terms.length) {
       var term = terms.shift();
-      deflist.push('\t', ['dt'].concat(addLineNumber({}, options, charPosToLine, charOffset, src.getPos() + localCharOffset), parsePhrase(term.trim(), options)), '\n');
+      deflist.push('\t', ['dt'].concat(addLineNumber({}, options, charPosToLine, charOffset, src.getPos() + localCharOffset), parsePhrase(term.trim(), options, charPosToLine)), '\n');
 
       if (options.showOriginalLineNumber) {
         localCharOffset += term.length; // perhaps no separator at the end of the list
@@ -1939,7 +2019,7 @@ function parseDefList(src, options, charOffset, charPosToLine) {
       }
     }
 
-    deflist.push('\t', ['dd'].concat(addLineNumber({}, options, charPosToLine, charOffset, src.getPos() + localCharOffset), /=:$/.test(def) ? parseFlow(def.slice(0, -2).trim(), options, options.showOriginalLineNumber ? charPosToLine[(charOffset || 0) + localCharOffset + src.getPos()] : 0) : parsePhrase(def, options)), '\n');
+    deflist.push('\t', ['dd'].concat(addLineNumber({}, options, charPosToLine, charOffset, src.getPos() + localCharOffset), /=:$/.test(def) ? parseFlow(def.slice(0, -2).trim(), options, options.showOriginalLineNumber ? charPosToLine[(charOffset || 0) + localCharOffset + src.getPos()] : 0) : parsePhrase(def, options, charPosToLine)), '\n');
     src.advance(m[0]);
   }
 
@@ -1976,7 +2056,7 @@ var _require4 = __webpack_require__(5),
 re.pattern.txattr = txattr;
 var reTable = re.compile(/^((?:table[:txattr:]\.(?:\s(.+?))\s*\n)?(?:(?:[:txattr:]\.[^\n\S]*)?\|.*?\|[^\n\S]*(?:\n|$))+)([^\n\S]*\n)?/, 's');
 var reHead = /^table(_?)([^\n]*?)\.(?:[ \t](.+?))?\s*\n/;
-var reRow = re.compile(/^(?:\|([~\^\-][:txattr:])\.\s*\n)?([:txattr:]\.[^\n\S]*)?\|(.*?)\|[^\n\S]*(\n|$)/, 's');
+var reRow = re.compile(/^(?:\|([~^-][:txattr:])\.\s*\n)?([:txattr:]\.[^\n\S]*)?\|(.*?)\|[^\n\S]*(\n|$)/, 's');
 var reCaption = /^\|=([^\n+]*)\n/;
 var reColgroup = /^\|:([^\n+]*)\|[\r\t ]*\n/;
 var reRowgroup = /^\|([\^\-~])([^\n+]*)\.[ \t\r]*\n/;
@@ -2140,8 +2220,8 @@ function parseTable(src, options, charOffset, charPosToLine) {
               }
             }
 
-            var mx = /^(==.*?==|[^\|])*/.exec(inner);
-            cell = cell.concat(parsePhrase(mx[0], options));
+            var mx = /^(==.*?==|[^|])*/.exec(inner);
+            cell = cell.concat(parsePhrase(mx[0], options, charPosToLine));
             row.push('\n\t\t\t', cell);
             more = inner.valueOf().charAt(mx[0].length) === '|';
             inner.advance(mx[0].length + 1);

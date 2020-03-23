@@ -5,9 +5,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [1.0.1] - 20200304
+## [UNRELEASED]
+### Changed
+- [DOC] Update
+- Update to vscode 1.43.1
+- [INTERNAL] update dependencies
+
+
+## [1.1.1-dev] - 20200314
+
 ### Fixed
-- [CSS] Fix highlight on hover for <UL>. Progress on #18.
+- [INTERNAL] fix npm security alerts
+- Update textile-js to , to get HTML comments line-numbering, and a fix for `<LI>`
+
+### Changed
+- [INTERNAL] Include shared.webpack config to diffs.
+- Update to vscode 1.43.0
+
+### Added
+- [SOURCE] Code folding. Progress on #4
+
+
+## [1.1.0-dev] - 20200305
+### Fixed
+- [CSS] Fix highlight on hover for `<UL>`. Progress on #18.
+- [INTERNAL] Reduces diffs with Markdown Language Features.
+
+### Changed
+- Update textile-js to GehDoc/textile-js@ae69c7a1d7b60aa417a0856801fe739a219d1fd7 , to benefit of pre-rendering hook and jsonml functions.
+- [INTERNAL] : Improve and update .d.ts for textile-js library. Progress on #18.
+
+### Added
+- [PREVIEW] Add support for link ID generation trough slugify. Closes #20.
+- [PREVIEW] Add support TOC generation trough slugify. Progress on #4.
+- [SOURCE] Add support for document and workspace symbol. Progress on #4.
 
 
 ## [1.0.0] - 20200301
@@ -107,10 +138,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [INTERNAL] Build process was broken (I was using a patched version of vscode-nls-dev)
 - [CSS] Fix : #23, #27
 
-## Added
+### Added
 - [INTERNAL] Add Travis CI, to launch test suite after each push to the repository : Linux & OS X
 
-## Changed
+### Changed
 - [CSS] Splitted to ease future updates
 
 
@@ -139,7 +170,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [DOC] Add more stats
 
-## Fixed
+### Fixed
 - [INTERNAL] Reactivate src processing, in the tool to import sources from vscode
 - [INTERNAL] Improve src processing, in the tool to import sources from vscode
 - [CSS] corrections // vscode

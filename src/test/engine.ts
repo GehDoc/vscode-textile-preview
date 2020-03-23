@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import { TextileEngine } from '../textileEngine';
 import { TextileContributionProvider, TextileContributions } from '../textileExtensions';
-//import { githubSlugifier } from '../slugify';
+import { githubSlugifier } from '../slugify';
 import { Disposable } from '../util/dispose';
 
 const emptyContributions = new class extends Disposable implements TextileContributionProvider {
@@ -16,9 +16,5 @@ const emptyContributions = new class extends Disposable implements TextileContri
 };
 
 export function createNewTextileEngine(): TextileEngine {
-	return new TextileEngine(emptyContributions
-		/* FIXME activate ? Need changes inside textile-js :
-			, githubSlugifier
-		*/
-	);
+	return new TextileEngine(emptyContributions, githubSlugifier);
 }

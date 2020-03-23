@@ -69,7 +69,11 @@ p<>. justified text paragraph
 
 "link text for local file(with tooltip)":./syntax.textile
 
+"Link text to local heading":#level-4-heading
+
 This is a ["Markdow-style link for local file":./syntax.textile].
+
+This is a ["Markdow-style link to heading of a local file":./syntax.textile#level-4-heading].
 
 This is "a link to main repo":vtp, "another link":vtp and a ["Markdow-style link":vtp] to the same site through on alias.
 
@@ -84,6 +88,8 @@ This is "a link to main repo":vtp, "another link":vtp and a ["Markdow-style link
 !https://raw.githubusercontent.com/GehDoc/vscode-textile-preview/master/media/textile-mark_logo.png(Online image with link alias)!:vtp
 
 ABBR(Abbreviation)
+
+<!-- #region Exemple of foldable region through HTML comments -->
 
 - Word 1 := Definition 1.
 - Word 2 := Beginning of
@@ -100,6 +106,8 @@ definition =:
 // "CODE" tag inside "PRE"
 document.write('help');
 </code></pre>
+
+<!-- #endregion Exemple of foldable region through HTML comments -->
 
 bc.
 // Comment inside "bc."

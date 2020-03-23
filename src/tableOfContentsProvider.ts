@@ -5,10 +5,10 @@
 
 import * as vscode from 'vscode';
 import { TextileEngine } from './textileEngine';
-//import { Slug, githubSlugifier } from './slugify';
+import { Slug, githubSlugifier } from './slugify';
 
 export interface TocEntry {
-	//readonly slug: Slug;
+	readonly slug: Slug;
 	readonly text: string;
 	readonly level: number;
 	readonly line: number;
@@ -27,7 +27,7 @@ export interface SkinnyTextDocument {
 	lineAt(line: number): SkinnyTextLine;
 	getText(): string;
 }
-/* FIXME : enable
+
 export class TableOfContentsProvider {
 	private toc?: TocEntry[];
 
@@ -53,34 +53,44 @@ export class TableOfContentsProvider {
 		return toc.find(entry => entry.slug.equals(slug));
 	}
 
+	// -- Begin : modified for textile
 	private async buildToc(document: SkinnyTextDocument): Promise<TocEntry[]> {
 		const toc: TocEntry[] = [];
 		const tokens = await this.engine.parse(document);
 
 		const slugCount = new Map<string, number>();
+		const jsonmlUtils = await this.engine.jsonmlUtils();
+		jsonmlUtils.applyHooks(tokens, [
+			[(token) => {
+				let level;
+				if(typeof(token[0]) === 'string' && (level = TableOfContentsProvider.getHeaderLevel( token[0] )) < 7) {
+					if( typeof(token[1]) === 'object' && typeof( token[1]['data-line'] ) === 'number' ) {
+						const lineNumber = token[1]['data-line'];
+						const line = document.lineAt(lineNumber);
+						const text = TableOfContentsProvider.getHeaderText(line.text)
 
-		for (const heading of tokens.filter(token => token.type === 'heading_open')) {
-			const lineNumber = heading.map[0];
-			const line = document.lineAt(lineNumber);
+						let slug = githubSlugifier.fromHeading(text);
+						if (slugCount.has(slug.value)) {
+							const count = slugCount.get(slug.value)!;
+							slugCount.set(slug.value, count + 1);
+							slug = githubSlugifier.fromHeading(slug.value + '-' + (count + 1));
+						} else {
+							slugCount.set(slug.value, 0);
+						}
 
-			let slug = githubSlugifier.fromHeading(line.text);
-			if (slugCount.has(slug.value)) {
-				const count = slugCount.get(slug.value)!;
-				slugCount.set(slug.value, count + 1);
-				slug = githubSlugifier.fromHeading(slug.value + '-' + (count + 1));
-			} else {
-				slugCount.set(slug.value, 0);
-			}
-
-			toc.push({
-				slug,
-				text: TableOfContentsProvider.getHeaderText(line.text),
-				level: TableOfContentsProvider.getHeaderLevel(heading.markup),
-				line: lineNumber,
-				location: new vscode.Location(document.uri,
-					new vscode.Range(lineNumber, 0, lineNumber, line.text.length))
-			});
-		}
+						toc.push({
+							slug,
+							text: text,
+							level: level,
+							line: lineNumber,
+							location: new vscode.Location(document.uri,
+								new vscode.Range(lineNumber, 0, lineNumber, line.text.length))
+						});
+					}
+				}
+				return token;
+			}]
+		]);
 
 		// Get full range of section
 		return toc.map((entry, startIndex): TocEntry => {
@@ -103,17 +113,26 @@ export class TableOfContentsProvider {
 	}
 
 	private static getHeaderLevel(markup: string): number {
-		if (markup === '=') {
-			return 1;
-		} else if (markup === '-') {
-			return 2;
-		} else { // '#', '##', ...
-			return markup.length;
+		switch (markup) {
+			case 'h1':
+				return 1;
+			case 'h2':
+				return 2;
+			case 'h3':
+				return 3;
+			case 'h4':
+				return 4;
+			case 'h5':
+				return 5;
+			case 'h6':
+				return 6;
+			default:
+				return 7;						
 		}
 	}
 
 	private static getHeaderText(header: string): string {
-		return header.replace(/^\s*#+\s*(.*?)\s*#*$/, (_, word) => word.trim());
+		return header.replace(/^\s*h[1-6]\.\s*(.*?)\s*$/, (_, word) => word.trim());
 	}
+	// -- End : modified for textile
 }
-*/

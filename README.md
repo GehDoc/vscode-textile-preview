@@ -1,6 +1,6 @@
 # Textile Language Features
 
-[![Marketplace Version](https://badgen.net/vs-marketplace/v/GehDoc.vscode-textile-preview?logo=visual-studio-code&label=VS%20marketplace)](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview "View this project on Visual Studio Code Marketplace")
+[![Marketplace Version](https://badgen.net/vs-marketplace/v/GehDoc.vscode-textile-preview?label=VS%20marketplace)](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview "View this project on Visual Studio Code Marketplace")
 [![Latest Version](https://badgen.net/github/release/GehDoc/vscode-textile-preview?icon=github)](https://github.com/GehDoc/vscode-textile-preview/releases "View releases on GitHub")
 [![Build Status](https://travis-ci.org/GehDoc/vscode-textile-preview.svg?branch=master)](https://travis-ci.org/GehDoc/vscode-textile-preview)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3273/badge)](https://bestpractices.coreinfrastructure.org/projects/3273)  
@@ -17,10 +17,15 @@ To switch between views, press (<kbd>Ctrl+Shift+V</kbd>) in the editor. You can 
 
 ## Features
 
-This extension is entirely based on the Markdown preview provided by Visual Studio Code, and tries to offer the same functionalities :
-* you can view Textile source and its HTML preview side by side, with synchronised scrolling;
-* you can include images, from local or network, with manageable security of the preview's content;
-* you can click on links, in the source view and in the HTML preview;
+This extension is entirely based on the Markdown preview provided by Visual Studio Code, and offers the same level of functionality :
+* view Textile source and its HTML preview side by side, with synchronised scrolling;
+* include images, from local or network, with manageable security of the preview's content;
+* click on links, in the source view and in the HTML preview.  
+Internal and external links to a paragraph header of a textile file are supported (slugify);
+* see the document headers structure in the outline view;
+* fold paragraphs from their headline, or from `<!-- #region -->` and `<!-- #endregion -->` HTML comments.
+
+And also :
 * the HTML preview supports VSCode light and dark themes;
 * the extension is translated into the 9 VScode core languages;
 
@@ -30,9 +35,7 @@ For now, some features of the original Markdown preview have been disabled.
 To see the full list of features and interactions, you can read the documentation of the [Visual Studio Code's Markdown Language Features](https://code.visualstudio.com/docs/languages/markdown#_markdown-preview).
 
 Features to be implemented :
-* Paragraph folding;
-* Generation of table of content, and table of symbols;
-* Support slugify : Allow internal and external links to a paragraph header of a textile file;
+* List items, and HTML code blocks folding;
 * Blockquote syntax coloring.
 
 Features considered out of scope of this extension :

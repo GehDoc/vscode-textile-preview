@@ -4,7 +4,7 @@
 # vscode and vscode-loc are fetched from their GitHub repo, into ./tools/tmp/
 # Then, all needed files are processed and copied to ./tools/tmp/out/
 
-VSCODE_VERSION_GIT_TAG=1.42.1
+VSCODE_VERSION_GIT_TAG=1.43.1
 
 . $(dirname $0)/log.sh
 
@@ -52,6 +52,7 @@ function process_dir_src() {
 			sed -i -e "s/Markdown/Textile/g" $destfile
 			sed -i -e "s/MDDocument/TextileDocument/g" $destfile
 			sed -i -e "s/'.md'/'.textile'/g" $destfile
+			sed -i -e "s/\*.md'/\*.textile'/g" $destfile
 			sed -i -e 's/`.md`/`.textile`/g' $destfile
 		else
 			# just copy other kind of files
@@ -161,7 +162,7 @@ echo "Processing src"
 # Download from github : https://github.com/Microsoft/vscode
 github_DL "vscode" $VSCODE_VERSION_GIT_TAG
 
-process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools/tmp/out/  '../shared.tsconfig.json ./src/*.* ./src/*/*.* ./media/*.* ./*.json ./*.js ./preview-src/*.* ./schemas/package.schema.json'
+process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools/tmp/out/  '../shared.webpack.config.js ../shared.tsconfig.json ./src/*.* ./src/*/*.* ./media/*.* ./*.json ./*.js ./preview-src/*.* ./schemas/package.schema.json'
 
 
 # -----------
