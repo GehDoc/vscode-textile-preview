@@ -1,4 +1,4 @@
-// [textile-js | https://github.com/GehDoc/textile-js]  Build version: 2.0.104 - 2020-03-14T17:28:10+0100  
+// [textile-js | https://github.com/GehDoc/textile-js]  Build version: 2.0.105 - 2020-03-25T23:24:33+0100  
  (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -1091,16 +1091,21 @@ function toHTML(jsonml) {
 
 function applyHooks(ml) {
   var hooks = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+  var level = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
 
   if (Array.isArray(ml) && Array.isArray(hooks) && hooks.length) {
+    var realLevel = +level || 0;
+
     for (var i = 0, l = hooks.length; i < l; i++) {
       var hook = hooks[i];
-      hook[0](ml, hook[1]);
+      hook[0](ml, hook[1], realLevel);
     }
+
+    realLevel++;
 
     for (var _i = 0, _l = ml.length; _i < _l; _i++) {
       if (Array.isArray(ml[_i])) {
-        applyHooks(ml[_i], hooks);
+        applyHooks(ml[_i], hooks, realLevel);
       }
     }
   }
@@ -1569,8 +1574,14 @@ function parseFlow(src, options, lineOffset) {
 
 
     if (m = reRuler.exec(src)) {
+      var _elm3 = ['hr'];
+
+      if (options.showOriginalLineNumber) {
+        _elm3.push(addLineNumber({}, options, charPosToLine, 0, src.getSlot()));
+      }
+
       src.advance(m[0]);
-      list.add(['hr']);
+      list.add(_elm3);
       continue;
     } // list
 
@@ -1779,6 +1790,8 @@ exports.parseGlyph = function parseGlyph(src) {
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 /* textile list parser */
 var ribbon = __webpack_require__(1);
 
@@ -1819,7 +1832,7 @@ function parseList(src, options, charOffset, charPosToLine) {
     var removedSrc = src.match(/(^|\r?\n)[\t ]+/);
 
     if (removedSrc && removedSrc[0]) {
-      charOffset++; // += removedSrc[0].length;
+      charOffset += removedSrc[0].length;
     }
   }
 
@@ -1853,7 +1866,7 @@ function parseList(src, options, charOffset, charPosToLine) {
       pba = pba[1];
     }
 
-    pba = addLineNumber(pba, options, charPosToLine, charOffset, src.getPos()); // list control
+    var pbaLineNumber = addLineNumber({}, options, charPosToLine, charOffset, src.getPos()); // list control
 
     if (/^\.\s*$/.test(m[2])) {
       listAttr = pba || {};
@@ -1876,7 +1889,8 @@ function parseList(src, options, charOffset, charPosToLine) {
         ul: lst,
         li: newLi,
         // count attributes's found per list
-        att: 0
+        att: 0,
+        pbaLineNumber: pbaLineNumber
       });
       currIndex[stack.length] = 1;
     } // remove nesting until we have correct level
@@ -1914,13 +1928,14 @@ function parseList(src, options, charOffset, charPosToLine) {
     }
 
     if (pba) {
-      par.li.push(pba);
+      par.li.push(merge(pba, pbaLineNumber));
       par.att++;
+    } else {
+      par.li.push(pbaLineNumber);
     }
 
     Array.prototype.push.apply(par.li, parsePhrase(m[2].trim(), options, charPosToLine));
-    src.advance(m[0]); //    console.log( item, charPosToLine[ charOffset + src.getPos() ], ':', pba, charOffset );
-
+    src.advance(m[0]);
     currIndex[destLevel] = (currIndex[destLevel] || 0) + 1;
   } // remember indexes for continuations next time
 
@@ -1933,6 +1948,13 @@ function parseList(src, options, charOffset, charPosToLine) {
 
     if (s.att === 1 && !s.ul[3][1].substr) {
       merge(s.ul[1], s.ul[3].splice(1, 1)[0]);
+    } // line number should stay on listitem
+
+
+    if (_typeof(s.ul[3][1]) === 'object') {
+      merge(s.ul[3][1], s.pbaLineNumber);
+    } else {
+      s.ul[3].splice(1, 0, s.pbaLineNumber);
     }
   }
 

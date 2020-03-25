@@ -1,4 +1,4 @@
-// Partial type definitions for textile-js (modified) 2.0.104
+// Partial type definitions for textile-js (modified) > 2.0.105
 // Project: https://github.com/GehDoc/textile-js/
 // Definitions by: Gérald Hameau <https://github.com/GehDoc>
 
@@ -7,7 +7,7 @@ export = TextileJS;
 declare namespace TextileJS {
 	type Token = any;
 
-	type Hook = [{ (tokens: Token[], params?: any): Token[]; }, any?];
+	type Hook = [{ (tokens: Token[], params: any | undefined, nodeLevel: number): Token[]; }, any?];
 
 	type jsonmlAttributes = { [key:string]: any };
 
