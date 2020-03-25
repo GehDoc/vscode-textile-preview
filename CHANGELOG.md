@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [UNRELEASED]
 ### Added
 - [DOC] Add SECURITY.md
+- [PREVIEW] Add paragraph folding for multi-line `<LI>` and HTML code blocks (PRE, DIV, BLOCKQUOTE)
 
 ### Fixed
 - [INTERNAL] npm audit fix

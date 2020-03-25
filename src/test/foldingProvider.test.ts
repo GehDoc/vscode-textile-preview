@@ -114,7 +114,6 @@ a`);
 		assert.strictEqual(second.end, 9);
 	});
 
-	/* FIXME :
 	test('Should fold from list to end of document', async () => {
 		const folds = await getFoldsForDocument(`a
 * b
@@ -146,7 +145,6 @@ b`);
 		assert.strictEqual(firstFold.start, 0);
 		assert.strictEqual(firstFold.end, 3);
 	});
-	*/
 
 	/* Disabled for textile : not relevant
 	test('Should fold fenced code blocks', async () => {
@@ -180,19 +178,18 @@ a`);
 	});
 	*/
 
-	/* FIXME :
+	// FIXME : it should accept no blank line between x and <div>
 	test('Should fold html blocks', async () => {
 		const folds = await getFoldsForDocument(`x
+
 <div>
 	fa
 </div>`);
 		assert.strictEqual(folds.length, 1);
 		const firstFold = folds[0];
-		assert.strictEqual(firstFold.start, 1);
-		assert.strictEqual(firstFold.end, 3);
+		assert.strictEqual(firstFold.start, 2);
+		assert.strictEqual(firstFold.end, 4);
 	});
-	*/
-
 	// --- END : modified for textile
 });
 

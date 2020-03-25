@@ -17,6 +17,8 @@ const isEndRegion = (t: string) => /^\s*#?endregion\b.*/.test(t);
 
 const isRegionMarker = (token: Token) =>
 	typeof(token[0]) === 'string' && token[0] === '!' && typeof(token[1]) === 'object' && typeof(token[2]) === 'string' && (isStartRegion(token[2]) || isEndRegion(token[2]));
+const getLineNumber = (token: Token) =>
+	typeof(token[0]) === 'string' && typeof(token[1]) === 'object' && typeof(token[1]['data-line']) !== 'undefined' ? +token[1]['data-line'] : undefined;
 // --- End : modified for textile
 
 
@@ -35,7 +37,7 @@ export default class TextileFoldingProvider implements vscode.FoldingRangeProvid
 		const foldables = await Promise.all([
 			this.getRegions(document), 
 			this.getHeaderFoldingRanges(document),
-			/* FIXME : this.getBlockFoldingRanges(document) */
+			this.getBlockFoldingRanges(document)
 		]);
 		return flatten(foldables).slice(0, rangeLimit);
 	}
@@ -47,8 +49,10 @@ export default class TextileFoldingProvider implements vscode.FoldingRangeProvid
 		jsonmlUtils.applyHooks(tokens, [
 			[(token) => {
 				if( isRegionMarker(token) ) {
-					const lineNumber = +token[1]['data-line'];
-					regionMarkers.push({ line: lineNumber, isStart: isStartRegion(token[2])});
+					const lineNumber = getLineNumber( token );
+					if (lineNumber !== undefined) {
+						regionMarkers.push({ line: lineNumber, isStart: isStartRegion(token[2])});
+					}
 				}
 				return token;
 			}]
@@ -82,17 +86,16 @@ export default class TextileFoldingProvider implements vscode.FoldingRangeProvid
 		});
 	}
 
-	/* FIXME
 	private async getBlockFoldingRanges(document: vscode.TextDocument): Promise<vscode.FoldingRange[]> {
 
+		// --- Begin : modified for textile
 		const isFoldableToken = (token: Token): boolean => {
-			switch (token.type) {
-				case 'fence':
-				case 'list_item_open':
-					return token.map[1] > token.map[0];
-
-				case 'html_block':
-					return token.map[1] > token.map[0] + 1;
+			switch (token[0]) {
+				case 'li':
+				case 'pre':
+				case 'div':
+				case 'blockquote':
+					return true;
 
 				default:
 					return false;
@@ -100,15 +103,50 @@ export default class TextileFoldingProvider implements vscode.FoldingRangeProvid
 		};
 
 		const tokens = await this.engine.parse(document);
-		const multiLineListItems = tokens.filter(isFoldableToken);
-		return multiLineListItems.map(listItem => {
-			const start = listItem.map[0];
-			let end = listItem.map[1] - 1;
-			if (document.lineAt(end).isEmptyOrWhitespace && end >= start + 1) {
-				end = end - 1;
+		const jsonmlUtils = await this.engine.jsonmlUtils();
+		const multiLineListItems :{start: number, end: number | undefined, nodeLevel: number}[] = [];
+		let undefinedEndCount = 0;
+		const setEndForPreviousItems = (nodeLevel: number, end: number) => {
+			if ( undefinedEndCount && multiLineListItems.length ) {
+				let id = multiLineListItems.length - 1;
+				while (id >= 0 && undefinedEndCount > 0 && multiLineListItems[id].nodeLevel >= nodeLevel ) {
+					if (multiLineListItems[id].end === undefined) {
+						undefinedEndCount--;
+						multiLineListItems[id].end = end;
+					}
+					// no need to go too far
+					if (multiLineListItems[id].nodeLevel === nodeLevel) {
+						break;
+					}
+					id--;
+				}
 			}
-			return new vscode.FoldingRange(start, end);
-		});
+		};
+		jsonmlUtils.applyHooks(tokens, [
+			[(token, param, nodeLevel) => {
+				let start = getLineNumber( token );
+				if( start !== undefined) {
+					setEndForPreviousItems( nodeLevel, start );
+					if(isFoldableToken(token) ) {
+						undefinedEndCount++;
+						multiLineListItems.push({ start, end: undefined, nodeLevel });
+					}
+				}
+				return token;
+			}]
+		]);
+		// last line !
+		setEndForPreviousItems( 0, document.lineCount );
+
+		return multiLineListItems
+			.map(listItem => {
+				const start = listItem.start;
+				let end = listItem.end! - 1;
+				if (document.lineAt(end).isEmptyOrWhitespace && end >= start + 1) {
+					end = end - 1;
+				}
+				return new vscode.FoldingRange(start, end);
+			});
+		// --- End : modified for textile
 	}
-	*/
 }
