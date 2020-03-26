@@ -21,9 +21,9 @@ This extension is entirely based on the Markdown preview provided by Visual Stud
 * view Textile source and its HTML preview side by side, with synchronised scrolling;
 * include images, from local or network, with manageable security of the preview's content;
 * click on links, in the source view and in the HTML preview.  
-Internal and external links to a paragraph header of a textile file are supported (slugify);
-* see the document headers structure in the outline view;
-* fold paragraphs from their headline, or from `<!-- #region -->` and `<!-- #endregion -->` HTML comments.
+Internal and external links to a paragraph headline of a textile file are supported (slugify);
+* see the document headlines structure in the outline view;
+* fold paragraphs from their headline, multi-line list-items, code blocks, and special HTML comments `<!-- #region [Optional text] -->` and `<!-- #endregion [Optional text] -->`.
 
 And also :
 * the HTML preview supports VSCode light and dark themes;
@@ -35,7 +35,6 @@ For now, some features of the original Markdown preview have been disabled.
 To see the full list of features and interactions, you can read the documentation of the [Visual Studio Code's Markdown Language Features](https://code.visualstudio.com/docs/languages/markdown#_markdown-preview).
 
 Features to be implemented :
-* List items, and HTML code blocks folding;
 * Blockquote syntax coloring.
 
 Features considered out of scope of this extension :
