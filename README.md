@@ -27,7 +27,7 @@ Internal and external links to a paragraph headline of a textile file are suppor
 
 And also :
 * the HTML preview supports VSCode light and dark themes;
-* the extension is translated into the 9 VScode core languages;
+* the extension is translated into the [9 VSCode core languages](https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs).
 
 ### Missing features
 
