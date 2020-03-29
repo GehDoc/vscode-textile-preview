@@ -19,6 +19,8 @@ const isRegionMarker = (token: Token) =>
 	typeof(token[0]) === 'string' && token[0] === '!' && typeof(token[1]) === 'object' && typeof(token[2]) === 'string' && (isStartRegion(token[2]) || isEndRegion(token[2]));
 const getLineNumber = (token: Token) =>
 	typeof(token[0]) === 'string' && typeof(token[1]) === 'object' && typeof(token[1]['data-line']) !== 'undefined' ? +token[1]['data-line'] : undefined;
+const getEndLineNumber = (token: Token) =>
+	typeof(token[0]) === 'string' && typeof(token[1]) === 'object' && typeof(token[1]['data-line-end']) !== 'undefined' ? +token[1]['data-line-end'] : undefined;
 // --- End : modified for textile
 
 
@@ -128,8 +130,13 @@ export default class TextileFoldingProvider implements vscode.FoldingRangeProvid
 				if( start !== undefined) {
 					setEndForPreviousItems( nodeLevel, start );
 					if(isFoldableToken(token) ) {
-						undefinedEndCount++;
-						multiLineListItems.push({ start, end: undefined, nodeLevel });
+						let end = getEndLineNumber( token );
+						if ( end === undefined ) {
+							undefinedEndCount++;
+							multiLineListItems.push({ start, end, nodeLevel });
+						} else {
+							multiLineListItems.push({ start, end: end + 1, nodeLevel });
+						}
 					}
 				}
 				return token;

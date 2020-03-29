@@ -178,17 +178,15 @@ a`);
 	});
 	*/
 
-	// FIXME : it should accept no blank line between x and <div>
 	test('Should fold html blocks', async () => {
 		const folds = await getFoldsForDocument(`x
-
 <div>
 	fa
 </div>`);
 		assert.strictEqual(folds.length, 1);
 		const firstFold = folds[0];
-		assert.strictEqual(firstFold.start, 2);
-		assert.strictEqual(firstFold.end, 4);
+		assert.strictEqual(firstFold.start, 1);
+		assert.strictEqual(firstFold.end, 3);
 	});
 	// --- END : modified for textile
 });

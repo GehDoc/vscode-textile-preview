@@ -12,9 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - [INTERNAL] npm audit fix
+- [PREVIEW] correctly fold inlined tags
 
 ### Changed
-- Update textile-js to GehDoc/textile-js@8a6755291e1e8eb9e73620cbe26c7c1c19fc3343, to get new applyHooks function, and some fixes for `<LI>` and `<HR>`
+- Update textile-js to GehDoc/textile-js@d9fd2e6517eb5b788afd34cb82c2c50d897cfc1e, to get new applyHooks function, and some fixes for `<LI>` and `<HR>` and other inlined tags
 
 
 ## [1.2.0] - 20200323
