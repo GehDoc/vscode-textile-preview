@@ -32,7 +32,7 @@ And also :
 
 ### Missing features
 
-For now, some features of the original Markdown preview have been disabled. 
+Some features of the original Markdown preview have been disabled. 
 To see the full list of features and interactions, you can read the documentation of the [Visual Studio Code's Markdown Language Features](https://code.visualstudio.com/docs/languages/markdown#_markdown-preview).
 
 Features considered out of scope of this extension :
