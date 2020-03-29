@@ -111,8 +111,10 @@ export class TextileEngine {
 
 				// hooks are set only once : don't add them to config member parameter
 				const localConfig :TextileJSConfig = {
-					hooks: []
+					hooks: [],
+					render: {}
 				};
+				await addHighlightRenderer( localConfig );
 				// FIXME ? this.addImageStabilizer(md);
 				// disabled for textile : this.addFencedRenderer(md);
 				// FIXME ? this.addLinkNormalizer(md);
@@ -200,7 +202,7 @@ export class TextileEngine {
 			: this.tokenizeDocument(input, config, engine);
 
 		// -- Begin: Changed for Textile
-		return tokens.map(engine.serialize).join('');
+		return tokens.map( ( value ) => engine.serialize( value , config ) ).join('');
 		// -- End: Changed for Textile
 	}
 
@@ -384,22 +386,22 @@ export class TextileEngine {
 	*/
 }
 
-/* FIXME ?
-async function getTextileOptions(md: () => TextileIt) {
+// -- Begin : Changed for textile
+async function addHighlightRenderer( config: TextileJSConfig /*md: () => TextileIt*/ ) {
 	const hljs = await import('highlight.js');
-	return {
-		html: true,
-		highlight: (str: string, lang?: string) => {
+	config.render!.content = (tag, attributes, content) => {
+		if (tag === 'code' && attributes) {
+			let lang = attributes['lang'] || attributes['class'];
 			lang = normalizeHighlightLang(lang);
 			if (lang && hljs.getLanguage(lang)) {
 				try {
-					return `<div>${hljs.highlight(lang, str, true).value}</div>`;
+					return `<div>${hljs.highlight(lang, content, true).value}</div>`;
 				}
 				catch (error) { }
 			}
-			return `<code><div>${md().utils.escapeHtml(str)}</div></code>`;
 		}
-	};
+		return content;
+	}
 }
 
 function normalizeHighlightLang(lang: string | undefined) {
@@ -421,4 +423,4 @@ function normalizeHighlightLang(lang: string | undefined) {
 			return lang;
 	}
 }
-*/
+// -- End : Changed for textile

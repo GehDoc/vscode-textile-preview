@@ -24,6 +24,7 @@ This extension is entirely based on the Markdown preview provided by Visual Stud
 Internal and external links to a paragraph headline of a textile file are supported (slugify);
 * see the document headlines structure in the outline view;
 * fold paragraphs from their headline, multi-line list-items, code blocks, and special HTML comments `<!-- #region [Optional text] -->` and `<!-- #endregion [Optional text] -->`.
+* blockquote syntax coloring : `bc[language].` or `<pre><code class="language">`, or `<pre><code lang="language">`.
 
 And also :
 * the HTML preview supports VSCode light and dark themes;
@@ -33,9 +34,6 @@ And also :
 
 For now, some features of the original Markdown preview have been disabled. 
 To see the full list of features and interactions, you can read the documentation of the [Visual Studio Code's Markdown Language Features](https://code.visualstudio.com/docs/languages/markdown#_markdown-preview).
-
-Features to be implemented :
-* Blockquote syntax coloring.
 
 Features considered out of scope of this extension :
 * Snippets / Source syntax coloring : You have to use another extensions for these purpose.

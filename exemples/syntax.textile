@@ -103,14 +103,20 @@ definition =:
 </pre>
 
 <pre><code class="javascript">
-// "CODE" tag inside "PRE"
+// "CODE" with class="javascript" inside "PRE"
 document.write('help');
 </code></pre>
 
-<!-- #endregion Exemple of foldable region through HTML comments -->
+<pre><code lang="javascript">
+// "CODE" with lang="javascript" inside "PRE"
+document.write('help');
+</code></pre>
 
-bc.
-// Comment inside "bc."
+bc[javascript].
+// bc[javascript].
 document.write('help');
 
+<!-- #endregion Exemple of foldable region through HTML comments -->
+
 ----
+

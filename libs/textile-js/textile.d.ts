@@ -11,20 +11,25 @@ declare namespace TextileJS {
 
 	type jsonmlAttributes = { [key:string]: any };
 
+	type Render = {
+		content?: {(tag: string, attributes: jsonmlAttributes, content: string) : string; }
+	};
+
 	type Options = {
 		breaks? :boolean,
 		showOriginalLineNumber? :boolean,
 		lineOffset? :number,
 		cssClassOriginalLineNumber?: string,
-		hooks?: Hook[];
+		hooks?: Hook[],
+		render?: Render,
 	};
 
 	interface TextileJS {
-		convert(text: string, options: undefined | Options): string;
+		convert(text: string, options?: Options): string;
 		setOptions(options: Options): object;
 
-		tokenize(text: string, options: undefined | Options): Token[];
-		serialize(tokens: Token[]): string;
+		tokenize(text: string, options?: Options): Token[];
+		serialize(tokens: Token[], options?: Options): string;
 
 		jsonmlUtils: {
 			applyHooks(jsonml: Token[], hooks: Hook[]): Token[];

@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [UNRELEASED]
+### Added
+- [PREVIEW] blockquote syntax coloring
+
+### Changed
+- Update textile-js to GehDoc/textile-js@95e6732bedf55a104d27d9354a31e740bd4d9a71, to get render hook
+
+
 ## [1.2.1] - 20200329
 ### Added
 - [DOC] Add SECURITY.md
