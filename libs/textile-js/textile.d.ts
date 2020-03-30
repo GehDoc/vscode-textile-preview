@@ -1,4 +1,4 @@
-// Partial type definitions for textile-js (modified) > 2.0.106
+// Partial type definitions for textile-js (modified) 2.0.107
 // Project: https://github.com/GehDoc/textile-js/
 // Definitions by: Gérald Hameau <https://github.com/GehDoc>
 

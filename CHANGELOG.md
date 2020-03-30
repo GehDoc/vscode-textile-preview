@@ -5,14 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [UNRELEASED]
+## [1.3.0 - 20200330
 ### Added
 - [DOC] include link to highlight.js supported language list.
 
 ### Changed
 - [CSS] Clarify style for `<PRE>` and highlight.js
 - [INTERNAL] Code cleanup
-- Update textile-js to GehDoc/textile-js@cd100488f4195e1128b45684f19a38b89a142c8e, to get refactored renderers code
+- Update textile-js to GehDoc/textile-js@e4c79e952a01104d9473022fae41ced7d093e2e3, to get refactored renderers code
 
 ### Fixed
 - [INTERNAL] Make transpilation less permissive : enable `noUnusedLocals`. Progress on #8.
