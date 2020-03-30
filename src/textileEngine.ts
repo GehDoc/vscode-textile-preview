@@ -114,9 +114,8 @@ export class TextileEngine {
 					hooks: [],
 					render: {}
 				};
-				await addHighlightRenderer( localConfig );
 				// FIXME ? this.addImageStabilizer(md);
-				// disabled for textile : this.addFencedRenderer(md);
+				this.addFencedRenderer(localConfig);
 				// FIXME ? this.addLinkNormalizer(md);
 				// FIXME ? this.addLinkValidator(md);
 				this.addNamedHeaders(textile, localConfig);
@@ -228,7 +227,7 @@ export class TextileEngine {
 		// -- End : Changed for textile
 	}
 
-	/* FIXME
+	/* FIXME ?
 	private addLineNumberRenderer(md: any, ruleName: string): void {
 		const original = md.renderer.rules[ruleName];
 		md.renderer.rules[ruleName] = (tokens: any, idx: number, options: any, env: any, self: any) => {
@@ -267,19 +266,28 @@ export class TextileEngine {
 			}
 		};
 	}
+	*/
 
-	private addFencedRenderer(md: any): void {
-		const original = md.renderer.rules['fenced'];
-		md.renderer.rules['fenced'] = (tokens: any, idx: number, options: any, env: any, self: any) => {
-			const token = tokens[idx];
-			if (token.map && token.map.length) {
-				token.attrJoin('class', 'hljs');
+	// -- Begin : Changed for textile
+	private async addFencedRenderer(config: TextileJSConfig) {
+		const hljs = await import('highlight.js');
+		config.render!.content = (tag, attributes, content) => {
+			if (tag === 'code' && attributes) {
+				let lang = attributes['lang'] || attributes['class'];
+				lang = normalizeHighlightLang(lang);
+				if (lang && hljs.getLanguage(lang)) {
+					try {
+						return `<div>${hljs.highlight(lang, content, true).value}</div>`;
+					}
+					catch (error) { }
+				}
 			}
-
-			return original(tokens, idx, options, env, self);
-		};
+			return content;
+		}
 	}
+	// -- End : Changed for textile
 
+	/* FIXME ?
 	private addLinkNormalizer(md: any): void {
 		const normalizeLink = md.normalizeLink;
 		md.normalizeLink = (link: string) => {
@@ -333,7 +341,7 @@ export class TextileEngine {
 				|| /^data:image\/.*?;/.test(link);
 		};
 	}
-*/
+	*/
 
 	// -- Begin : Changed for textile
 	private addNamedHeaders(textile: TextileJS, config: TextileJSConfig): void {
@@ -386,24 +394,26 @@ export class TextileEngine {
 	*/
 }
 
-// -- Begin : Changed for textile
-async function addHighlightRenderer( config: TextileJSConfig /*md: () => TextileIt*/ ) {
+/* Disabled for textile
+async function getTextileOptions(md: () => TextileJS) {
 	const hljs = await import('highlight.js');
-	config.render!.content = (tag, attributes, content) => {
-		if (tag === 'code' && attributes) {
-			let lang = attributes['lang'] || attributes['class'];
+	return {
+		html: true,
+		highlight: (str: string, lang?: string) => {
 			lang = normalizeHighlightLang(lang);
 			if (lang && hljs.getLanguage(lang)) {
 				try {
-					return `<div>${hljs.highlight(lang, content, true).value}</div>`;
+					return `<div>${hljs.highlight(lang, str, true).value}</div>`;
 				}
 				catch (error) { }
 			}
+			return `<code><div>${md().utils.escapeHtml(str)}</div></code>`;
 		}
-		return content;
-	}
+	};
 }
+*/
 
+// -- Begin : Changed for textile
 function normalizeHighlightLang(lang: string | undefined) {
 	switch (lang && lang.toLowerCase()) {
 		case 'tsx':
