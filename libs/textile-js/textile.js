@@ -1,4 +1,4 @@
-// [textile-js | https://github.com/GehDoc/textile-js]  Build version: 2.0.106 - 2020-03-30T11:23:07+0200  
+// [textile-js | https://github.com/GehDoc/textile-js]  Build version: 2.0.107 - 2020-03-30T17:01:55+0200  
  (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
