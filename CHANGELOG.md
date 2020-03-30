@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - [CSS] Clarify style for `<PRE>` and highlight.js
+- [INTERNAL] Code cleanup
+- Update textile-js to GehDoc/textile-js@cd100488f4195e1128b45684f19a38b89a142c8e, to get refactored renderers code
 
 
 ## [1.3.0-beta.1] - 20200329
