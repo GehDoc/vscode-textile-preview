@@ -112,7 +112,7 @@ export class TextileEngine {
 				// hooks are set only once : don't add them to config member parameter
 				const localConfig :TextileJSConfig = {
 					hooks: [],
-					render: {}
+					renderers: []
 				};
 				// FIXME ? this.addImageStabilizer(md);
 				this.addFencedRenderer(localConfig);
@@ -271,19 +271,21 @@ export class TextileEngine {
 	// -- Begin : Changed for textile
 	private async addFencedRenderer(config: TextileJSConfig) {
 		const hljs = await import('highlight.js');
-		config.render!.content = (tag, attributes, content) => {
-			if (tag === 'code' && attributes) {
-				let lang = attributes['lang'] || attributes['class'];
-				lang = normalizeHighlightLang(lang);
-				if (lang && hljs.getLanguage(lang)) {
-					try {
-						return `<div>${hljs.highlight(lang, content, true).value}</div>`;
+		config.renderers!.push(
+			(tag, attributes, content) => {
+				if (tag === 'code' && attributes) {
+					let lang = attributes['lang'] || attributes['class'];
+					lang = normalizeHighlightLang(lang);
+					if (lang && hljs.getLanguage(lang)) {
+						try {
+							return `<div>${hljs.highlight(lang, content, true).value}</div>`;
+						}
+						catch (error) { }
 					}
-					catch (error) { }
 				}
+				return content;
 			}
-			return content;
-		}
+		);
 	}
 	// -- End : Changed for textile
 

@@ -11,9 +11,7 @@ declare namespace TextileJS {
 
 	type jsonmlAttributes = { [key:string]: any };
 
-	type Render = {
-		content?: {(tag: string, attributes: jsonmlAttributes, content: string) : string; }
-	};
+	type Renderer = {(tag: string, attributes: jsonmlAttributes, content: string) : string; };
 
 	type Options = {
 		breaks? :boolean,
@@ -21,7 +19,7 @@ declare namespace TextileJS {
 		lineOffset? :number,
 		cssClassOriginalLineNumber?: string,
 		hooks?: Hook[],
-		render?: Render,
+		renderers?: Renderer[],
 	};
 
 	interface TextileJS {

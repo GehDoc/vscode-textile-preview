@@ -1,4 +1,4 @@
-// [textile-js | https://github.com/GehDoc/textile-js]  Build version: 2.0.106 - 2020-03-29T23:25:02+0200  
+// [textile-js | https://github.com/GehDoc/textile-js]  Build version: 2.0.106 - 2020-03-30T11:23:07+0200  
  (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -1081,7 +1081,7 @@ function escape(text, escapeQuotes) {
   return text.replace(/&(?!(#\d{2,}|#x[\da-fA-F]{2,}|[a-zA-Z][a-zA-Z1-4]{1,6});)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, escapeQuotes ? '&quot;' : '"').replace(/'/g, escapeQuotes ? '&#39;' : "'");
 }
 
-function toHTML(jsonml, render) {
+function toHTML(jsonml, renderers) {
   jsonml = jsonml.concat(); // basic case
 
   if (typeof jsonml === 'string') {
@@ -1098,18 +1098,25 @@ function toHTML(jsonml, render) {
   }
 
   while (jsonml.length) {
-    content.push(toHTML(jsonml.shift(), render));
+    content.push(toHTML(jsonml.shift(), renderers));
+  }
+
+  var realContent = content.join('');
+
+  if (Array.isArray(renderers)) {
+    renderers.forEach(function (render) {
+      realContent = render(tag, attributes, realContent);
+    });
   }
 
   for (var a in attributes) {
     tagAttrs += attributes[a] == null ? " ".concat(a) : " ".concat(a, "=\"").concat(escape(String(attributes[a]), true), "\"");
-  }
+  } // be careful about adding whitespace here for inline elements
 
-  var realContent = render && render.content ? render.content(tag, attributes, content.join('')) : content.join(''); // be careful about adding whitespace here for inline elements
 
   if (tag === '!') {
     return "<!--".concat(realContent, "-->");
-  } else if (tag in singletons || tag.indexOf(':') > -1 && !content.length) {
+  } else if (tag in singletons || tag.indexOf(':') > -1 && !realContent.length) {
     return "<".concat(tag).concat(tagAttrs, " />");
   } else {
     return "<".concat(tag).concat(tagAttrs, ">").concat(realContent, "</").concat(tag, ">");
@@ -1735,7 +1742,7 @@ function textile(txt, opt) {
   opt = merge(merge({}, textile.defaults), opt || {}); // run the converter
 
   return parseFlow(txt, opt, opt.lineOffset).map(function (value) {
-    return jsonmlUtils.toHTML(value, opt.render);
+    return jsonmlUtils.toHTML(value, opt.renderers);
   }).join('');
 }
 
@@ -1754,7 +1761,7 @@ textile.defaults = {
   // functions to apply to each JsonML node before rendering to HTML
   'hooks': [],
   // function called where a JsonML node is rendered to HTML
-  'render': {}
+  'renderers': {}
 };
 
 textile.setOptions = textile.setoptions = function (opt) {
@@ -1781,7 +1788,7 @@ textile.serialize = function (jsonml, opt) {
   // get a throw-away copy of options
   opt = merge(merge({}, textile.defaults), opt || {}); // serialize
 
-  return jsonmlUtils.toHTML(jsonml, opt.render);
+  return jsonmlUtils.toHTML(jsonml, opt.renderers);
 };
 
 textile.jsonmlUtils = jsonmlUtils;
