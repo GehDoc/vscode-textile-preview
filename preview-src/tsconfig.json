@@ -3,7 +3,6 @@
 	"compilerOptions": {
 		"outDir": "./dist/",
 		"jsx": "react",
-		"noUnusedLocals": true,
 		"lib": [
 			"es2018",
 			"DOM",

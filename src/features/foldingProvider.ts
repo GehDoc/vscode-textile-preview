@@ -125,7 +125,7 @@ export default class TextileFoldingProvider implements vscode.FoldingRangeProvid
 			}
 		};
 		jsonmlUtils.applyHooks(tokens, [
-			[(token, param, nodeLevel) => {
+			[(token, _param, nodeLevel) => {
 				let start = getLineNumber( token );
 				if( start !== undefined) {
 					setEndForPreviousItems( nodeLevel, start );

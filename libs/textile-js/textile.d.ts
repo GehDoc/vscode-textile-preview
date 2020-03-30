@@ -1,4 +1,4 @@
-// Partial type definitions for textile-js (modified) > 2.0.105
+// Partial type definitions for textile-js (modified) > 2.0.106
 // Project: https://github.com/GehDoc/textile-js/
 // Definitions by: Gérald Hameau <https://github.com/GehDoc>
 
@@ -11,20 +11,23 @@ declare namespace TextileJS {
 
 	type jsonmlAttributes = { [key:string]: any };
 
+	type Renderer = {(tag: string, attributes: jsonmlAttributes, content: string) : string; };
+
 	type Options = {
 		breaks? :boolean,
 		showOriginalLineNumber? :boolean,
 		lineOffset? :number,
 		cssClassOriginalLineNumber?: string,
-		hooks?: Hook[];
+		hooks?: Hook[],
+		renderers?: Renderer[],
 	};
 
 	interface TextileJS {
-		convert(text: string, options: undefined | Options): string;
+		convert(text: string, options?: Options): string;
 		setOptions(options: Options): object;
 
-		tokenize(text: string, options: undefined | Options): Token[];
-		serialize(tokens: Token[]): string;
+		tokenize(text: string, options?: Options): Token[];
+		serialize(tokens: Token[], options?: Options): string;
 
 		jsonmlUtils: {
 			applyHooks(jsonml: Token[], hooks: Hook[]): Token[];

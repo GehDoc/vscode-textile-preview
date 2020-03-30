@@ -7,9 +7,11 @@ body.wordWrap pre {
 	white-space: pre-wrap;
 }
 
-/* FIXME : adapt this, if highlighting of source-code is implemented later. */
+/* Disabled for Textile
 pre:not(.hljs),
-pre.hljs code > div {
+pre.hljs code > div
+*/
+pre {
 	padding: 16px;
 	border-radius: 3px;
 	/* Disabled for textile : overflow: auto; */

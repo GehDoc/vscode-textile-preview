@@ -66,7 +66,7 @@ export class TextileEngine {
 	private _tokenCache = new TokenCache();
 
 	public constructor(
-		private readonly contributionProvider: TextileContributionProvider,
+		/* Disabled for textile : private */ readonly contributionProvider: TextileContributionProvider,
 		private readonly slugifier: Slugifier,
 	) {
 		contributionProvider.onContributionsChanged(() => {
@@ -111,10 +111,11 @@ export class TextileEngine {
 
 				// hooks are set only once : don't add them to config member parameter
 				const localConfig :TextileJSConfig = {
-					hooks: []
+					hooks: [],
+					renderers: []
 				};
 				// FIXME ? this.addImageStabilizer(md);
-				// disabled for textile : this.addFencedRenderer(md);
+				this.addFencedRenderer(localConfig);
 				// FIXME ? this.addLinkNormalizer(md);
 				// FIXME ? this.addLinkValidator(md);
 				this.addNamedHeaders(textile, localConfig);
@@ -200,7 +201,7 @@ export class TextileEngine {
 			: this.tokenizeDocument(input, config, engine);
 
 		// -- Begin: Changed for Textile
-		return tokens.map(engine.serialize).join('');
+		return tokens.map( ( value ) => engine.serialize( value , config ) ).join('');
 		// -- End: Changed for Textile
 	}
 
@@ -226,7 +227,7 @@ export class TextileEngine {
 		// -- End : Changed for textile
 	}
 
-	/* FIXME
+	/* FIXME ?
 	private addLineNumberRenderer(md: any, ruleName: string): void {
 		const original = md.renderer.rules[ruleName];
 		md.renderer.rules[ruleName] = (tokens: any, idx: number, options: any, env: any, self: any) => {
@@ -265,19 +266,30 @@ export class TextileEngine {
 			}
 		};
 	}
+	*/
 
-	private addFencedRenderer(md: any): void {
-		const original = md.renderer.rules['fenced'];
-		md.renderer.rules['fenced'] = (tokens: any, idx: number, options: any, env: any, self: any) => {
-			const token = tokens[idx];
-			if (token.map && token.map.length) {
-				token.attrJoin('class', 'hljs');
+	// -- Begin : Changed for textile
+	private async addFencedRenderer(config: TextileJSConfig) {
+		const hljs = await import('highlight.js');
+		config.renderers!.push(
+			(tag, attributes, content) => {
+				if (tag === 'code' && attributes) {
+					let lang = attributes['lang'] || attributes['class'];
+					lang = normalizeHighlightLang(lang);
+					if (lang && hljs.getLanguage(lang)) {
+						try {
+							return `<div>${hljs.highlight(lang, content, true).value}</div>`;
+						}
+						catch (error) { }
+					}
+				}
+				return content;
 			}
-
-			return original(tokens, idx, options, env, self);
-		};
+		);
 	}
+	// -- End : Changed for textile
 
+	/* FIXME ?
 	private addLinkNormalizer(md: any): void {
 		const normalizeLink = md.normalizeLink;
 		md.normalizeLink = (link: string) => {
@@ -331,7 +343,7 @@ export class TextileEngine {
 				|| /^data:image\/.*?;/.test(link);
 		};
 	}
-*/
+	*/
 
 	// -- Begin : Changed for textile
 	private addNamedHeaders(textile: TextileJS, config: TextileJSConfig): void {
@@ -384,8 +396,8 @@ export class TextileEngine {
 	*/
 }
 
-/* FIXME ?
-async function getTextileOptions(md: () => TextileIt) {
+/* Disabled for textile
+async function getTextileOptions(md: () => TextileJS) {
 	const hljs = await import('highlight.js');
 	return {
 		html: true,
@@ -401,7 +413,9 @@ async function getTextileOptions(md: () => TextileIt) {
 		}
 	};
 }
+*/
 
+// -- Begin : Changed for textile
 function normalizeHighlightLang(lang: string | undefined) {
 	switch (lang && lang.toLowerCase()) {
 		case 'tsx':
@@ -421,4 +435,4 @@ function normalizeHighlightLang(lang: string | undefined) {
 			return lang;
 	}
 }
-*/
+// -- End : Changed for textile
