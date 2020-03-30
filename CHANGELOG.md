@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - [INTERNAL] Make transpilation less permissive : enable `noUnusedLocals`. Progress on #8.
+- [INTERNAL] Make transpilation less permissive : enable `noUnusedParameters`. Close #8.
 
 
 ## [1.3.0-beta.1] - 20200329
