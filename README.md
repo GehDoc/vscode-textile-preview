@@ -24,7 +24,8 @@ This extension is entirely based on the Markdown preview provided by Visual Stud
 Internal and external links to a paragraph headline of a textile file are supported (slugify);
 * see the document headlines structure in the outline view;
 * fold paragraphs from their headline, multi-line list-items, code blocks, and special HTML comments `<!-- #region [Optional text] -->` and `<!-- #endregion [Optional text] -->`.
-* blockquote syntax coloring : `bc[language].` or `<pre><code class="language">`, or `<pre><code lang="language">`.
+* blockquote syntax coloring, with `bc[language].` or `<pre><code class="language">`, or `<pre><code lang="language">`.  
+Look at the official highlight.js documentation for the [list of supported languages](https://highlightjs.org/static/demo/).
 
 And also :
 * the HTML preview supports VSCode light and dark themes;
