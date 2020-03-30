@@ -66,7 +66,7 @@ export class TextileEngine {
 	private _tokenCache = new TokenCache();
 
 	public constructor(
-		private readonly contributionProvider: TextileContributionProvider,
+		/* Disabled for textile : private */ readonly contributionProvider: TextileContributionProvider,
 		private readonly slugifier: Slugifier,
 	) {
 		contributionProvider.onContributionsChanged(() => {

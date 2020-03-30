@@ -207,6 +207,7 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 		return preview;
 	}
 
+	/* FIXME : proposedapi :
 	private registerStaticPreview(preview: DynamicTextilePreview): DynamicTextilePreview {
 		this._staticPreviews.add(preview);
 
@@ -217,6 +218,7 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 		this.trackActive(preview);
 		return preview;
 	}
+	*/
 
 	private trackActive(preview: DynamicTextilePreview): void {
 		preview.onDidChangeViewState(({ webviewPanel }) => {

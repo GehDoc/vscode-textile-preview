@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [INTERNAL] Code cleanup
 - Update textile-js to GehDoc/textile-js@cd100488f4195e1128b45684f19a38b89a142c8e, to get refactored renderers code
 
+### Fixed
+- [INTERNAL] Make transpilation less permissive : enable `noUnusedLocals`. Progress on #8.
+
 
 ## [1.3.0-beta.1] - 20200329
 ### Added
