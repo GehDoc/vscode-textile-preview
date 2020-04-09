@@ -8,7 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [UNRELEASED]
 ### Fixed
 - [INTERNAL] npm audit fix
-- update to vscode 1.44.0
+- update to vscode 1.44.0, wich includes some fixes
+
+### Changed
+- [DOC] Update README.md
 
 
 ## [1.3.0] - 20200330

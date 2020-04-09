@@ -51,13 +51,12 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 ## Roadmap
 
-All [bugs and enhancements](https://github.com/GehDoc/vscode-textile-preview/issues) are tagged. Mostly :
-*  Implement missing features (see above), keep in sync with VSCode and Textile-JS updates, ...  
-*  All remaining ToDOs and issues will be triaged and planned soon, now that the first release has been made available.
+All [bugs and enhancements](https://github.com/GehDoc/vscode-textile-preview/issues) are tagged, and will be processed ASAP. Feel free to contribute !
 
 ## Supporting
 
 * Give feedback and rating through [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview).
+* Add stars to [the project on github](https://github.com/GehDoc/vscode-textile-preview ) if you like it !
 * Financially sponsor our project [here](http://www.leetchi.com/c/vscode-textile-language-features), or through the GitHub ❤ sponsor button on [the project's repository](https://github.com/GehDoc/vscode-textile-preview/).
 
 Your support is greatly appreciated !
