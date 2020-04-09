@@ -5,7 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [1.3.1] - 20200409
+## [UNRELEASED]
+### Fixed
+- [INTERNAL] @types/vscode ^1.44.0 greater than engines.vscode ^1.38.0 => lower dependencies
+
+### Changed
+- 1.3.1 will not be released
+
+
+## [1.3.1] - CANCELED
 ### Fixed
 - [INTERNAL] npm audit fix
 - update to vscode 1.44.0, wich includes some fixes
