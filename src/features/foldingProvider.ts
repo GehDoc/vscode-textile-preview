@@ -37,7 +37,7 @@ export default class TextileFoldingProvider implements vscode.FoldingRangeProvid
 		_token: vscode.CancellationToken
 	): Promise<vscode.FoldingRange[]> {
 		const foldables = await Promise.all([
-			this.getRegions(document), 
+			this.getRegions(document),
 			this.getHeaderFoldingRanges(document),
 			this.getBlockFoldingRanges(document)
 		]);
@@ -98,6 +98,8 @@ export default class TextileFoldingProvider implements vscode.FoldingRangeProvid
 				case 'div':
 				case 'blockquote':
 					return true;
+				case '!':
+					return !isRegionMarker(token);
 
 				default:
 					return false;
@@ -106,7 +108,7 @@ export default class TextileFoldingProvider implements vscode.FoldingRangeProvid
 
 		const tokens = await this.engine.parse(document);
 		const jsonmlUtils = await this.engine.jsonmlUtils();
-		const multiLineListItems :{start: number, end: number | undefined, nodeLevel: number}[] = [];
+		const multiLineListItems :{start: number, end: number | undefined, nodeLevel: number, isComment?: boolean}[] = [];
 		let undefinedEndCount = 0;
 		const setEndForPreviousItems = (nodeLevel: number, end: number) => {
 			if ( undefinedEndCount && multiLineListItems.length ) {
@@ -133,9 +135,9 @@ export default class TextileFoldingProvider implements vscode.FoldingRangeProvid
 						let end = getEndLineNumber( token );
 						if ( end === undefined ) {
 							undefinedEndCount++;
-							multiLineListItems.push({ start, end, nodeLevel });
+							multiLineListItems.push({ start, end, nodeLevel, isComment: token[0] === '!' });
 						} else {
-							multiLineListItems.push({ start, end: end + 1, nodeLevel });
+							multiLineListItems.push({ start, end: end + 1, nodeLevel, isComment: token[0] === '!' });
 						}
 					}
 				}
@@ -152,7 +154,7 @@ export default class TextileFoldingProvider implements vscode.FoldingRangeProvid
 				if (document.lineAt(end).isEmptyOrWhitespace && end >= start + 1) {
 					end = end - 1;
 				}
-				return new vscode.FoldingRange(start, end);
+				return new vscode.FoldingRange(start, end, listItem.isComment ? vscode.FoldingRangeKind.Comment : undefined);
 			});
 		// --- End : modified for textile
 	}

@@ -3,8 +3,11 @@
 # Replace 'Markdown' by 'Textile' in VSCode Markdown Language Features tree.
 # vscode and vscode-loc are fetched from their GitHub repo, into ./tools/tmp/
 # Then, all needed files are processed and copied to ./tools/tmp/out/
+#
+# After running this tool, you can compare ./ and ./tools/tmp/out/ to gather
+# new features.
 
-VSCODE_VERSION_GIT_TAG=1.43.1
+VSCODE_VERSION_GIT_TAG=1.44.0
 
 . $(dirname $0)/log.sh
 

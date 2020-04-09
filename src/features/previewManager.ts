@@ -63,6 +63,8 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 
 	private _activePreview: DynamicTextilePreview | undefined = undefined;
 
+	// FIXME : proposedapi : private readonly customEditorViewType = 'vscode.textile.preview.editor';
+
 	public constructor(
 		private readonly _contentProvider: TextileContentProvider,
 		private readonly _logger: Logger,
@@ -70,7 +72,7 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 	) {
 		super();
 		this._register(vscode.window.registerWebviewPanelSerializer(DynamicTextilePreview.viewType, this));
-		// FIXME : proposedapi : this._register(vscode.window.registerCustomEditorProvider('vscode.textile.preview.editor', this));
+		// FIXME : proposedapi : this._register(vscode.window.registerCustomEditorProvider(this.customEditorViewType, this));
 	}
 
 	public refresh() {
@@ -149,12 +151,12 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 	}
 
 	/* FIXME : proposedapi : 
-	public async resolveCustomDocument(_document: vscode.CustomDocument): Promise<vscode.CustomEditorCapabilities> {
-		return {};
+	public async openCustomDocument(uri: vscode.Uri) {
+		return new vscode.CustomDocument(uri);
 	}
 
-	public async resolveCustomEditor(
-		document: vscode.CustomDocument,
+	public async resolveCustomTextEditor(
+		document: vscode.TextDocument,
 		webview: vscode.WebviewPanel
 	): Promise<void> {
 		const preview = DynamicTextilePreview.revive(
