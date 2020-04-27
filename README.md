@@ -37,9 +37,9 @@ Some features of the original Markdown preview have been disabled.
 To see the full list of features and interactions, you can read the documentation of the [Visual Studio Code's Markdown Language Features](https://code.visualstudio.com/docs/languages/markdown#_markdown-preview).
 
 Features considered out of scope of this extension :
-* Snippets / Source syntax coloring : You have to use another extensions for these purpose.
-* Support plugins, like mardown-it : Need antother textile to HTML engine
-* Telemetry Reporter : Need a non free Azure account : https://www.npmjs.com/package/vscode-extension-telemetry
+* Textile code snippets / Source syntax coloring : You have to use [other extensions from the marketplace](https://marketplace.visualstudio.com/search?term=textile&target=VSCode&category=All%20categories&sortBy=Relevance) for these purposes;
+* Support plugins, like Mardown-it : Need antother textile to HTML engine;
+* Telemetry reporter : Need a non free Azure account : https://www.npmjs.com/package/vscode-extension-telemetry
 
 Maybe implemented, if requested :
 * Add other translations than the 9 core languages listed there : https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
@@ -63,7 +63,7 @@ Your support is greatly appreciated !
 
 ## Contributing
 
-* [Submit bugs and feature requests](https://github.com/GehDoc/vscode-textile-preview/issues), and help us verify as they are checked in.
+* [Submit bugs and feature requests](https://github.com/GehDoc/vscode-textile-preview/issues), and help us verify as they are checked in;
 * Fix issues and contribute to the code.
 
 Before contributing, take the time to read [the contributing guide](CONTRIBUTING.md).
