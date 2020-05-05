@@ -8,6 +8,29 @@ Full featured document live preview and rich language support, for the [Textile 
 
 Based on the source code of [Visual Studio Code's Markdown Language Features](https://github.com/microsoft/vscode/tree/master/extensions/markdown-language-features), it uses [a modified version of textile.js Textile parser](https://github.com/GehDoc/textile-js) in order to display the live preview.
 
+## Installation
+
+### From Marketplace within VS Code
+
+Launch VS Code Quick Open (<kbd>Ctrl+P</kbd>), paste the following command, and press <kbd>enter</kbd> :
+```
+ext install GehDoc.vscode-textile-preview
+```
+
+### From Marketplace with CLI
+
+In your favorite shell, the following command will download and install the extension :
+```bash
+code --install-extension GehDoc.vscode-textile-preview
+```
+
+### From Github
+
+Download the packaged extension from the [release page](https://github.com/GehDoc/vscode-textile-preview/releases) and install it from the command line :
+```bash
+code --install-extension path/to/vscode-textile-preview-*.vsix
+```
+
 ## Working with Textile
 
 Create or open any file with a .textile extension, and then you can toggle the visualization of the editor between the code and the preview of the Textile file.
