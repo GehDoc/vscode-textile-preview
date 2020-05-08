@@ -32,3 +32,8 @@ export function getUriForLinkWithKnownExternalScheme(link: string): vscode.Uri |
 export function isOfScheme(scheme: string, link: string): boolean {
 	return link.toLowerCase().startsWith(scheme);
 }
+
+// Changed for textile :
+export const TextileFileExtensions: readonly string[] = [
+	'.textile',
+];

@@ -18,8 +18,8 @@ const settings = getSettings();
 
 const vscode = acquireVsCodeApi();
 
-// Set VS Code state
-let state = getData<{ line: number; fragment: string; }>('data-state');
+const state = { ...vscode.getState(), ...getData<any>('data-state') };
+// Make sure to sync VS Code state here
 vscode.setState(state);
 
 const messaging = createPosterForVsCode(vscode);
@@ -32,24 +32,6 @@ window.onload = () => {
 };
 
 onceDocumentLoaded(() => {
-	if (settings.scrollPreviewWithEditor) {
-		setTimeout(() => {
-			// Try to scroll to fragment if available
-			if (state.fragment) {
-				const element = getLineElementForFragment(state.fragment);
-				if (element) {
-					scrollDisabled = true;
-					scrollToRevealSourceLine(element.line);
-				}
-			} else {
-				const initialLine = +settings.line;
-				if (!isNaN(initialLine)) {
-					scrollDisabled = true;
-					scrollToRevealSourceLine(initialLine);
-				}
-			}
-		}, 0);
-	}
 	// -- Begin: Modified for textile
 	// Allow accurate hover on multi-levels LI
 	let root = document.getElementById('text_preview');
@@ -78,10 +60,39 @@ onceDocumentLoaded(() => {
 				target = target.parentNode as Element;
 			}
 		}, true);
-	} else {
-		throw new Error('No text_preview node.');
 	}
 	// -- End: Modified for textile
+
+	const scrollProgress = state.scrollProgress;
+
+	if (typeof scrollProgress === 'number' && !settings.fragment) {
+		setImmediate(() => {
+			scrollDisabled = true;
+			window.scrollTo(0, scrollProgress * document.body.clientHeight);
+		});
+		return;
+	}
+
+	if (settings.scrollPreviewWithEditor) {
+		setImmediate(() => {
+			// Try to scroll to fragment if available
+			if (settings.fragment) {
+				state.fragment = undefined;
+				vscode.setState(state);
+
+				const element = getLineElementForFragment(settings.fragment);
+				if (element) {
+					scrollDisabled = true;
+					scrollToRevealSourceLine(element.line);
+				}
+			} else {
+				if (!isNaN(settings.line!)) {
+					scrollDisabled = true;
+					scrollToRevealSourceLine(settings.line!);
+				}
+			}
+		});
+	}
 });
 
 const onUpdateView = (() => {
@@ -90,9 +101,10 @@ const onUpdateView = (() => {
 		scrollToRevealSourceLine(line);
 	}, 50);
 
-	return (line: number, settings: any) => {
+	return (line: number) => {
 		if (!isNaN(line)) {
-			settings.line = line;
+			state.line = line;
+
 			doScroll(line);
 		}
 	};
@@ -123,6 +135,7 @@ let updateImageSizes = throttle(() => {
 
 window.addEventListener('resize', () => {
 	scrollDisabled = true;
+	updateScrollProgress();
 	updateImageSizes();
 }, true);
 
@@ -137,7 +150,7 @@ window.addEventListener('message', event => {
 			break;
 
 		case 'updateView':
-			onUpdateView(event.data.line, settings);
+			onUpdateView(event.data.line);
 			break;
 	}
 }, false);
@@ -197,15 +210,20 @@ document.addEventListener('click', event => {
 }, true);
 
 window.addEventListener('scroll', throttle(() => {
+	updateScrollProgress();
+
 	if (scrollDisabled) {
 		scrollDisabled = false;
 	} else {
 		const line = getEditorLineNumberForPageOffset(window.scrollY);
 		if (typeof line === 'number' && !isNaN(line)) {
 			messaging.postMessage('revealLine', { line });
-			state.line = line;
-			vscode.setState(state);
 		}
 	}
 }, 50));
+
+function updateScrollProgress() {
+	state.scrollProgress = window.scrollY / document.body.clientHeight;
+	vscode.setState(state);
+}
 

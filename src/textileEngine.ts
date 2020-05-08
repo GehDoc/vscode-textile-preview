@@ -10,7 +10,7 @@ import * as vscode from 'vscode';
 import { TextileContributionProvider as TextileContributionProvider } from './textileExtensions';
 import { Slugifier } from './slugify';
 import { SkinnyTextDocument } from './tableOfContentsProvider';
-//import { Schemes, isOfScheme } from './util/links';
+//import { TextileFileExtensions, Schemes, isOfScheme } from './util/links';
 
 const UNICODE_NEWLINE_REGEX = /\u2028|\u2029/g;
 
@@ -318,7 +318,9 @@ export class TextileEngine {
 						}
 					}
 
-					if (uri.fragment) {
+					const extname = path.extname(uri.fsPath);
+
+					if (uri.fragment && (extname === '' || TextileFileExtensions.includes(extname))) {
 						uri = uri.with({
 							fragment: this.slugifier.fromHeading(uri.fragment).value
 						});

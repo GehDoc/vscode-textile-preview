@@ -13,7 +13,7 @@ import { Disposable } from '../util/dispose';
 import * as nls from 'vscode-nls';
 import { getVisibleLine, TopmostLineMonitor } from '../util/topmostLineMonitor';
 import { TextilePreviewConfigurationManager } from './previewConfig';
-import { TextileContributionProvider, TextileContributions } from '../textileExtensions';
+import { TextileContributionProvider } from '../textileExtensions';
 import { isTextileFile } from '../util/file';
 import { resolveLinkToTextileFile } from '../commands/openDocumentLink';
 import { WebviewResourceProvider, normalizeResource } from '../util/resources';
@@ -61,10 +61,14 @@ interface PreviewStyleLoadErrorMessage extends WebviewMessage {
 }
 
 export class PreviewDocumentVersion {
-	public constructor(
-		public readonly resource: vscode.Uri,
-		public readonly version: number,
-	) { }
+
+	private readonly resource: vscode.Uri;
+	private readonly version: number;
+
+	public constructor(document: vscode.TextDocument) {
+		this.resource = document.uri;
+		this.version = document.version;
+	}
 
 	public equals(other: PreviewDocumentVersion): boolean {
 		return this.resource.fsPath === other.resource.fsPath
@@ -72,102 +76,86 @@ export class PreviewDocumentVersion {
 	}
 }
 
-interface DynamicPreviewInput {
-	readonly resource: vscode.Uri;
-	readonly resourceColumn: vscode.ViewColumn;
-	readonly locked: boolean;
-	readonly line?: number;
+interface TextilePreviewDelegate {
+	getTitle?(resource: vscode.Uri): string;
+	getAdditionalState(): {},
+	openPreviewLinkToTextileFile(textileLink: vscode.Uri, fragment: string): void;
 }
 
-export class DynamicTextilePreview extends Disposable {
+class StartingScrollLine {
+	public readonly type = 'line';
 
-	public static readonly viewType = 'textile.preview';
+	constructor(
+		public readonly line: number,
+	) { }
+}
+
+class StartingScrollFragment {
+	public readonly type = 'fragment';
+
+	constructor(
+		public readonly fragment: string,
+	) { }
+}
+
+type StartingScrollLocation = StartingScrollLine | StartingScrollFragment;
+
+class TextilePreview extends Disposable implements WebviewResourceProvider {
 
 	private readonly delay = 300;
 
-	private _resource: vscode.Uri;
-	private readonly _resourceColumn: vscode.ViewColumn;
+	private readonly _resource: vscode.Uri;
+	private readonly _webviewPanel: vscode.WebviewPanel;
 
-	private _locked: boolean;
-
-	private readonly editor: vscode.WebviewPanel;
 	private throttleTimer: any;
-	private line: number | undefined = undefined;
+
+	private line: number | undefined;
+	private scrollToFragment: string | undefined;
+
 	private firstUpdate = true;
 	private currentVersion?: PreviewDocumentVersion;
 	private isScrolling = false;
 	private _disposed: boolean = false;
-	private imageInfo: { id: string, width: number, height: number; }[] = [];
-	private scrollToFragment: string | undefined;
+	private imageInfo: { readonly id: string, readonly width: number, readonly height: number; }[] = [];
 
-	public static revive(
-		input: DynamicPreviewInput,
+	constructor(
 		webview: vscode.WebviewPanel,
-		contentProvider: TextileContentProvider,
-		previewConfigurations: TextilePreviewConfigurationManager,
-		logger: Logger,
-		topmostLineMonitor: TopmostLineMonitor,
-		contributionProvider: TextileContributionProvider,
-	): DynamicTextilePreview {
-		webview.webview.options = DynamicTextilePreview.getWebviewOptions(input.resource, contributionProvider.contributions);
-		webview.title = DynamicTextilePreview.getPreviewTitle(input.resource, input.locked);
-
-		return new DynamicTextilePreview(webview, input,
-			contentProvider, previewConfigurations, logger, topmostLineMonitor, contributionProvider);
-	}
-
-	public static create(
-		input: DynamicPreviewInput,
-		previewColumn: vscode.ViewColumn,
-		contentProvider: TextileContentProvider,
-		previewConfigurations: TextilePreviewConfigurationManager,
-		logger: Logger,
-		topmostLineMonitor: TopmostLineMonitor,
-		contributionProvider: TextileContributionProvider
-	): DynamicTextilePreview {
-		const webview = vscode.window.createWebviewPanel(
-			DynamicTextilePreview.viewType,
-			DynamicTextilePreview.getPreviewTitle(input.resource, input.locked),
-			previewColumn, {
-			enableFindWidget: true,
-			...DynamicTextilePreview.getWebviewOptions(input.resource, contributionProvider.contributions)
-		});
-
-		return new DynamicTextilePreview(webview, input,
-			contentProvider, previewConfigurations, logger, topmostLineMonitor, contributionProvider);
-	}
-
-	private constructor(
-		webview: vscode.WebviewPanel,
-		input: DynamicPreviewInput,
+		resource: vscode.Uri,
+		startingScroll: StartingScrollLocation | undefined,
+		private readonly delegate: TextilePreviewDelegate,
 		private readonly _contentProvider: TextileContentProvider,
 		private readonly _previewConfigurations: TextilePreviewConfigurationManager,
 		private readonly _logger: Logger,
-		topmostLineMonitor: TopmostLineMonitor,
 		private readonly _contributionProvider: TextileContributionProvider,
 	) {
 		super();
-		this._resource = input.resource;
-		this._resourceColumn = input.resourceColumn;
-		this._locked = input.locked;
-		this.editor = webview;
-		if (!isNaN(input.line!)) {
-			this.line = input.line;
+
+		this._webviewPanel = webview;
+		this._resource = resource;
+
+		switch (startingScroll?.type) {
+			case 'line':
+				if (!isNaN(startingScroll.line!)) {
+					this.line = startingScroll.line;
+				}
+				break;
+
+			case 'fragment':
+				this.scrollToFragment = startingScroll.fragment;
+				break;
 		}
-
-		this._register(this.editor.onDidDispose(() => {
-			this.dispose();
-		}));
-
-		this._register(this.editor.onDidChangeViewState(e => {
-			this._onDidChangeViewStateEmitter.fire(e);
-		}));
 
 		this._register(_contributionProvider.onContributionsChanged(() => {
 			setImmediate(() => this.refresh());
 		}));
 
-		this._register(this.editor.webview.onDidReceiveMessage((e: CacheImageSizesMessage | RevealLineMessage | DidClickMessage | ClickLinkMessage | ShowPreviewSecuritySelectorMessage | PreviewStyleLoadErrorMessage) => {
+		this._register(vscode.workspace.onDidChangeTextDocument(event => {
+			if (this.isPreviewOf(event.document.uri)) {
+				this.refresh();
+			}
+		}));
+
+		this._register(this._webviewPanel.webview.onDidReceiveMessage((e: CacheImageSizesMessage | RevealLineMessage | DidClickMessage | ClickLinkMessage | ShowPreviewSecuritySelectorMessage | PreviewStyleLoadErrorMessage) => {
 			if (e.source !== this._resource.toString()) {
 				return;
 			}
@@ -194,156 +182,48 @@ export class DynamicTextilePreview extends Disposable {
 					break;
 
 				case 'previewStyleLoadError':
-					vscode.window.showWarningMessage(localize('onPreviewStyleLoadError', "Could not load 'textile.styles': {0}", e.body.unloadedStyles.join(', ')));
+					vscode.window.showWarningMessage(
+						localize('onPreviewStyleLoadError',
+							"Could not load 'textile.styles': {0}",
+							e.body.unloadedStyles.join(', ')));
 					break;
 			}
 		}));
 
-		this._register(vscode.workspace.onDidChangeTextDocument(event => {
-			if (this.isPreviewOf(event.document.uri)) {
-				this.refresh();
-			}
-		}));
-
-		this._register(topmostLineMonitor.onDidChanged(event => {
-			if (this.isPreviewOf(event.resource)) {
-				this.updateForView(event.resource, event.line);
-			}
-		}));
-
-		this._register(vscode.window.onDidChangeTextEditorSelection(event => {
-			if (this.isPreviewOf(event.textEditor.document.uri)) {
-				this.postMessage({
-					type: 'onDidChangeTextEditorSelection',
-					line: event.selections[0].active.line,
-					source: this.resource.toString()
-				});
-			}
-		}));
-
-		this._register(vscode.window.onDidChangeActiveTextEditor(editor => {
-			if (editor && isTextileFile(editor.document) && !this._locked) {
-				this.update(editor.document.uri, false);
-			}
-		}));
-
-		this.doUpdate();
+		this.updatePreview();
 	}
 
-	private readonly _onDisposeEmitter = this._register(new vscode.EventEmitter<void>());
-	public readonly onDispose = this._onDisposeEmitter.event;
-
-	private readonly _onDidChangeViewStateEmitter = this._register(new vscode.EventEmitter<vscode.WebviewPanelOnDidChangeViewStateEvent>());
-	public readonly onDidChangeViewState = this._onDidChangeViewStateEmitter.event;
+	dispose() {
+		super.dispose();
+		this._disposed = true;
+		clearTimeout(this.throttleTimer);
+	}
 
 	public get resource(): vscode.Uri {
 		return this._resource;
 	}
 
-	public get resourceColumn(): vscode.ViewColumn {
-		return this._resourceColumn;
-	}
-
 	public get state() {
 		return {
-			resource: this.resource.toString(),
-			locked: this._locked,
+			resource: this._resource.toString(),
 			line: this.line,
-			resourceColumn: this.resourceColumn,
 			imageInfo: this.imageInfo,
-			fragment: this.scrollToFragment
+			fragment: this.scrollToFragment,
+			...this.delegate.getAdditionalState(),
 		};
 	}
 
-	public dispose() {
-		if (this._disposed) {
-			return;
-		}
-
-		this._disposed = true;
-		this._onDisposeEmitter.fire();
-		this._onDisposeEmitter.dispose();
-
-		this.editor.dispose();
-		super.dispose();
-	}
-
-	public update(resource: vscode.Uri, isRefresh = true) {
-		// Reposition scroll preview, position scroll to the top if active text editor
-		// doesn't corresponds with preview
-		const editor = vscode.window.activeTextEditor;
-		if (editor) {
-			if (!isRefresh || this._previewConfigurations.loadAndCacheConfiguration(this._resource).scrollEditorWithPreview) {
-				if (editor.document.uri.fsPath === resource.fsPath) {
-					this.line = getVisibleLine(editor);
-				} else {
-					this.line = 0;
-				}
-			}
-		}
-
-		// If we have changed resources, cancel any pending updates
-		const isResourceChange = resource.fsPath !== this._resource.fsPath;
-		if (isResourceChange) {
-			clearTimeout(this.throttleTimer);
-			this.throttleTimer = undefined;
-		}
-
-		this._resource = resource;
-
+	public refresh() {
 		// Schedule update if none is pending
 		if (!this.throttleTimer) {
-			if (isResourceChange || this.firstUpdate) {
-				this.doUpdate(isRefresh);
+			if (this.firstUpdate) {
+				this.updatePreview(true);
 			} else {
-				this.throttleTimer = setTimeout(() => this.doUpdate(isRefresh), this.delay);
+				this.throttleTimer = setTimeout(() => this.updatePreview(true), this.delay);
 			}
 		}
 
 		this.firstUpdate = false;
-	}
-
-	public refresh() {
-		this.update(this._resource, true);
-	}
-
-	public updateConfiguration() {
-		if (this._previewConfigurations.hasConfigurationChanged(this._resource)) {
-			this.refresh();
-		}
-	}
-
-	public get position(): vscode.ViewColumn | undefined {
-		return this.editor.viewColumn;
-	}
-
-	public matchesResource(
-		otherResource: vscode.Uri,
-		otherPosition: vscode.ViewColumn | undefined,
-		otherLocked: boolean
-	): boolean {
-		if (this.position !== otherPosition) {
-			return false;
-		}
-
-		if (this._locked) {
-			return otherLocked && this.isPreviewOf(otherResource);
-		} else {
-			return !otherLocked;
-		}
-	}
-
-	public matches(otherPreview: DynamicTextilePreview): boolean {
-		return this.matchesResource(otherPreview._resource, otherPreview.position, otherPreview._locked);
-	}
-
-	public reveal(viewColumn: vscode.ViewColumn) {
-		this.editor.reveal(viewColumn);
-	}
-
-	public toggleLock() {
-		this._locked = !this._locked;
-		this.editor.title = DynamicTextilePreview.getPreviewTitle(this._resource, this._locked);
 	}
 
 	private get iconPath() {
@@ -354,18 +234,18 @@ export class DynamicTextilePreview extends Disposable {
 		};
 	}
 
-	private isPreviewOf(resource: vscode.Uri): boolean {
+	public isPreviewOf(resource: vscode.Uri): boolean {
 		return this._resource.fsPath === resource.fsPath;
 	}
 
-	private static getPreviewTitle(resource: vscode.Uri, locked: boolean): string {
-		return locked
-			? localize('lockedPreviewTitle', '[Preview] {0}', path.basename(resource.fsPath))
-			: localize('previewTitle', 'Preview {0}', path.basename(resource.fsPath));
+	public postMessage(msg: any) {
+		if (!this._disposed) {
+			this._webviewPanel.webview.postMessage(msg);
+		}
 	}
 
-	private updateForView(resource: vscode.Uri, topLine: number | undefined) {
-		if (!this.isPreviewOf(resource)) {
+	public scrollTo(topLine: number) {
+		if (this._disposed) {
 			return;
 		}
 
@@ -374,36 +254,26 @@ export class DynamicTextilePreview extends Disposable {
 			return;
 		}
 
-		if (typeof topLine === 'number') {
-			this._logger.log('updateForView', { textileFile: resource });
-			this.line = topLine;
-			this.postMessage({
-				type: 'updateView',
-				line: topLine,
-				source: resource.toString()
-			});
-		}
+		this._logger.log('updateForView', { textileFile: this._resource });
+		this.line = topLine;
+		this.postMessage({
+			type: 'updateView',
+			line: topLine,
+			source: this._resource.toString()
+		});
 	}
 
-	private postMessage(msg: any) {
-		if (!this._disposed) {
-			this.editor.webview.postMessage(msg);
-		}
-	}
+	private async updatePreview(forceUpdate?: boolean): Promise<void> {
+		clearTimeout(this.throttleTimer);
+		this.throttleTimer = undefined;
 
-	private async doUpdate(forceUpdate?: boolean): Promise<void> {
 		if (this._disposed) {
 			return;
 		}
 
-		const textileResource = this._resource;
-
-		clearTimeout(this.throttleTimer);
-		this.throttleTimer = undefined;
-
 		let document: vscode.TextDocument;
 		try {
-			document = await vscode.workspace.openTextDocument(textileResource);
+			document = await vscode.workspace.openTextDocument(this._resource);
 		} catch {
 			await this.showFileNotFoundError();
 			return;
@@ -413,59 +283,22 @@ export class DynamicTextilePreview extends Disposable {
 			return;
 		}
 
-		const pendingVersion = new PreviewDocumentVersion(textileResource, document.version);
+		const pendingVersion = new PreviewDocumentVersion(document);
 		if (!forceUpdate && this.currentVersion?.equals(pendingVersion)) {
 			if (this.line) {
-				this.updateForView(textileResource, this.line);
+				this.scrollTo(this.line);
 			}
 			return;
 		}
 
 		this.currentVersion = pendingVersion;
-		if (this._resource === textileResource) {
-			const self = this;
-			const resourceProvider: WebviewResourceProvider = {
-				asWebviewUri: (resource) => {
-					return this.editor.webview.asWebviewUri(normalizeResource(textileResource, resource));
-				},
-				get cspSource() { return self.editor.webview.cspSource; }
-			};
-			const content = await this._contentProvider.provideTextDocumentContent(document, resourceProvider, this._previewConfigurations, this.line, this.state);
-			// Another call to `doUpdate` may have happened.
-			// Make sure we are still updating for the correct document
-			if (this.currentVersion && this.currentVersion.equals(pendingVersion)) {
-				this.setContent(content);
-			}
+		const content = await this._contentProvider.provideTextDocumentContent(document, this, this._previewConfigurations, this.line, this.state);
+
+		// Another call to `doUpdate` may have happened.
+		// Make sure we are still updating for the correct document
+		if (this.currentVersion?.equals(pendingVersion)) {
+			this.setContent(content);
 		}
-	}
-
-	private static getWebviewOptions(
-		resource: vscode.Uri,
-		contributions: TextileContributions
-	): vscode.WebviewOptions {
-		return {
-			enableScripts: true,
-			localResourceRoots: DynamicTextilePreview.getLocalResourceRoots(resource, contributions)
-		};
-	}
-
-	private static getLocalResourceRoots(
-		base: vscode.Uri,
-		contributions: TextileContributions
-	): ReadonlyArray<vscode.Uri> {
-		const baseRoots = Array.from(contributions.previewResourceRoots);
-
-		const folder = vscode.workspace.getWorkspaceFolder(base);
-		if (folder) {
-			const workspaceRoots = vscode.workspace.workspaceFolders?.map(folder => folder.uri);
-			if (workspaceRoots) {
-				baseRoots.push(...workspaceRoots);
-			}
-		} else if (!base.scheme || base.scheme === 'file') {
-			baseRoots.push(vscode.Uri.file(path.dirname(base.fsPath)));
-		}
-
-		return baseRoots.map(root => normalizeResource(base, root));
 	}
 
 	private onDidScrollPreview(line: number) {
@@ -513,15 +346,46 @@ export class DynamicTextilePreview extends Disposable {
 	}
 
 	private async showFileNotFoundError() {
-		this.setContent(this._contentProvider.provideFileNotFoundContent(this._resource));
+		this._webviewPanel.webview.html = this._contentProvider.provideFileNotFoundContent(this._resource);
 	}
 
 	private setContent(html: string): void {
-		this.editor.title = DynamicTextilePreview.getPreviewTitle(this._resource, this._locked);
-		this.editor.iconPath = this.iconPath;
-		this.editor.webview.options = DynamicTextilePreview.getWebviewOptions(this._resource, this._contributionProvider.contributions);
-		this.editor.webview.html = html;
+		if (this._disposed) {
+			return;
+		}
+
+		if (this.delegate.getTitle) {
+			this._webviewPanel.title = this.delegate.getTitle(this._resource);
+		}
+		this._webviewPanel.iconPath = this.iconPath;
+		this._webviewPanel.webview.options = this.getWebviewOptions();
+
+		this._webviewPanel.webview.html = html;
 	}
+
+	private getWebviewOptions(): vscode.WebviewOptions {
+		return {
+			enableScripts: true,
+			localResourceRoots: this.getLocalResourceRoots()
+		};
+	}
+
+	private getLocalResourceRoots(): ReadonlyArray<vscode.Uri> {
+		const baseRoots = Array.from(this._contributionProvider.contributions.previewResourceRoots);
+
+		const folder = vscode.workspace.getWorkspaceFolder(this._resource);
+		if (folder) {
+			const workspaceRoots = vscode.workspace.workspaceFolders?.map(folder => folder.uri);
+			if (workspaceRoots) {
+				baseRoots.push(...workspaceRoots);
+			}
+		} else if (!this._resource.scheme || this._resource.scheme === 'file') {
+			baseRoots.push(vscode.Uri.file(path.dirname(this._resource.fsPath)));
+		}
+
+		return baseRoots.map(root => normalizeResource(this._resource, root));
+	}
+
 
 	private async onDidClickPreviewLink(href: string) {
 		let [hrefPath, fragment] = decodeURIComponent(href).split('#');
@@ -529,7 +393,8 @@ export class DynamicTextilePreview extends Disposable {
 		// We perviously already resolve absolute paths.
 		// Now make sure we handle relative file paths
 		if (hrefPath[0] !== '/') {
-			hrefPath = path.join(path.dirname(this.resource.path), hrefPath);
+			// Fix #93691, use this.resource.fsPath instead of this.resource.path
+			hrefPath = path.join(path.dirname(this.resource.fsPath), hrefPath);
 		}
 
 		const config = vscode.workspace.getConfiguration('textile', this.resource);
@@ -537,14 +402,332 @@ export class DynamicTextilePreview extends Disposable {
 		if (openLinks === 'inPreview') {
 			const textileLink = await resolveLinkToTextileFile(hrefPath);
 			if (textileLink) {
-				if (fragment) {
-					this.scrollToFragment = fragment;
-				}
-				this.update(textileLink);
+				this.delegate.openPreviewLinkToTextileFile(textileLink, fragment);
 				return;
 			}
 		}
 
 		vscode.commands.executeCommand('_textile.openDocumentLink', { path: hrefPath, fragment, fromResource: this.resource });
 	}
+
+	//#region WebviewResourceProvider
+
+	asWebviewUri(resource: vscode.Uri) {
+		return this._webviewPanel.webview.asWebviewUri(normalizeResource(this._resource, resource));
+	}
+
+	get cspSource() {
+		return this._webviewPanel.webview.cspSource;
+	}
+
+	//#endregion
 }
+
+export interface ManagedTextilePreview {
+
+	readonly resource: vscode.Uri;
+	readonly resourceColumn: vscode.ViewColumn;
+
+	readonly onDispose: vscode.Event<void>;
+	readonly onDidChangeViewState: vscode.Event<vscode.WebviewPanelOnDidChangeViewStateEvent>;
+
+	dispose(): void;
+
+	refresh(): void;
+	updateConfiguration(): void;
+
+	matchesResource(
+		otherResource: vscode.Uri,
+		otherPosition: vscode.ViewColumn | undefined,
+		otherLocked: boolean
+	): boolean;
+}
+
+export class StaticTextilePreview extends Disposable implements ManagedTextilePreview {
+
+	public static revive(
+		resource: vscode.Uri,
+		webview: vscode.WebviewPanel,
+		contentProvider: TextileContentProvider,
+		previewConfigurations: TextilePreviewConfigurationManager,
+		logger: Logger,
+		contributionProvider: TextileContributionProvider,
+	): StaticTextilePreview {
+		return new StaticTextilePreview(webview, resource, contentProvider, previewConfigurations, logger, contributionProvider);
+	}
+
+	private readonly preview: TextilePreview;
+
+	private constructor(
+		private readonly _webviewPanel: vscode.WebviewPanel,
+		resource: vscode.Uri,
+		contentProvider: TextileContentProvider,
+		private readonly _previewConfigurations: TextilePreviewConfigurationManager,
+		logger: Logger,
+		contributionProvider: TextileContributionProvider,
+	) {
+		super();
+
+		this.preview = this._register(new TextilePreview(this._webviewPanel, resource, undefined, {
+			getAdditionalState: () => { return {}; },
+			openPreviewLinkToTextileFile: () => { /* todo */ }
+		}, contentProvider, _previewConfigurations, logger, contributionProvider));
+
+		this._register(this._webviewPanel.onDidDispose(() => {
+			this.dispose();
+		}));
+
+		this._register(this._webviewPanel.onDidChangeViewState(e => {
+			this._onDidChangeViewState.fire(e);
+		}));
+	}
+
+	private readonly _onDispose = this._register(new vscode.EventEmitter<void>());
+	public readonly onDispose = this._onDispose.event;
+
+	private readonly _onDidChangeViewState = this._register(new vscode.EventEmitter<vscode.WebviewPanelOnDidChangeViewStateEvent>());
+	public readonly onDidChangeViewState = this._onDidChangeViewState.event;
+
+	dispose() {
+		this._onDispose.fire();
+		super.dispose();
+	}
+
+	public matchesResource(
+		_otherResource: vscode.Uri,
+		_otherPosition: vscode.ViewColumn | undefined,
+		_otherLocked: boolean
+	): boolean {
+		return false;
+	}
+
+	public refresh() {
+		this.preview.refresh();
+	}
+
+	public updateConfiguration() {
+		if (this._previewConfigurations.hasConfigurationChanged(this.preview.resource)) {
+			this.refresh();
+		}
+	}
+
+	public get resource() {
+		return this.preview.resource;
+	}
+
+	public get resourceColumn() {
+		return this._webviewPanel.viewColumn || vscode.ViewColumn.One;
+	}
+}
+
+interface DynamicPreviewInput {
+	readonly resource: vscode.Uri;
+	readonly resourceColumn: vscode.ViewColumn;
+	readonly locked: boolean;
+	readonly line?: number;
+}
+
+/**
+ * A
+ */
+export class DynamicTextilePreview extends Disposable implements ManagedTextilePreview {
+
+	public static readonly viewType = 'textile.preview';
+
+	private readonly _resourceColumn: vscode.ViewColumn;
+	private _locked: boolean;
+
+	private readonly _webviewPanel: vscode.WebviewPanel;
+	private _preview: TextilePreview;
+
+	public static revive(
+		input: DynamicPreviewInput,
+		webview: vscode.WebviewPanel,
+		contentProvider: TextileContentProvider,
+		previewConfigurations: TextilePreviewConfigurationManager,
+		logger: Logger,
+		topmostLineMonitor: TopmostLineMonitor,
+		contributionProvider: TextileContributionProvider,
+	): DynamicTextilePreview {
+		return new DynamicTextilePreview(webview, input,
+			contentProvider, previewConfigurations, logger, topmostLineMonitor, contributionProvider);
+	}
+
+	public static create(
+		input: DynamicPreviewInput,
+		previewColumn: vscode.ViewColumn,
+		contentProvider: TextileContentProvider,
+		previewConfigurations: TextilePreviewConfigurationManager,
+		logger: Logger,
+		topmostLineMonitor: TopmostLineMonitor,
+		contributionProvider: TextileContributionProvider
+	): DynamicTextilePreview {
+		const webview = vscode.window.createWebviewPanel(
+			DynamicTextilePreview.viewType,
+			DynamicTextilePreview.getPreviewTitle(input.resource, input.locked),
+			previewColumn, { enableFindWidget: true, });
+
+		return new DynamicTextilePreview(webview, input,
+			contentProvider, previewConfigurations, logger, topmostLineMonitor, contributionProvider);
+	}
+
+	private constructor(
+		webview: vscode.WebviewPanel,
+		input: DynamicPreviewInput,
+		private readonly _contentProvider: TextileContentProvider,
+		private readonly _previewConfigurations: TextilePreviewConfigurationManager,
+		private readonly _logger: Logger,
+		private readonly _topmostLineMonitor: TopmostLineMonitor,
+		private readonly _contributionProvider: TextileContributionProvider,
+	) {
+		super();
+
+		this._webviewPanel = webview;
+
+		this._resourceColumn = input.resourceColumn;
+		this._locked = input.locked;
+
+		this._preview = this.createPreview(input.resource, typeof input.line === 'number' ? new StartingScrollLine(input.line) : undefined);
+
+		this._register(webview.onDidDispose(() => { this.dispose(); }));
+
+		this._register(this._webviewPanel.onDidChangeViewState(e => {
+			this._onDidChangeViewStateEmitter.fire(e);
+		}));
+
+		this._register(this._topmostLineMonitor.onDidChanged(event => {
+			if (this._preview.isPreviewOf(event.resource)) {
+				this._preview.scrollTo(event.line);
+			}
+		}));
+
+		this._register(vscode.window.onDidChangeTextEditorSelection(event => {
+			if (this._preview.isPreviewOf(event.textEditor.document.uri)) {
+				this._preview.postMessage({
+					type: 'onDidChangeTextEditorSelection',
+					line: event.selections[0].active.line,
+					source: this._preview.resource.toString()
+				});
+			}
+		}));
+
+		this._register(vscode.window.onDidChangeActiveTextEditor(editor => {
+			if (editor && isTextileFile(editor.document) && !this._locked && !this._preview.isPreviewOf(editor.document.uri)) {
+				const line = getVisibleLine(editor);
+				this.update(editor.document.uri, line ? new StartingScrollLine(line) : undefined);
+			}
+		}));
+	}
+
+	private readonly _onDisposeEmitter = this._register(new vscode.EventEmitter<void>());
+	public readonly onDispose = this._onDisposeEmitter.event;
+
+	private readonly _onDidChangeViewStateEmitter = this._register(new vscode.EventEmitter<vscode.WebviewPanelOnDidChangeViewStateEvent>());
+	public readonly onDidChangeViewState = this._onDidChangeViewStateEmitter.event;
+
+	dispose() {
+		this._preview.dispose();
+		this._webviewPanel.dispose();
+
+		this._onDisposeEmitter.fire();
+		this._onDisposeEmitter.dispose();
+		super.dispose();
+	}
+
+	public get resource() {
+		return this._preview.resource;
+	}
+
+	public get resourceColumn() {
+		return this._resourceColumn;
+	}
+
+	public reveal(viewColumn: vscode.ViewColumn) {
+		this._webviewPanel.reveal(viewColumn);
+	}
+
+	public refresh() {
+		this._preview.refresh();
+	}
+
+	public updateConfiguration() {
+		if (this._previewConfigurations.hasConfigurationChanged(this._preview.resource)) {
+			this.refresh();
+		}
+	}
+
+	public update(newResource: vscode.Uri, scrollLocation?: StartingScrollLocation) {
+		if (this._preview.isPreviewOf(newResource)) {
+			switch (scrollLocation?.type) {
+				case 'line':
+					this._preview.scrollTo(scrollLocation.line);
+					return;
+
+				case 'fragment':
+					// Workaround. For fragments, just reload the entire preview
+					break;
+
+				default:
+					return;
+			}
+		}
+
+		this._preview.dispose();
+		this._preview = this.createPreview(newResource, scrollLocation);
+	}
+
+	public toggleLock() {
+		this._locked = !this._locked;
+		this._webviewPanel.title = DynamicTextilePreview.getPreviewTitle(this._preview.resource, this._locked);
+	}
+
+	private static getPreviewTitle(resource: vscode.Uri, locked: boolean): string {
+		return locked
+			? localize('lockedPreviewTitle', '[Preview] {0}', path.basename(resource.fsPath))
+			: localize('previewTitle', 'Preview {0}', path.basename(resource.fsPath));
+	}
+
+	public get position(): vscode.ViewColumn | undefined {
+		return this._webviewPanel.viewColumn;
+	}
+
+	public matchesResource(
+		otherResource: vscode.Uri,
+		otherPosition: vscode.ViewColumn | undefined,
+		otherLocked: boolean
+	): boolean {
+		if (this.position !== otherPosition) {
+			return false;
+		}
+
+		if (this._locked) {
+			return otherLocked && this._preview.isPreviewOf(otherResource);
+		} else {
+			return !otherLocked;
+		}
+	}
+
+	public matches(otherPreview: DynamicTextilePreview): boolean {
+		return this.matchesResource(otherPreview._preview.resource, otherPreview.position, otherPreview._locked);
+	}
+
+	private createPreview(resource: vscode.Uri, startingScroll?: StartingScrollLocation): TextilePreview {
+		return new TextilePreview(this._webviewPanel, resource, startingScroll, {
+			getTitle: (resource) => DynamicTextilePreview.getPreviewTitle(resource, this._locked),
+			getAdditionalState: () => {
+				return {
+					resourceColumn: this.resourceColumn,
+					locked: this._locked,
+				};
+			},
+			openPreviewLinkToTextileFile: (link: vscode.Uri, fragment?: string) => {
+				this.update(link, fragment ? new StartingScrollFragment(fragment) : undefined);
+			}
+		},
+			this._contentProvider,
+			this._previewConfigurations,
+			this._logger,
+			this._contributionProvider);
+	}
+}
+

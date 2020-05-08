@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [UNRELEASED]
 ### Changed
-- [DOC] - Sponsoring links
+- [DOC] Change sponsoring links
+- [DOC] Add installation instructions
+- Update to vscode 1.45.0
+- [I18N] Update translations to latest vscode-loc
 
 
 ## [1.3.2] - 20200409
