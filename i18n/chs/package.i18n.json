@@ -8,7 +8,7 @@
 	],
 	"displayName": "Textile 语言功能",
 	"description": "为 Textile 提供丰富的语言支持。",
-	"textile.preview.breaks.desc": "设置换行符如何在 textile 预览中呈现。将其设置为 \"true\" 会为每一个新行创建一个 <br>。",
+	"textile.preview.breaks.desc": "设置如何在 Textile 预览中呈现分行符。如果将其设置为 \"true\"，则将为每个新行创建一个 <br>。",
 	"textile.preview.linkify": "在 Textile 预览中启用或禁用将类似 URL 的文本转换为链接。",
 	"textile.preview.doubleClickToSwitchToEditor.desc": "在 Textile 预览中双击切换到编辑器。",
 	"textile.preview.fontFamily.desc": "控制 Textile 预览中使用的字体系列。",
