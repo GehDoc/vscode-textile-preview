@@ -52,16 +52,16 @@ module.exports = {
 		folderName: 'jpn',
 		replacements: [
 			[ /markdown/g, 'textile', 25 ],
-			[ /マークダウン/g, 'Textile', 19 ],
-			[ /Markdown/g, 'Textile', 5 ],
+			[ /マークダウン/g, 'Textile', 18 ],
+			[ /Markdown/g, 'Textile', 6 ],
 		]
 	},
 	'ko':{
 		id: 'ko',
 		folderName: 'kor',
 		replacements: [
-			[ /markdown/g, 'textile', 32 ],
-			[ /Markdown/g, 'Textile', 14 ],
+			[ /markdown/g, 'textile', 33 ],
+			[ /Markdown/g, 'Textile', 13 ],
 			[ /마크다운/g, 'Textile', 3]
 		]
 	},
@@ -69,8 +69,8 @@ module.exports = {
 		id: 'ru',
 		folderName: 'rus',
 		replacements: [
-			[ /markdown/g, 'textile', 25 ],
-			[ /Markdown/g, 'Textile', 24 ],
+			[ /markdown/g, 'textile', 26 ],
+			[ /Markdown/g, 'Textile', 23 ],
 		]
 	},
 	'zh-hant':{
@@ -86,8 +86,8 @@ module.exports = {
 		id: 'zh-cn',
 		folderName: 'chs',
 		replacements: [
-			[ /markdown/g, 'textile', 29 ],
-			[ /Markdown/g, 'Textile', 20 ],
+			[ /markdown/g, 'textile', 28 ],
+			[ /Markdown/g, 'Textile', 21 ],
 		],
 		transifexId: 'zh-hans'
 	},
