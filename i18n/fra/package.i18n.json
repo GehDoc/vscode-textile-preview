@@ -8,7 +8,7 @@
 	],
 	"displayName": "Fonctionnalités de langage Textile",
 	"description": "Fournit une prise en charge riche de langage pour Textile",
-	"textile.preview.breaks.desc": "Définit la façon dont les sauts de ligne sont affichés dans l'aperçu Textile. Si vous affectez la valeur true, un <br> est créé pour chaque nouvelle ligne.",
+	"textile.preview.breaks.desc": "Définit la façon dont les sauts de ligne sont affichés dans l'aperçu Textile. Si vous affectez la valeur 'true', un <br> est créé pour les nouvelles lignes à l'intérieur des paragraphes.",
 	"textile.preview.linkify": "Activez ou désactivez la conversion de texte de type URL en liens dans l’aperçu Textile.",
 	"textile.preview.doubleClickToSwitchToEditor.desc": "Double-cliquez dans l'aperçu Textile pour passer à l'éditeur.",
 	"textile.preview.fontFamily.desc": "Contrôle la famille de polices utilisée dans l'aperçu Textile.",

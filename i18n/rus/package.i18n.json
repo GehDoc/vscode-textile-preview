@@ -8,7 +8,7 @@
 	],
 	"displayName": "Возможности языка Textile",
 	"description": "Предоставляет широкую поддержку языка для Textile.",
-	"textile.preview.breaks.desc": "Sets how line-breaks are rendered in the textile preview. Setting it to 'true' creates a <br> for every newline.",
+	"textile.preview.breaks.desc": "Задает способ визуализации разрывов строк при предварительном просмотре Textile. Если задано значение true, для каждой новой строки внутри абзацев создается <br>.",
 	"textile.preview.linkify": "Включить или отключить преобразование текста в URL для предварительного просмотра Textile.",
 	"textile.preview.doubleClickToSwitchToEditor.desc": "Двойной щелчок в области предварительного просмотра Textile в редакторе.",
 	"textile.preview.fontFamily.desc": "Определяет семейство шрифтов, используемое в области предварительного просмотра файла Textile.",

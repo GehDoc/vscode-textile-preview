@@ -8,7 +8,7 @@
 	],
 	"displayName": "Textile 言語機能",
 	"description": "Textile に豊富な言語サポートを提供。",
-	"textile.preview.breaks.desc": "Textile プレビューで改行を表現する方法を設定します。'true' に設定すると、すべての改行に対して <br> が作成されます。",
+	"textile.preview.breaks.desc": "Textile プレビューで改行を表現する方法を設定します。'true' に設定すると、段落内のすべての改行に対して <br> が作成されます。",
 	"textile.preview.linkify": "Textile プレビューで URL 形式のテキストからリンクへの変換を有効または無効にします。",
 	"textile.preview.doubleClickToSwitchToEditor.desc": "Textileのプレビューでダブルクリックすると、エディターに切り替わります。",
 	"textile.preview.fontFamily.desc": "Textile プレビューで使用されるフォント ファミリを制御します。",

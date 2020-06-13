@@ -8,7 +8,7 @@
 	],
 	"displayName": "Textile-Sprachfeatures",
 	"description": "Bietet umfangreiche Sprachunterstützung für Textile.",
-	"textile.preview.breaks.desc": "Legt fest, wie Zeilenumbrüche in der Textilevorschau gerendert werden. Durch eine Festlegung auf TRUE wird ein <br> für jeden Zeilenumbruch erstellt.",
+	"textile.preview.breaks.desc": "Legt fest, wie Zeilenumbrüche in der Textilevorschau gerendert werden. Durch eine Festlegung auf TRUE wird ein <br> für Zeilenumbrüche innerhalb von Absätzen erstellt.",
 	"textile.preview.linkify": "Aktiviert oder deaktiviert die Konvertierung von URL-ähnlichem Text in Links in der Textile-Vorschau.",
 	"textile.preview.doubleClickToSwitchToEditor.desc": "Doppelklicken Sie in die Textile-Vorschau, um zum Editor zu wechseln.",
 	"textile.preview.fontFamily.desc": "Steuert die Schriftfamilie, die in der Textilevorschau verwendet wird.",

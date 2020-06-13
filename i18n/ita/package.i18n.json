@@ -8,7 +8,7 @@
 	],
 	"displayName": "Funzionalità del linguaggio Textile",
 	"description": "Fornisce un supporto avanzato del linguaggio per Textile.",
-	"textile.preview.breaks.desc": "Imposta il rendering delle interruzioni di riga nell'anteprima Textile. Se viene impostato su 'true', viene creato un tag <br> per ogni carattere di nuova riga.",
+	"textile.preview.breaks.desc": "Imposta il rendering delle interruzioni di riga nell'anteprima Textile. Se viene impostato su 'true', viene creato un tag <br> per i caratteri di nuova riga all'interno di paragrafi.",
 	"textile.preview.linkify": "Abilita o disabilita la conversione di testo simile a URL in collegamenti nell'anteprima textile.",
 	"textile.preview.doubleClickToSwitchToEditor.desc": "Fare doppio clic nell'anteprima textile per passare all'editor.",
 	"textile.preview.fontFamily.desc": "Controlla la famiglia di caratteri usata nell'anteprima Textile.",
