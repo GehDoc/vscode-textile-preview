@@ -398,7 +398,7 @@ export class TextileEngine {
 	*/
 }
 
-/* Disabled for textile
+/* Disabled for textile : Done in addFencedRenderer
 async function getTextileOptions(md: () => TextileJS) {
 	const hljs = await import('highlight.js');
 	return {
@@ -417,7 +417,6 @@ async function getTextileOptions(md: () => TextileJS) {
 }
 */
 
-// -- Begin : Changed for textile
 function normalizeHighlightLang(lang: string | undefined) {
 	switch (lang && lang.toLowerCase()) {
 		case 'tsx':
@@ -437,4 +436,4 @@ function normalizeHighlightLang(lang: string | undefined) {
 			return lang;
 	}
 }
-// -- End : Changed for textile
+
