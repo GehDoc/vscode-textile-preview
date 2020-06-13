@@ -1,7 +1,7 @@
 {
 	"displayName": "Textile Language Features",
 	"description": "Rich language support for Textile: live preview, code folding, link to headlines, code blocks syntax highlighting...",
-	"textile.preview.breaks.desc": "Sets how line-breaks are rendered in the Textile preview. Setting it to 'true' creates a <br> for every newline.",
+	"textile.preview.breaks.desc": "Sets how line-breaks are rendered in the Textile preview. Setting it to 'true' creates a <br> for newlines inside paragraphs.",
 	"textile.preview.linkify": "Enable or disable conversion of URL-like text to links in the Textile preview.",
 	"textile.preview.doubleClickToSwitchToEditor.desc": "Double click in the Textile preview to switch to the editor.",
 	"textile.preview.fontFamily.desc": "Controls the font family used in the Textile preview.",

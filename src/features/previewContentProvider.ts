@@ -158,9 +158,9 @@ export class TextileContentProvider {
 
 	private getSettingsOverrideStyles(config: TextilePreviewConfiguration): string {
 		return [
-			config.fontFamily ? `--vscode-textile-font-family: ${config.fontFamily};` : '',
-			isNaN(config.fontSize) ? '' : `--vscode-textile-font-size: ${config.fontSize}px;`,
-			isNaN(config.lineHeight) ? '' : `--vscode-textile-line-height: ${config.lineHeight};`,
+			config.fontFamily ? `--textile-font-family: ${config.fontFamily};` : '',
+			isNaN(config.fontSize) ? '' : `--textile-font-size: ${config.fontSize}px;`,
+			isNaN(config.lineHeight) ? '' : `--textile-line-height: ${config.lineHeight};`,
 		].join(' ');
 	}
 

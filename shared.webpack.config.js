@@ -69,7 +69,7 @@ module.exports = function withDefaults(/**@type WebpackConfig*/extConfig) {
 		devtool: 'source-map',
 		plugins: [
 			new NLSBundlePlugin(id),
-			// @ts-ignore
+			// @ts-expect-error
 			new CopyWebpackPlugin([
 				{ from: './out/nls.*.json', to: '[name].json' }
 			])

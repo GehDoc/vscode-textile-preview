@@ -223,7 +223,7 @@
 				},
 				"textile.preview.fontFamily": {
 					"type": "string",
-					"default": "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'Ubuntu', 'Droid Sans', sans-serif",
+					"default": "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif",
 					"description": "%textile.preview.fontFamily.desc%",
 					"scope": "resource"
 				},
