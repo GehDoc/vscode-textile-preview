@@ -60,8 +60,8 @@ module.exports = {
 		id: 'ko',
 		folderName: 'kor',
 		replacements: [
-			[ /markdown/g, 'textile', 33 ],
-			[ /Markdown/g, 'Textile', 13 ],
+			[ /markdown/g, 'textile', 32 ],
+			[ /Markdown/g, 'Textile', 14 ],
 			[ /마크다운/g, 'Textile', 3]
 		]
 	},
@@ -69,8 +69,8 @@ module.exports = {
 		id: 'ru',
 		folderName: 'rus',
 		replacements: [
-			[ /markdown/g, 'textile', 26 ],
-			[ /Markdown/g, 'Textile', 23 ],
+			[ /markdown/g, 'textile', 25 ],
+			[ /Markdown/g, 'Textile', 24 ],
 		]
 	},
 	'zh-hant':{
