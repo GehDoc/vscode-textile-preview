@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [INTERNAL] Updated dependencies, and VSCode minimal engine version
 - [INTERNAL] Import extra check to extension state, from Markdown extension
 - [INTERNAL] Cleanup comments
+- Update to vscode 1.46.0
+- [I18N] Update translations to latest vscode-loc
 
 
 ## [1.3.3] - 20200508
