@@ -4,12 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import * as path from 'path';
-import { Disposable } from './util/dispose';
 import * as arrays from './util/arrays';
+import { Disposable } from './util/dispose';
 
 const resolveExtensionResource = (extension: vscode.Extension<any>, resourcePath: string): vscode.Uri => {
-	return vscode.Uri.file(path.join(extension.extensionPath, resourcePath));
+	return vscode.Uri.joinPath(extension.extensionUri, resourcePath);
 };
 
 const resolveExtensionResources = (extension: vscode.Extension<any>, resourcePaths: unknown): vscode.Uri[] => {
@@ -114,7 +113,8 @@ export namespace TextileContributions {
 }
 
 export interface TextileContributionProvider {
-	readonly extensionPath: string;
+	readonly extensionUri: vscode.Uri;
+
 	readonly contributions: TextileContributions;
 	readonly onContributionsChanged: vscode.Event<this>;
 
@@ -125,7 +125,7 @@ class VSCodeExtensionTextileContributionProvider extends Disposable implements T
 	private _contributions?: TextileContributions;
 
 	public constructor(
-		public readonly extensionPath: string,
+		private readonly _extensionContext: vscode.ExtensionContext,
 	) {
 		super();
 
@@ -138,6 +138,8 @@ class VSCodeExtensionTextileContributionProvider extends Disposable implements T
 			}
 		}, undefined, this._disposables);
 	}
+
+	public get extensionUri() { return this._extensionContext.extensionUri; }
 
 	private readonly _onContributionsChanged = this._register(new vscode.EventEmitter<this>());
 	public readonly onContributionsChanged = this._onContributionsChanged.event;
@@ -157,5 +159,5 @@ class VSCodeExtensionTextileContributionProvider extends Disposable implements T
 }
 
 export function getTextileExtensionContributions(context: vscode.ExtensionContext): TextileContributionProvider {
-	return new VSCodeExtensionTextileContributionProvider(context.extensionPath);
+	return new VSCodeExtensionTextileContributionProvider(context);
 }

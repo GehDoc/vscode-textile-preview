@@ -22,6 +22,7 @@ tsconfig.json
 shared.tsconfig.json
 shared.webpack.config.js
 extension.webpack.config.js
+extension-browser.webpack.config.js
 webpack.config.js
 
 PERSONAL-NOTES.md

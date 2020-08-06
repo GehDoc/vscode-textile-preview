@@ -62,28 +62,19 @@
 				"command": "textile.showPreviewToSide",
 				"title": "%textile.previewSide.title%",
 				"category": "Textile",
-				"icon": {
-					"light": "./media/preview-right-light.svg",
-					"dark": "./media/preview-right-dark.svg"
-				}
+				"icon": "$(open-preview)"
 			},
 			{
 				"command": "textile.showLockedPreviewToSide",
 				"title": "%textile.showLockedPreviewToSide.title%",
 				"category": "Textile",
-				"icon": {
-					"light": "./media/preview-right-light.svg",
-					"dark": "./media/preview-right-dark.svg"
-				}
+				"icon": "$(open-preview)"
 			},
 			{
 				"command": "textile.showSource",
 				"title": "%textile.showSource.title%",
 				"category": "Textile",
-				"icon": {
-					"light": "./media/view-source-light.svg",
-					"dark": "./media/view-source-dark.svg"
-				}
+				"icon": "$(go-to-file)"
 			},
 			{
 				"command": "textile.showPreviewSecuritySelector",

@@ -117,7 +117,7 @@ export class TextileContentProvider {
 
 	private extensionResourcePath(resourceProvider: WebviewResourceProvider, mediaFile: string): string {
 		const webviewResource = resourceProvider.asWebviewUri(
-			vscode.Uri.file(this.context.asAbsolutePath(path.join('media', mediaFile))));
+			vscode.Uri.joinPath(this.context.extensionUri, 'media', mediaFile));
 		return webviewResource.toString();
 	}
 
@@ -138,7 +138,7 @@ export class TextileContentProvider {
 		// Use a workspace relative path if there is a workspace
 		const root = vscode.workspace.getWorkspaceFolder(resource);
 		if (root) {
-			return resourceProvider.asWebviewUri(vscode.Uri.file(path.join(root.uri.fsPath, href))).toString();
+			return resourceProvider.asWebviewUri(vscode.Uri.joinPath(root.uri, href)).toString();
 		}
 
 		// Otherwise look relative to the textile file
