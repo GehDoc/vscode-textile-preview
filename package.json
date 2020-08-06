@@ -33,7 +33,8 @@
 		"onCommand:textile.showSource",
 		"onCommand:textile.showPreviewSecuritySelector",
 		"onCommand:textile.api.render",
-		"onWebviewPanel:textile.preview"
+		"onWebviewPanel:textile.preview",
+		"onCustomEditor:vscode.textile.preview.editor"
 	],
 	"contributes": {
 		"languages": [
@@ -314,6 +315,18 @@
 		],
 		"textile.previewScripts": [
 			"./media/index.js"
+		],
+		"customEditors": [
+			{
+				"viewType": "vscode.textile.preview.editor",
+				"displayName": "Textile Preview (Experimental)",
+				"priority": "option",
+				"selector": [
+					{
+						"filenamePattern": "*.textile"
+					}
+				]
+			}
 		]
 	},
 	"scripts": {

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [NOT RELEASED]
 ### Changed
 - Update to vscode-1.47.3, without browser.webpack nor sourcemap removing
+- [PREVIEW] Activate experimental custom editor
 
 
 ## [1.3.4] - 20200801

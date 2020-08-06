@@ -52,7 +52,7 @@ class PreviewStore<T extends ManagedTextilePreview> extends Disposable {
 	}
 }
 
-export class TextilePreviewManager extends Disposable implements vscode.WebviewPanelSerializer /* FIXME : proposedapi : , vscode.CustomTextEditorProvider */ {
+export class TextilePreviewManager extends Disposable implements vscode.WebviewPanelSerializer, vscode.CustomTextEditorProvider {
 	private static readonly textilePreviewActiveContextKey = 'textilePreviewFocus';
 
 	private readonly _topmostLineMonitor = new TopmostLineMonitor();
@@ -63,7 +63,7 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 
 	private _activePreview: ManagedTextilePreview | undefined = undefined;
 
-	// FIXME : proposedapi : private readonly customEditorViewType = 'vscode.textile.preview.editor';
+	private readonly customEditorViewType = 'vscode.textile.preview.editor';
 
 	public constructor(
 		private readonly _contentProvider: TextileContentProvider,
@@ -72,7 +72,7 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 	) {
 		super();
 		this._register(vscode.window.registerWebviewPanelSerializer(DynamicTextilePreview.viewType, this));
-		// FIXME : proposedapi : this._register(vscode.window.registerCustomEditorProvider(this.customEditorViewType, this));
+		this._register(vscode.window.registerCustomEditorProvider(this.customEditorViewType, this));
 	}
 
 	public refresh() {
@@ -150,7 +150,6 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 		this.registerDynamicPreview(preview);
 	}
 
-	/* FIXME : proposedapi : 
 	public async resolveCustomTextEditor(
 		document: vscode.TextDocument,
 		webview: vscode.WebviewPanel
@@ -164,7 +163,6 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 			this._contributions);
 		this.registerStaticPreview(preview);
 	}
-	*/
 
 	private createNewDynamicPreview(
 		resource: vscode.Uri,
@@ -204,7 +202,6 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 		return preview;
 	}
 
-	/* FIXME : proposedapi :
 	private registerStaticPreview(preview: StaticTextilePreview): StaticTextilePreview {
 		this._staticPreviews.add(preview);
 
@@ -215,7 +212,6 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 		this.trackActive(preview);
 		return preview;
 	}
-	*/
 
 	private trackActive(preview: ManagedTextilePreview): void {
 		preview.onDidChangeViewState(({ webviewPanel }) => {
