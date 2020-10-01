@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [PREVIEW] Activate experimental custom editor
 - Update to vscode 1.48.0
 - Build on travis-ci.com
+- [INTERNAL] fix npm security alerts
 
 
 ## [1.3.4] - 20200801
