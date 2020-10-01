@@ -3,20 +3,20 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
 import * as path from 'path';
-
-import { Logger } from '../logger';
-import { TextileContentProvider } from './previewContentProvider';
-import { Disposable } from '../util/dispose';
-
+import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
+import { OpenDocumentLinkCommand, resolveLinkToTextileFile } from '../commands/openDocumentLink';
+import { Logger } from '../logger';
+import { TextileContributionProvider } from '../textileExtensions';
+import { Disposable } from '../util/dispose';
+import { isTextileFile } from '../util/file';
+import { normalizeResource, WebviewResourceProvider } from '../util/resources';
 import { getVisibleLine, TopmostLineMonitor } from '../util/topmostLineMonitor';
 import { TextilePreviewConfigurationManager } from './previewConfig';
-import { TextileContributionProvider } from '../textileExtensions';
-import { isTextileFile } from '../util/file';
-import { resolveLinkToTextileFile } from '../commands/openDocumentLink';
-import { WebviewResourceProvider, normalizeResource } from '../util/resources';
+import { TextileContentProvider } from './previewContentProvider';
+import { TextileEngine } from '../textileEngine';
+
 const localize = nls.loadMessageBundle();
 
 interface WebviewMessage {
@@ -123,6 +123,7 @@ class TextilePreview extends Disposable implements WebviewResourceProvider {
 		resource: vscode.Uri,
 		startingScroll: StartingScrollLocation | undefined,
 		private readonly delegate: TextilePreviewDelegate,
+		private readonly engine: TextileEngine,
 		private readonly _contentProvider: TextileContentProvider,
 		private readonly _previewConfigurations: TextilePreviewConfigurationManager,
 		private readonly _logger: Logger,
@@ -407,7 +408,7 @@ class TextilePreview extends Disposable implements WebviewResourceProvider {
 			}
 		}
 
-		vscode.commands.executeCommand('_textile.openDocumentLink', { path: hrefPath, fragment, fromResource: this.resource });
+		OpenDocumentLinkCommand.execute(this.engine, { path: hrefPath, fragment, fromResource: this.resource.toJSON() });
 	}
 
 	//#region WebviewResourceProvider
@@ -452,8 +453,9 @@ export class StaticTextilePreview extends Disposable implements ManagedTextilePr
 		previewConfigurations: TextilePreviewConfigurationManager,
 		logger: Logger,
 		contributionProvider: TextileContributionProvider,
+		engine: TextileEngine,
 	): StaticTextilePreview {
-		return new StaticTextilePreview(webview, resource, contentProvider, previewConfigurations, logger, contributionProvider);
+		return new StaticTextilePreview(webview, resource, contentProvider, previewConfigurations, logger, contributionProvider, engine);
 	}
 
 	private readonly preview: TextilePreview;
@@ -465,13 +467,14 @@ export class StaticTextilePreview extends Disposable implements ManagedTextilePr
 		private readonly _previewConfigurations: TextilePreviewConfigurationManager,
 		logger: Logger,
 		contributionProvider: TextileContributionProvider,
+		engine: TextileEngine,
 	) {
 		super();
 
 		this.preview = this._register(new TextilePreview(this._webviewPanel, resource, undefined, {
 			getAdditionalState: () => { return {}; },
 			openPreviewLinkToTextileFile: () => { /* todo */ }
-		}, contentProvider, _previewConfigurations, logger, contributionProvider));
+		}, engine, contentProvider, _previewConfigurations, logger, contributionProvider));
 
 		this._register(this._webviewPanel.onDidDispose(() => {
 			this.dispose();
@@ -548,9 +551,10 @@ export class DynamicTextilePreview extends Disposable implements ManagedTextileP
 		logger: Logger,
 		topmostLineMonitor: TopmostLineMonitor,
 		contributionProvider: TextileContributionProvider,
+		engine: TextileEngine,
 	): DynamicTextilePreview {
 		return new DynamicTextilePreview(webview, input,
-			contentProvider, previewConfigurations, logger, topmostLineMonitor, contributionProvider);
+			contentProvider, previewConfigurations, logger, topmostLineMonitor, contributionProvider, engine);
 	}
 
 	public static create(
@@ -560,7 +564,8 @@ export class DynamicTextilePreview extends Disposable implements ManagedTextileP
 		previewConfigurations: TextilePreviewConfigurationManager,
 		logger: Logger,
 		topmostLineMonitor: TopmostLineMonitor,
-		contributionProvider: TextileContributionProvider
+		contributionProvider: TextileContributionProvider,
+		engine: TextileEngine,
 	): DynamicTextilePreview {
 		const webview = vscode.window.createWebviewPanel(
 			DynamicTextilePreview.viewType,
@@ -568,7 +573,7 @@ export class DynamicTextilePreview extends Disposable implements ManagedTextileP
 			previewColumn, { enableFindWidget: true, });
 
 		return new DynamicTextilePreview(webview, input,
-			contentProvider, previewConfigurations, logger, topmostLineMonitor, contributionProvider);
+			contentProvider, previewConfigurations, logger, topmostLineMonitor, contributionProvider, engine);
 	}
 
 	private constructor(
@@ -579,6 +584,7 @@ export class DynamicTextilePreview extends Disposable implements ManagedTextileP
 		private readonly _logger: Logger,
 		private readonly _topmostLineMonitor: TopmostLineMonitor,
 		private readonly _contributionProvider: TextileContributionProvider,
+		private readonly _engine: TextileEngine,
 	) {
 		super();
 
@@ -612,7 +618,12 @@ export class DynamicTextilePreview extends Disposable implements ManagedTextileP
 		}));
 
 		this._register(vscode.window.onDidChangeActiveTextEditor(editor => {
-			if (editor && isTextileFile(editor.document) && !this._locked && !this._preview.isPreviewOf(editor.document.uri)) {
+			// Only allow previewing normal text editors which have a viewColumn: See #101514
+			if (typeof editor?.viewColumn === 'undefined') {
+				return;
+			}
+
+			if (isTextileFile(editor.document) && !this._locked && !this._preview.isPreviewOf(editor.document.uri)) {
 				const line = getVisibleLine(editor);
 				this.update(editor.document.uri, line ? new StartingScrollLine(line) : undefined);
 			}
@@ -724,6 +735,7 @@ export class DynamicTextilePreview extends Disposable implements ManagedTextileP
 				this.update(link, fragment ? new StartingScrollFragment(fragment) : undefined);
 			}
 		},
+			this._engine,
 			this._contentProvider,
 			this._previewConfigurations,
 			this._logger,

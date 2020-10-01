@@ -5,10 +5,11 @@
 
 import * as vscode from 'vscode';
 import { Logger } from '../logger';
+import { TextileEngine } from '../textileEngine';
 import { TextileContributionProvider } from '../textileExtensions';
-import { disposeAll, Disposable } from '../util/dispose';
+import { Disposable, disposeAll } from '../util/dispose';
 import { TopmostLineMonitor } from '../util/topmostLineMonitor';
-import { DynamicTextilePreview, StaticTextilePreview, ManagedTextilePreview } from './preview';
+import { DynamicTextilePreview, ManagedTextilePreview, StaticTextilePreview } from './preview';
 import { TextilePreviewConfigurationManager } from './previewConfig';
 import { TextileContentProvider } from './previewContentProvider';
 
@@ -68,7 +69,8 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 	public constructor(
 		private readonly _contentProvider: TextileContentProvider,
 		private readonly _logger: Logger,
-		private readonly _contributions: TextileContributionProvider
+		private readonly _contributions: TextileContributionProvider,
+		private readonly _engine: TextileEngine,
 	) {
 		super();
 		this._register(vscode.window.registerWebviewPanelSerializer(DynamicTextilePreview.viewType, this));
@@ -145,7 +147,8 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 			this._previewConfigurations,
 			this._logger,
 			this._topmostLineMonitor,
-			this._contributions);
+			this._contributions,
+			this._engine);
 
 		this.registerDynamicPreview(preview);
 	}
@@ -160,7 +163,8 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 			this._contentProvider,
 			this._previewConfigurations,
 			this._logger,
-			this._contributions);
+			this._contributions,
+			this._engine);
 		this.registerStaticPreview(preview);
 	}
 
@@ -179,7 +183,8 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 			this._previewConfigurations,
 			this._logger,
 			this._topmostLineMonitor,
-			this._contributions);
+			this._contributions,
+			this._engine);
 
 		this.setPreviewActiveContext(true);
 		this._activePreview = preview;

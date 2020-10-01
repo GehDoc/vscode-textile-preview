@@ -174,7 +174,6 @@ export class TextileEngine {
 		}
 
 		// Disabled for textile : this.currentDocument = document.uri;
-		this._slugCount = new Map<string, number>();
 
 		const tokens = this.tokenizeString(document.getText(), engine);
 		this._tokenCache.update(document, config, tokens);
@@ -182,6 +181,8 @@ export class TextileEngine {
 	}
 
 	private tokenizeString(text: string, engine: TextileJS) {
+		this._slugCount = new Map<string, number>();
+
 		// -- Begin : Modified for textile
 		// Now, always strip frontMatter
 		const textileContent = this.stripFrontmatter(text);
@@ -434,4 +435,3 @@ function normalizeHighlightLang(lang: string | undefined) {
 			return lang;
 	}
 }
-

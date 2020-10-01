@@ -11,6 +11,21 @@ html, body {
 	word-wrap: break-word;
 }
 
+body {
+	padding-top: 1em;
+}
+
+/* Reset margin top for elements */
+h1, h2, h3, h4, h5, h6,
+p, ol, ul, pre {
+	margin-top: 0;
+}
+
+h2, h3, h4, h5, h6 {
+	font-weight: normal;
+	margin-bottom: 0.2em;
+}
+
 #code-csp-warning {
 	position: fixed;
 	top: 0;

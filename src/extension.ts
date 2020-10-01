@@ -19,9 +19,9 @@ import TextileWorkspaceSymbolProvider from './features/workspaceSymbolProvider';
 import { Logger } from './logger';
 import { TextileEngine } from './textileEngine';
 import { getTextileExtensionContributions } from './textileExtensions';
-import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector, ContentSecurityPolicyArbiter } from './security';
-//import { loadDefaultTelemetryReporter, TelemetryReporter } from './telemetryReporter';
+import { ContentSecurityPolicyArbiter, ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './security';
 import { githubSlugifier } from './slugify';
+// import { loadDefaultTelemetryReporter, TelemetryReporter } from './telemetryReporter';
 
 
 export function activate(context: vscode.ExtensionContext) {
@@ -39,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const contentProvider = new TextileContentProvider(engine, context, cspArbiter, contributions, logger);
 	const symbolProvider = new TextileDocumentSymbolProvider(engine);
-	const previewManager = new TextilePreviewManager(contentProvider, logger, contributions);
+	const previewManager = new TextilePreviewManager(contentProvider, logger, contributions, engine);
 	context.subscriptions.push(previewManager);
 
 	context.subscriptions.push(registerTextileLanguageFeatures(symbolProvider, engine));

@@ -10,7 +10,7 @@ import LinkProvider from '../features/documentLinkProvider';
 import { InMemoryDocument } from './inMemoryDocument';
 
 
-const testFileName = vscode.Uri.file('test.md');
+const testFile = vscode.Uri.file('x.textile');
 
 const noopToken = new class implements vscode.CancellationToken {
 	private _onCancellationRequestedEmitter = new vscode.EventEmitter<void>();
@@ -20,7 +20,7 @@ const noopToken = new class implements vscode.CancellationToken {
 };
 
 function getLinksForFile(fileContents: string) {
-	const doc = new InMemoryDocument(testFileName, fileContents);
+	const doc = new InMemoryDocument(testFile, fileContents);
 	const provider = new LinkProvider();
 	return provider.provideDocumentLinks(doc, noopToken);
 }
@@ -138,8 +138,8 @@ suite('textile.DocumentLinkProvider', () => {
 			const links = getLinksForFile('!image.jpg(alt text)!:https://example.com');
 			assert.strictEqual(links.length, 2);
 			const [link1, link2] = links;
-			assertRangeEqual(link1.range, new vscode.Range(0,1,0,10));
-			assertRangeEqual(link2.range, new vscode.Range(0,22,0,41));
+			assertRangeEqual(link1.range, new vscode.Range(0, 1, 0, 10));
+			assertRangeEqual(link2.range, new vscode.Range(0, 22, 0, 41));
 		}
 		{
 			const links = getLinksForFile('!>image.jpg(alt text)!:https://example.com');
@@ -153,18 +153,18 @@ suite('textile.DocumentLinkProvider', () => {
 			const links = getLinksForFile('[![a]( whitespace.jpg )]( https://whitespace.com )');
 			assert.strictEqual(links.length, 2);
 			const [link1, link2] = links;
-			assertRangeEqual(link1.range, new vscode.Range(0,7,0,21));
-			assertRangeEqual(link2.range, new vscode.Range(0,26,0,48));
+			assertRangeEqual(link1.range, new vscode.Range(0, 7, 0, 21));
+			assertRangeEqual(link2.range, new vscode.Range(0, 26, 0, 48));
 		}
 		*/
 		{
 			const links = getLinksForFile('!img1.jpg(a)!:file1.txt text !img2.jpg(a)!:file2.txt');
 			assert.strictEqual(links.length, 4);
 			const [link1, link2, link3, link4] = links;
-			assertRangeEqual(link1.range, new vscode.Range(0,1,0,9));
-			assertRangeEqual(link2.range, new vscode.Range(0,14,0,23));
-			assertRangeEqual(link3.range, new vscode.Range(0,30,0,38));
-			assertRangeEqual(link4.range, new vscode.Range(0,43,0,52));
+			assertRangeEqual(link1.range, new vscode.Range(0, 1, 0, 9));
+			assertRangeEqual(link2.range, new vscode.Range(0, 14, 0, 23));
+			assertRangeEqual(link3.range, new vscode.Range(0, 30, 0, 38));
+			assertRangeEqual(link4.range, new vscode.Range(0, 43, 0, 52));
 		}
 	});
 });
