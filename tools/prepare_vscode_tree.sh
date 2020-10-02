@@ -165,7 +165,7 @@ echo "Processing src"
 # Download from github : https://github.com/Microsoft/vscode
 github_DL "vscode" $VSCODE_VERSION_GIT_TAG
 
-process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools/tmp/out/  '../shared.webpack.config.js ../shared.tsconfig.json ./src/*.* ./src/*/*.* ./media/*.* ./*.json ./*.js ./preview-src/*.* ./schemas/package.schema.json'
+process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools/tmp/out/  '../shared.webpack.config.js ../shared.tsconfig.json ./src/*.* ./src/*/*.* ./media/*.* ./*.json ./*.js ./preview-src/*.* ./schemas/package.schema.json ./test-workspace/*.* ./test-workspace/*/*.*'
 
 
 # -----------
