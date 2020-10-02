@@ -4,12 +4,21 @@ All notable changes to the "vscode-textile-preview" extension will be documented
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [UNRELEASED]
+### Changed
+-  Prepare update to vscode 1.49.1
+
+
 ## [1.3.5] - 20201001
+### Added
+- [PREVIEW] Activate experimental custom editor
+
 ### Changed
 - Update to vscode-1.47.3, without browser.webpack nor sourcemap removing
-- [PREVIEW] Activate experimental custom editor
 - Update to vscode 1.48.0
 - Build on travis-ci.com
+
+### Fixed
 - [INTERNAL] fix npm security alerts
 
 
