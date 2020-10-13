@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 -  Update to vscode 1.49.1
 - [INTERNAL] add .vscodeignore to the tool to import sources from vscode
+- [INTERNAL] Update dependencies
+
+### Fix
+- [INTERNAL] Fix build failure on CI
 
 
 ## [1.3.5] - 20201001
