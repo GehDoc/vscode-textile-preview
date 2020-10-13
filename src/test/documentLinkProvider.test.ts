@@ -10,7 +10,7 @@ import LinkProvider from '../features/documentLinkProvider';
 import { InMemoryDocument } from './inMemoryDocument';
 
 
-const testFile = vscode.Uri.file('x.textile');
+const testFile = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'x.textile');
 
 const noopToken = new class implements vscode.CancellationToken {
 	private _onCancellationRequestedEmitter = new vscode.EventEmitter<void>();
