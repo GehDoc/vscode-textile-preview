@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [UNRELEASED]
 ### Changed
--  Update to vscode 1.49.1
+-  Update to vscode 1.50.1
 - [INTERNAL] add .vscodeignore to the tool to import sources from vscode
 - [INTERNAL] Update dependencies
 

@@ -98,6 +98,7 @@ export default class TextileFoldingProvider implements vscode.FoldingRangeProvid
 				case 'div':
 				case 'blockquote':
 					return true;
+
 				case '!':
 					return !isRegionMarker(token);
 
