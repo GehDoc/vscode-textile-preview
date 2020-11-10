@@ -4,13 +4,15 @@ All notable changes to the "vscode-textile-preview" extension will be documented
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [UNRELEASED]
+## [1.3.6] - 20201110
 ### Changed
 -  Update to vscode 1.50.1
 - [INTERNAL] add .vscodeignore to the tool to import sources from vscode
 - [INTERNAL] Update dependencies
+- [INTERNAL] Update textile-js to latest version 2.0.110
+- [DOC] Update
 
-### Fix
+### Fixed
 - [INTERNAL] Fix build failure on CI
 
 
