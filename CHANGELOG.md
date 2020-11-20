@@ -4,6 +4,13 @@ All notable changes to the "vscode-textile-preview" extension will be documented
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [1.3.7] - 20201121
+### Fixed
+- [PREVIEW] Fix scrolling flickering when typing text in a Textile file containing images.
+- [CSS] Use font-family from VSCode for `<code>`
+
+
 ## [1.3.6] - 20201110
 ### Changed
 -  Update to vscode 1.50.1
