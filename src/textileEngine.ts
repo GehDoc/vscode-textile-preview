@@ -9,7 +9,7 @@ import * as vscode from 'vscode';
 import { TextileContributionProvider as TextileContributionProvider } from './textileExtensions';
 import { Slugifier } from './slugify';
 import { SkinnyTextDocument } from './tableOfContentsProvider';
-//import { hash } from './util/hash';
+import { hash } from './util/hash';
 //import { isOfScheme, TextileFileExtensions, Schemes } from './util/links';
 
 const UNICODE_NEWLINE_REGEX = /\u2028|\u2029/g;
@@ -114,7 +114,7 @@ export class TextileEngine {
 					hooks: [],
 					renderers: []
 				};
-				// FIXME ? this.addImageStabilizer(md);
+				this.addImageStabilizer(textile, localConfig);
 				this.addFencedRenderer(localConfig);
 				// FIXME ? this.addLinkNormalizer(md);
 				// FIXME ? this.addLinkValidator(md);
@@ -228,7 +228,7 @@ export class TextileEngine {
 		// -- End : Changed for textile
 	}
 
-	/* FIXME ?
+	/* Disabled for textile : not necessary
 	private addLineNumberRenderer(md: any, ruleName: string): void {
 		const original = md.renderer.rules[ruleName];
 		md.renderer.rules[ruleName] = (tokens: any, idx: number, options: any, env: any, self: any) => {
@@ -245,29 +245,31 @@ export class TextileEngine {
 			}
 		};
 	}
-
-	private addImageStabilizer(md: any): void {
-		const original = md.renderer.rules.image;
-		md.renderer.rules.image = (tokens: any, idx: number, options: any, env: any, self: any) => {
-			const token = tokens[idx];
-			token.attrJoin('class', 'loading');
-
-			const src = token.attrGet('src');
-			if (src) {
-				const imgHash = hash(src);
-				token.attrSet('id', `image-hash-${imgHash}`);
-			}
-
-			if (original) {
-				return original(tokens, idx, options, env, self);
-			} else {
-				return self.renderToken(tokens, idx, options, env, self);
-			}
-		};
-	}
 	*/
 
 	// -- Begin : Changed for textile
+	private addImageStabilizer(textile: TextileJS, config: TextileJSConfig): void {
+		config.hooks!.push(
+			[(tokens: Token[]) => {
+				switch( tokens[0] ) {
+					case 'img':
+						let className = (tokens[1]?.class || '') + ' loading';
+						textile.jsonmlUtils.addAttributes( tokens, {'class': className}); 
+
+						const src = tokens[1]?.src;
+						if (src) {
+							const imgHash = hash(src);
+							textile.jsonmlUtils.addAttributes( tokens, {'id': `image-hash-${imgHash}`});
+						}
+						break;
+					default:
+						break;
+				}
+				return tokens;
+		 }]
+	 );
+	}
+
 	private async addFencedRenderer(config: TextileJSConfig) {
 		const hljs = await import('highlight.js');
 		config.renderers!.push(
@@ -349,7 +351,7 @@ export class TextileEngine {
 	// -- Begin : Changed for textile
 	private addNamedHeaders(textile: TextileJS, config: TextileJSConfig): void {
 		config.hooks!.push(
-			 [(tokens: Token[]) => {
+			[(tokens: Token[]) => {
 				switch( tokens[0] ) {
 					case 'h1':
 					case 'h2':
