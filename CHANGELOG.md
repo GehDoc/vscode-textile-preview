@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [UNRELEASED]
+### Changed
+- [INTERNAL] prepare update to vscode-1.51.1
+
+### Fixed
+- [DEPENDENCIES] Update highlight.js for security fix
+
+
+
 ## [1.3.7] - 20201121
 ### Fixed
 - [PREVIEW] Fix scrolling flickering when typing text in a Textile file containing images.
@@ -13,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.6] - 20201110
 ### Changed
--  Update to vscode 1.50.1
+- Update to vscode 1.50.1
 - [INTERNAL] add .vscodeignore to the tool to import sources from vscode
 - [INTERNAL] Update dependencies
 - [INTERNAL] Update textile-js to latest version 2.0.110
