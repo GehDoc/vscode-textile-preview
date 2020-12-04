@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [UNRELEASED]
 ### Changed
 - [INTERNAL] prepare update to vscode-1.51.1
+- Update to vscode 1.51.1
 
 ### Fixed
 - [DEPENDENCIES] Update highlight.js for security fix

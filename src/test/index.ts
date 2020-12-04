@@ -18,11 +18,11 @@ const options: Mocha.MochaOptions = {
 // for the test results file name
 let suite = '';
 if (process.env.VSCODE_BROWSER) {
-	suite = `${process.env.VSCODE_BROWSER} Browser Integration Markdown Tests`;
+	suite = `${process.env.VSCODE_BROWSER} Browser Integration Textile Tests`;
 } else if (process.env.REMOTE_VSCODE) {
-	suite = 'Remote Integration Markdown Tests';
+	suite = 'Remote Integration Textile Tests';
 } else {
-	suite = 'Integration Markdown Tests';
+	suite = 'Integration Textile Tests';
 }
 
 if (process.env.BUILD_ARTIFACTSTAGINGDIRECTORY) {

@@ -13,6 +13,7 @@ import * as commands from './commands/index';
 import LinkProvider from './features/documentLinkProvider';
 import TextileDocumentSymbolProvider from './features/documentSymbolProvider';
 import TextileFoldingProvider from './features/foldingProvider';
+// import TextileSmartSelect from './features/smartSelect';
 import { TextileContentProvider } from './features/previewContentProvider';
 import { TextilePreviewManager } from './features/previewManager';
 import TextileWorkspaceSymbolProvider from './features/workspaceSymbolProvider';
@@ -66,6 +67,7 @@ function registerTextileLanguageFeatures(
 		vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider),
 		vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider()),
 		vscode.languages.registerFoldingRangeProvider(selector, new TextileFoldingProvider(engine)),
+		// FIXME: vscode.languages.registerSelectionRangeProvider(selector, new TextileSmartSelect(engine)),
 		vscode.languages.registerWorkspaceSymbolProvider(new TextileWorkspaceSymbolProvider(symbolProvider))
 	);
 }

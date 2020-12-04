@@ -101,7 +101,7 @@ export class TableOfContentsProvider {
 					break;
 				}
 			}
-			const endLine = end !== undefined ? end : document.lineCount - 1;
+			const endLine = end ?? document.lineCount - 1;
 			return {
 				...entry,
 				location: new vscode.Location(document.uri,
