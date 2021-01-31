@@ -115,7 +115,7 @@ export class TextileEngine {
 					renderers: []
 				};
 				this.addImageStabilizer(textile, localConfig);
-				this.addFencedRenderer(localConfig);
+				this.addFencedRenderer(textile, localConfig);
 				// FIXME ? this.addLinkNormalizer(md);
 				// FIXME ? this.addLinkValidator(md);
 				this.addNamedHeaders(textile, localConfig);
@@ -223,7 +223,8 @@ export class TextileEngine {
 			breaks: config.get<boolean>('preview.breaks', false),
 			/* Disabled for Textile : linkify: config.get<boolean>('preview.linkify', true), */
 			showOriginalLineNumber: true,
-			cssClassOriginalLineNumber: 'code-line'
+			cssClassOriginalLineNumber: 'code-line',
+			dontEscapeContentForTags: ['code'],
 		};
 		// -- End : Changed for textile
 	}
@@ -270,19 +271,22 @@ export class TextileEngine {
 	 );
 	}
 
-	private async addFencedRenderer(config: TextileJSConfig) {
+	private async addFencedRenderer(textile: TextileJS, config: TextileJSConfig) {
 		const hljs = await import('highlight.js');
 		config.renderers!.push(
 			(tag, attributes, content) => {
-				if (tag === 'code' && attributes) {
-					let lang = attributes['lang'] || attributes['class'];
-					lang = normalizeHighlightLang(lang);
-					if (lang && hljs.getLanguage(lang)) {
-						try {
-							return `<div>${hljs.highlight(lang, content, true).value}</div>`;
+				if (tag === 'code') {
+					if (attributes) {
+						let lang = attributes['lang'] || attributes['class'];
+						lang = normalizeHighlightLang(lang);
+						if (lang && hljs.getLanguage(lang)) {
+							try {
+								return `<div>${hljs.highlight(lang, content, true).value}</div>`;
+							}
+							catch (error) { }
 						}
-						catch (error) { }
 					}
+					return `<div>${textile.jsonmlUtils.escape(content)}</div>`;
 				}
 				return content;
 			}

@@ -20,6 +20,7 @@ declare namespace TextileJS {
 		cssClassOriginalLineNumber?: string,
 		hooks?: Hook[],
 		renderers?: Renderer[],
+		dontEscapeContentForTags? :string[],
 	};
 
 	interface TextileJS {
@@ -32,6 +33,7 @@ declare namespace TextileJS {
 		jsonmlUtils: {
 			applyHooks(jsonml: Token[], hooks: Hook[]): Token[];
 			addAttributes(jsonml: Token[], newAttr: jsonmlAttributes): jsonmlAttributes;
+			escape(text: string, escapeQuotes?: boolean): string;
 		};
 	}
 }

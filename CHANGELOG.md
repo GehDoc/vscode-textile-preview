@@ -9,10 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [INTERNAL] prepare update to vscode-1.51.1
 - Update to vscode 1.51.1
+- [INTERNAL] Update textile-js to latest version 2.0.111
 
 ### Fixed
 - [DEPENDENCIES] Update highlight.js for security fix
-
+- [PREVIEW] Don't escape `<code>` and `<pre>` content
 
 
 ## [1.3.7] - 20201121
