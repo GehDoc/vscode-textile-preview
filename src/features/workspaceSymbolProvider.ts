@@ -9,7 +9,6 @@ import { isTextileFile } from '../util/file';
 import { Lazy, lazy } from '../util/lazy';
 import TextileDocumentSymbolProvider from './documentSymbolProvider';
 import { SkinnyTextDocument, SkinnyTextLine } from '../tableOfContentsProvider';
-import { flatten } from '../util/arrays';
 
 export interface WorkspaceTextileDocumentProvider {
 	getAllTextileDocuments(): Thenable<Iterable<SkinnyTextDocument>>;
@@ -136,7 +135,7 @@ export default class TextileWorkspaceSymbolProvider extends Disposable implement
 		}
 
 		const allSymbolsSets = await Promise.all(Array.from(this._symbolCache.values()).map(x => x.value));
-		const allSymbols = flatten(allSymbolsSets);
+		const allSymbols = allSymbolsSets.flat();
 		return allSymbols.filter(symbolInformation => symbolInformation.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
 	}
 
