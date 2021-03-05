@@ -8,8 +8,8 @@ Preview and rich language support, for the [Textile markup language](https://tex
 
 You can split your screen vertically, and keep the Textile source code side by side with the preview. The preview is updated as you type, and stays synchronized with the source code when you scroll.
 
-As, this extension is based on the [Visual Studio Code's Markdown Language Features](https://github.com/microsoft/vscode/tree/master/extensions/markdown-language-features), it provides **[MUCH MORE than a preview](#features)**.  
-It uses [a modified version of textile.js Textile parser](https://github.com/GehDoc/textile-js) in order to display a WYSIWYG preview of your textile document.
+As this extension is based on the [Visual Studio Code's Markdown Language Features](https://github.com/microsoft/vscode/tree/master/extensions/markdown-language-features), it provides **[MUCH MORE than a preview](#features)**.  
+It relies on [a modified version of textile.js Textile parser](https://github.com/GehDoc/textile-js) in order to display a WYSIWYG preview of your textile document.
 
 ## Installation
 
@@ -70,8 +70,9 @@ Features considered out of scope of this extension :
 Maybe implemented, if requested :
 * Add other translations than the 9 core languages listed there : https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
 * Support enabling/disabling 'linkify' = Enable or disable conversion of URL-like text to links in the Textile preview;
-* Some helper functionalities, like image stabilization during loading. Look [here](./src/textileEngine.ts), and search for Disabled and FIXME;
-* Support for integration into [Codespaces browser based editor](https://code.visualstudio.com/api/advanced-topics/remote-extensions).
+* Some helper functionalities, like link normalization and validation. Look [here](./src/textileEngine.ts), and search for Disabled and FIXME;
+* Support for integration into [Codespaces browser based editor](https://code.visualstudio.com/api/advanced-topics/remote-extensions);
+* Smart select.
 
 ## Release Notes
 
