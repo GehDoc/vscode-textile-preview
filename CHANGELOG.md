@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update to vscode 1.52.1
 - [DOC] Update Readme.md with current state
+- [INTERNAL] Update dependencies, and VSCode minimal engine version
 
 
 ## [1.3.8] - 20210131
