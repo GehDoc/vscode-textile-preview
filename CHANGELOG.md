@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [DOC] Update Readme.md with current state
 - [INTERNAL] Update dependencies, and VSCode minimal engine version
 
+### Added
+- [INTERNAL] Configure remote container, for manual testing purpose
+
 
 ## [1.3.8] - 20210131
 ### Changed

@@ -1,6 +1,7 @@
 .vscode/**
 .vscode-test/**
 
+.devcontainer/**
 .gitignore
 .github/**
 .travis.yml
