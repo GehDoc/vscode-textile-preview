@@ -21,6 +21,11 @@ async function getLinksForFile(file: vscode.Uri): Promise<vscode.DocumentLink[]>
 
 suite('Textile Document links', () => {
 
+	setup(async () => {
+		// the tests make the assumption that link providers are already registered
+		await vscode.extensions.getExtension('gehdoc.vscode-textile-preview')!.activate();
+	});
+
 	teardown(async () => {
 		await vscode.commands.executeCommand('workbench.action.closeAllEditors');
 	});

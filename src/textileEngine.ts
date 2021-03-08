@@ -58,6 +58,15 @@ class TokenCache {
 
 const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/; // Keep for Textile
 
+export interface RenderOutput {
+	html: string;
+	containingImages: { src: string }[];
+}
+
+interface RenderEnv {
+	containingImages: { src: string }[];
+}
+
 export class TextileEngine {
 	private textile?: Promise<TextileJS>;
 
@@ -163,10 +172,12 @@ export class TextileEngine {
 	}
 	// -- End: Added for Textile
 
+	// -- Begin : Modified for textile
 	private tokenizeDocument(
 		document: SkinnyTextDocument,
 		config: TextileJSConfig,
-		engine: TextileJS
+		engine: TextileJS,
+		env?: RenderEnv
 	): Token[] {
 		const cached = this._tokenCache.tryGetCached(document, config);
 		if (cached) {
@@ -175,41 +186,49 @@ export class TextileEngine {
 
 		// Disabled for textile : this.currentDocument = document.uri;
 
-		const tokens = this.tokenizeString(document.getText(), engine);
+		const tokens = this.tokenizeString(document.getText(), engine, env);
 		this._tokenCache.update(document, config, tokens);
 		return tokens;
 	}
 
-	private tokenizeString(text: string, engine: TextileJS) {
+	private tokenizeString(text: string, engine: TextileJS, env?: RenderEnv) {
 		this._slugCount = new Map<string, number>();
 
-		// -- Begin : Modified for textile
 		// Now, always strip frontMatter
 		const textileContent = this.stripFrontmatter(text);
 		
 		return engine.tokenize(textileContent.text.replace(UNICODE_NEWLINE_REGEX, ''), {
 			lineOffset: textileContent.offset
-		});
-		// -- End : Modified for textile
+		}, env);
 	}
 
-	public async render(input: SkinnyTextDocument | string): Promise<string> {
+	public async render(input: SkinnyTextDocument | string): Promise<RenderOutput> {
 		const config = this.getConfig(typeof input === 'string' ? undefined : input.uri);
 		const engine = await this.getEngine(config);
 
+		const env: RenderEnv = {
+			containingImages: []
+		};
+
 		const tokens = typeof input === 'string'
-			? this.tokenizeString(input, engine)
-			: this.tokenizeDocument(input, config, engine);
+			? this.tokenizeString(input, engine, env)
+			: this.tokenizeDocument(input, config, engine, env);
 
 		// -- Begin: Changed for Textile
-		return tokens.map( ( value ) => engine.serialize( value , config ) ).join('');
+		const html = tokens.map( ( value ) => engine.serialize( value, config, env ) ).join('');
 		// -- End: Changed for Textile
-	}
 
-	public async parse(document: SkinnyTextDocument): Promise<Token[]> {
+		return {
+			html,
+			containingImages: env.containingImages
+		};
+	}
+	// -- End : Modified for textile
+
+	public async parse(document: SkinnyTextDocument, env?: RenderEnv): Promise<Token[]> {
 		const config = this.getConfig(document.uri);
 		const engine = await this.getEngine(config);
-		return this.tokenizeDocument(document, config, engine);
+		return this.tokenizeDocument(document, config, engine, env);
 	}
 
 	public cleanCache(): void {
@@ -251,7 +270,7 @@ export class TextileEngine {
 	// -- Begin : Changed for textile
 	private addImageStabilizer(textile: TextileJS, config: TextileJSConfig): void {
 		config.hooks!.push(
-			[(tokens: Token[]) => {
+			[(tokens: Token[], _attributes, _content, env) => {
 				switch( tokens[0] ) {
 					case 'img':
 						let className = (tokens[1]?.class || '') + ' loading';
@@ -259,6 +278,7 @@ export class TextileEngine {
 
 						const src = tokens[1]?.src;
 						if (src) {
+							env?.containingImages?.push({ src });
 							const imgHash = hash(src);
 							textile.jsonmlUtils.addAttributes( tokens, {'id': `image-hash-${imgHash}`});
 						}
@@ -304,6 +324,13 @@ export class TextileEngine {
 					return normalizeLink(vscode.Uri.parse(link).with({ scheme: vscode.env.uriScheme }).toString());
 				}
 
+				// Support file:// links
+				if (isOfScheme(Schemes.file, link)) {
+					// Ensure link is relative by prepending `/` so that it uses the <base> element URI
+					// when resolving the absolute URL
+					return normalizeLink('/' + link.replace(/^file:/, 'file'));
+				}
+
 				// If original link doesn't look like a url with a scheme, assume it must be a link to a file in workspace
 				if (!/^[a-z\-]+:/i.test(link)) {
 					// Use a fake scheme for parsing
@@ -314,12 +341,14 @@ export class TextileEngine {
 					if (uri.path[0] === '/') {
 						const root = vscode.workspace.getWorkspaceFolder(this.currentDocument!);
 						if (root) {
-							const fileUri = vscode.Uri.joinPath(root.uri, uri.fsPath);
-							uri = fileUri.with({
-								scheme: uri.scheme,
+							const fileUri = vscode.Uri.joinPath(root.uri, uri.fsPath).with({
 								fragment: uri.fragment,
 								query: uri.query,
 							});
+
+							// Ensure fileUri is relative by prepending `/` so that it uses the <base> element URI
+							// when resolving the absolute URL
+							uri = vscode.Uri.parse('textile-link:' + '/' + fileUri.toString(true).replace(/^\S+?:/, fileUri.scheme));
 						}
 					}
 
@@ -342,9 +371,7 @@ export class TextileEngine {
 	private addLinkValidator(md: any): void {
 		const validateLink = md.validateLink;
 		md.validateLink = (link: string) => {
-			// support file:// links
 			return validateLink(link)
-				|| isOfScheme(Schemes.file, link)
 				|| isOfScheme(Schemes.vscode, link)
 				|| isOfScheme(Schemes['vscode-insiders'], link)
 				|| /^data:image\/.*?;/.test(link);

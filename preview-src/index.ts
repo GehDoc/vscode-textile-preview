@@ -12,7 +12,7 @@ import throttle = require('lodash.throttle');
 
 declare let acquireVsCodeApi: any;
 
-let scrollDisabled = true;
+let scrollDisabledCount = 0;
 const marker = new ActiveLineMarker();
 const settings = getSettings();
 
@@ -36,6 +36,26 @@ window.styleLoadingMonitor.setPoster(messaging);
 window.onload = () => {
 	updateImageSizes();
 };
+
+
+function doAfterImagesLoaded(cb: () => void) {
+	const imgElements = document.getElementsByTagName('img');
+	if (imgElements.length > 0) {
+		const ps = Array.from(imgElements).map(e => {
+			if (e.complete) {
+				return Promise.resolve();
+			} else {
+				return new Promise<void>((resolve) => {
+					e.addEventListener('load', () => resolve());
+					e.addEventListener('error', () => resolve());
+				});
+			}
+		});
+		Promise.all(ps).then(() => setImmediate(cb));
+	} else {
+		setImmediate(cb);
+	}
+}
 
 onceDocumentLoaded(() => {
 	// -- Begin: Modified for textile
@@ -72,15 +92,15 @@ onceDocumentLoaded(() => {
 	const scrollProgress = state.scrollProgress;
 
 	if (typeof scrollProgress === 'number' && !settings.fragment) {
-		setImmediate(() => {
-			scrollDisabled = true;
+		doAfterImagesLoaded(() => {
+			scrollDisabledCount += 1;
 			window.scrollTo(0, scrollProgress * document.body.clientHeight);
 		});
 		return;
 	}
 
 	if (settings.scrollPreviewWithEditor) {
-		setImmediate(() => {
+		doAfterImagesLoaded(() => {
 			// Try to scroll to fragment if available
 			if (settings.fragment) {
 				state.fragment = undefined;
@@ -88,12 +108,12 @@ onceDocumentLoaded(() => {
 
 				const element = getLineElementForFragment(settings.fragment);
 				if (element) {
-					scrollDisabled = true;
+					scrollDisabledCount += 1;
 					scrollToRevealSourceLine(element.line);
 				}
 			} else {
 				if (!isNaN(settings.line!)) {
-					scrollDisabled = true;
+					scrollDisabledCount += 1;
 					scrollToRevealSourceLine(settings.line!);
 				}
 			}
@@ -103,8 +123,8 @@ onceDocumentLoaded(() => {
 
 const onUpdateView = (() => {
 	const doScroll = throttle((line: number) => {
-		scrollDisabled = true;
-		scrollToRevealSourceLine(line);
+		scrollDisabledCount += 1;
+		doAfterImagesLoaded(() => scrollToRevealSourceLine(line));
 	}, 50);
 
 	return (line: number) => {
@@ -140,7 +160,7 @@ let updateImageSizes = throttle(() => {
 }, 50);
 
 window.addEventListener('resize', () => {
-	scrollDisabled = true;
+	scrollDisabledCount += 1;
 	updateScrollProgress();
 	updateImageSizes();
 }, true);
@@ -220,8 +240,8 @@ document.addEventListener('click', event => {
 window.addEventListener('scroll', throttle(() => {
 	updateScrollProgress();
 
-	if (scrollDisabled) {
-		scrollDisabled = false;
+	if (scrollDisabledCount > 0) {
+		scrollDisabledCount -= 1;
 	} else {
 		const line = getEditorLineNumberForPageOffset(window.scrollY);
 		if (typeof line === 'number' && !isNaN(line)) {

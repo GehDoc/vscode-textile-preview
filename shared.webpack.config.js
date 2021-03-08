@@ -14,7 +14,7 @@ const merge = require('merge-options');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { NLSBundlePlugin } = require('vscode-nls-dev/lib/webpack-bundler');
 
-module.exports = function withDefaults(/**@type WebpackConfig*/extConfig) {
+function withNodeDefaults(/**@type WebpackConfig*/extConfig) {
 	// Need to find the top-most `package.json` file
 	const folderName = path.relative(__dirname, extConfig.context).split(/[\\\/]/)[0];
 	const pkgPath = path.join(__dirname, folderName, 'package.json');
@@ -77,4 +77,8 @@ module.exports = function withDefaults(/**@type WebpackConfig*/extConfig) {
 	};
 
 	return merge(defaultConfig, extConfig);
-};
+}
+
+
+module.exports = withNodeDefaults;
+module.exports.node = withNodeDefaults;

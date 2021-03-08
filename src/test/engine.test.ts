@@ -21,12 +21,33 @@ suite('textile.engine', () => {
 		test('Renders a document', async () => {
 			const doc = new InMemoryDocument(testFileName, input);
 			const engine = createNewTextileEngine();
-			assert.strictEqual(await engine.render(doc), output);
+			assert.strictEqual((await engine.render(doc)).html, output);
 		});
 
 		test('Renders a string', async () => {
 			const engine = createNewTextileEngine();
-			assert.strictEqual(await engine.render(input), output);
+			assert.strictEqual((await engine.render(input)).html, output);
 		});
 	});
+
+	// -- Begin : Changed for textile
+	suite('image-caching', () => {
+		const input = '!img.png! "a":no-img.png !http://example.org/img.png! !img.png! !./img2.png!';
+
+		test('Extracts all images', async () => {
+			const engine = createNewTextileEngine();
+			assert.deepStrictEqual((await engine.render(input)), {
+				html: '<p data-line="0" class="code-line">'
+					+ '<img src="img.png" data-line="0" class="code-line loading" alt="" id="image-hash--754511435" /> '
+					+ '<a href="no-img.png">a</a> '
+					+ '<img src="http://example.org/img.png" data-line="0" class="code-line loading" alt="" id="image-hash--1903814170" /> '
+					+ '<img src="img.png" data-line="0" class="code-line loading" alt="" id="image-hash--754511435" /> '
+					+ '<img src="./img2.png" data-line="0" class="code-line loading" alt="" id="image-hash-265238964" />'
+					+ '</p>'
+				,
+				containingImages: [{ src: 'img.png' }, { src: 'http://example.org/img.png' }, { src: 'img.png' }, { src: './img2.png' }],
+			});
+		});
+	});
+	// -- End : Changed for textile
 });

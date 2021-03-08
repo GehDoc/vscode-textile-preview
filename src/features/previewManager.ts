@@ -9,7 +9,7 @@ import { TextileEngine } from '../textileEngine';
 import { TextileContributionProvider } from '../textileExtensions';
 import { Disposable, disposeAll } from '../util/dispose';
 import { TopmostLineMonitor } from '../util/topmostLineMonitor';
-import { DynamicTextilePreview, ManagedTextilePreview, StaticTextilePreview } from './preview';
+import { DynamicTextilePreview, ManagedTextilePreview, StartingScrollFragment, StaticTextilePreview } from './preview';
 import { TextilePreviewConfigurationManager } from './previewConfig';
 import { TextileContentProvider } from './previewContentProvider';
 
@@ -106,7 +106,10 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 			preview = this.createNewDynamicPreview(resource, settings);
 		}
 
-		preview.update(resource);
+		preview.update(
+			resource,
+			resource.fragment ? new StartingScrollFragment(resource.fragment) : undefined
+		);
 	}
 
 	public get activePreviewResource() {

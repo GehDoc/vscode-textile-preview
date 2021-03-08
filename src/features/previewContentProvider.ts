@@ -39,6 +39,12 @@ function escapeAttribute(value: string | vscode.Uri): string {
 	return value.toString().replace(/"/g, '&quot;');
 }
 
+export interface TextileContentProviderOutput {
+	html: string;
+	containingImages: { src: string }[];
+}
+
+
 export class TextileContentProvider {
 	constructor(
 		private readonly engine: TextileEngine,
@@ -54,11 +60,12 @@ export class TextileContentProvider {
 		previewConfigurations: TextilePreviewConfigurationManager,
 		initialLine: number | undefined = undefined,
 		state?: any
-	): Promise<string> {
+	): Promise<TextileContentProviderOutput> {
 		const sourceUri = textileDocument.uri;
 		const config = previewConfigurations.loadAndCacheConfiguration(sourceUri);
 		const initialData = {
 			source: sourceUri.toString(),
+			fragment: state?.fragment || textileDocument.uri.fragment || undefined,
 			line: initialLine,
 			lineCount: textileDocument.lineCount,
 			scrollPreviewWithEditor: config.scrollPreviewWithEditor,
@@ -76,7 +83,7 @@ export class TextileContentProvider {
 
 		const body = await this.engine.render(textileDocument);
 		// Changed for Textile :
-		return `<!DOCTYPE html>
+		const html = `<!DOCTYPE html>
 			<html style="${escapeAttribute(this.getSettingsOverrideStyles(config))}">
 			<head>
 				<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
@@ -91,12 +98,16 @@ export class TextileContentProvider {
 			</head>
 			<body class="vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.markEditorSelection ? 'showEditorSelection' : ''}">
 				<div id="text_preview">
-					${body}
+					${body.html}
 				</div>
 				<div class="code-line" data-line="${textileDocument.lineCount}"></div>
 				${this.getScripts(resourceProvider, nonce)}
 			</body>
 			</html>`;
+		return {
+			html,
+			containingImages: body.containingImages,
+		};
 	}
 
 	public provideFileNotFoundContent(
