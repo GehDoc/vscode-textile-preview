@@ -19,9 +19,9 @@
 	"textile.trace.desc": "Enable debug logging for the Textile extension.",
 	"textile.preview.refresh.title": "Refresh Preview",
 	"textile.preview.toggleLock.title": "Toggle Preview Locking",
-	"configuration.textile.preview.openTextileLinks.description": "Controls how links to other Textile files in the textile preview should be opened.",
-	"configuration.textile.preview.openTextileLinks.inEditor": "Try to open links in the editor",
-	"configuration.textile.preview.openTextileLinks.inPreview": "Try to open links in the Textile preview",
+	"configuration.textile.preview.openTextileLinks.description": "Controls how links to other Textile files in the Textile preview should be opened.",
+	"configuration.textile.preview.openTextileLinks.inEditor": "Try to open links in the editor.",
+	"configuration.textile.preview.openTextileLinks.inPreview": "Try to open links in the Textile preview.",
 	"configuration.textile.links.openLocation.description": "Controls where links in Textile files should be opened.",
 	"configuration.textile.links.openLocation.currentGroup": "Open links in the active editor group.",
 	"configuration.textile.links.openLocation.beside": "Open links beside the active editor."

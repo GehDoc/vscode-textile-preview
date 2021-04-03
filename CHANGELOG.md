@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [UNRELEASED]
 ### Changed
-- Update to vscode 1.54.1
+- Update to vscode 1.55.0
 - [DOC] Update Readme.md with current state
 - [INTERNAL] Update dependencies, and VSCode minimal engine version
 - [INTERNAL] Update textile-js to latest version 2.0.112

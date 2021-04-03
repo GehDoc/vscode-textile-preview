@@ -58,7 +58,7 @@ export class TableOfContentsProvider {
 		const toc: TocEntry[] = [];
 		const tokens = await this.engine.parse(document);
 
-		const slugCount = new Map<string, number>();
+		const existingSlugEntries = new Map<string, { count: number }>();
 		const jsonmlUtils = await this.engine.jsonmlUtils();
 		jsonmlUtils.applyHooks(tokens, [
 			[(token) => {
@@ -70,12 +70,12 @@ export class TableOfContentsProvider {
 						const text = TableOfContentsProvider.getHeaderText(line.text)
 
 						let slug = githubSlugifier.fromHeading(text);
-						if (slugCount.has(slug.value)) {
-							const count = slugCount.get(slug.value)!;
-							slugCount.set(slug.value, count + 1);
-							slug = githubSlugifier.fromHeading(slug.value + '-' + (count + 1));
+						const existingSlugEntry = existingSlugEntries.get(slug.value);
+						if (existingSlugEntry) {
+							++existingSlugEntry.count;
+							slug = githubSlugifier.fromHeading(slug.value + '-' + existingSlugEntry.count);
 						} else {
-							slugCount.set(slug.value, 0);
+							existingSlugEntries.set(slug.value, { count: 0 });
 						}
 
 						toc.push({

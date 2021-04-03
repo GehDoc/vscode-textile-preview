@@ -70,7 +70,7 @@ Features considered out of scope of this extension :
 Maybe implemented, if requested :
 * Add other translations than the 9 core languages listed there : https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
 * Support enabling/disabling 'linkify' = Enable or disable conversion of URL-like text to links in the Textile preview;
-* Some helper functionalities, like link normalization and validation. Look [here](./src/textileEngine.ts), and search for Disabled and FIXME;
+* Some helper functionalities, like link normalization and validation (may allow file:// protocol and absolute paths to images. Currently, http:// protocol, and path relative to Textile file are recognized). Look [here](./src/textileEngine.ts), and search for Disabled and FIXME;
 * Support for integration into [Codespaces browser based editor](https://code.visualstudio.com/api/advanced-topics/remote-extensions);
 * Smart select.
 
