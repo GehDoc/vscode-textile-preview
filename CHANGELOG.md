@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [UNRELEASED]
 ### Changed
-[INTERNAL] Update dependencies
+- [INTERNAL] Update dependencies
+
+### Fixed
+- [INTERNAL] npm audit fix
+- [PREVIEW] remove embedding of code/inline into `<div>`. Closes #50
 
 
 ## [1.3.9] - 20210403

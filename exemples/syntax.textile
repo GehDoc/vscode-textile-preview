@@ -116,6 +116,8 @@ bc[javascript].
 // bc[javascript].
 document.write('help');
 
+Example of @inline monospace@ text.
+
 <!-- #endregion Exemple of foldable region through HTML comments -->
 
 ----

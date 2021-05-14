@@ -301,12 +301,12 @@ export class TextileEngine {
 						lang = normalizeHighlightLang(lang);
 						if (lang && hljs.getLanguage(lang)) {
 							try {
-								return `<div>${hljs.highlight(lang, content, true).value}</div>`;
+								return hljs.highlight(lang, content, true).value;
 							}
 							catch (error) { }
 						}
 					}
-					return `<div>${textile.jsonmlUtils.escape(content)}</div>`;
+					return textile.jsonmlUtils.escape(content);
 				}
 				return content;
 			}
