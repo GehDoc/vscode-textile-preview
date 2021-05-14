@@ -49,5 +49,15 @@ suite('textile.engine', () => {
 			});
 		});
 	});
+
+	suite('code processing', () => {
+		const input = 'example of @inline code@ in text block';
+		const output = '<p data-line="0" class="code-line">example <code>inline code</code> in text block</p>';
+
+		test('Renders inline code', async () => {
+			const engine = createNewTextileEngine();
+			assert.strictEqual((await engine.render(input)).html, output);
+		});
+	});
 	// -- End : Changed for textile
 });
