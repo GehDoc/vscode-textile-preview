@@ -17,60 +17,57 @@ module.exports = {
 		id: 'de',
 		folderName: 'deu',
 		replacements: [
-			[ /markdown/g, 'textile', 25 ],
-			[ /Markdown/g, 'Textile', 24 ],
+			[ /markdown/g, 'textile', 26 ],
+			[ /Markdown/g, 'Textile', 25 ],
 		]
 	},
 	'es':{
 		id: 'es',
 		folderName: 'esn',
 		replacements: [
-			// OK, count is 44
-			[ /markdown/g, 'textile', 29 ],
-			[ /Markdown/g, 'Textile', 15 ],
+			[ /markdown/g, 'textile', 26 ],
+			[ /Markdown/g, 'Textile', 25 ],
 		]
 	},
 	'fr':{
 		id: 'fr',
 		folderName: 'fra',
 		replacements: [
-			[ /markdown/g, 'textile', 28 ],
-			[ /Markdown/g, 'Textile', 20 ],
-			[ /markdow/g, 'textile', 1 ],
+			[ /markdown/g, 'textile', 26 ],
+			[ /Markdown/g, 'Textile', 25 ],
 		]
 	},
 	'it':{
 		id: 'it',
 		folderName: 'ita',
 		replacements: [
-			[ /markdown/g, 'textile', 37 ],
-			[ /Markdown/g, 'Textile', 12 ],
+			[ /markdown/g, 'textile', 26 ],
+			[ /Markdown/g, 'Textile', 25 ],
 		]
 	},
 	'ja':{
 		id: 'ja',
 		folderName: 'jpn',
 		replacements: [
-			[ /markdown/g, 'textile', 25 ],
-			[ /マークダウン/g, 'Textile', 18 ],
-			[ /Markdown/g, 'Textile', 6 ],
+			[ /markdown/g, 'textile', 26 ],
+			[ /マークダウン/g, 'Textile', 4 ],
+			[ /Markdown/g, 'Textile', 21 ],
 		]
 	},
 	'ko':{
 		id: 'ko',
 		folderName: 'kor',
 		replacements: [
-			[ /markdown/g, 'textile', 32 ],
-			[ /Markdown/g, 'Textile', 14 ],
-			[ /마크다운/g, 'Textile', 3]
+			[ /markdown/g, 'textile', 26 ],
+			[ /Markdown/g, 'Textile', 25 ],
 		]
 	},
 	'ru':{
 		id: 'ru',
 		folderName: 'rus',
 		replacements: [
-			[ /markdown/g, 'textile', 25 ],
-			[ /Markdown/g, 'Textile', 24 ],
+			[ /markdown/g, 'textile', 26 ],
+			[ /Markdown/g, 'Textile', 25 ],
 		]
 	},
 	'zh-hant':{
@@ -78,7 +75,7 @@ module.exports = {
 		folderName: 'cht',
 		replacements: [
 			[ /markdown/g, 'textile', 26 ],
-			[ /Markdown/g, 'Textile', 23 ],
+			[ /Markdown/g, 'Textile', 25 ],
 		],
 		transifexId: 'zh-hant'
 	},
@@ -86,8 +83,8 @@ module.exports = {
 		id: 'zh-cn',
 		folderName: 'chs',
 		replacements: [
-			[ /markdown/g, 'textile', 28 ],
-			[ /Markdown/g, 'Textile', 21 ],
+			[ /markdown/g, 'textile', 26 ],
+			[ /Markdown/g, 'Textile', 25 ],
 		],
 		transifexId: 'zh-hans'
 	},
