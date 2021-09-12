@@ -3,6 +3,7 @@
 	"description": "Rich language support for Textile: live preview, code folding, link to headlines, code blocks syntax highlighting...",
 	"textile.preview.breaks.desc": "Sets how line-breaks are rendered in the Textile preview. Setting it to 'true' creates a <br> for newlines inside paragraphs.",
 	"textile.preview.linkify": "Enable or disable conversion of URL-like text to links in the Textile preview.",
+	"textile.preview.typographer": "Enable or disable some language-neutral replacement and quotes beautification in the Textile preview.",
 	"textile.preview.doubleClickToSwitchToEditor.desc": "Double click in the Textile preview to switch to the editor.",
 	"textile.preview.fontFamily.desc": "Controls the font family used in the Textile preview.",
 	"textile.preview.fontSize.desc": "Controls the font size in pixels used in the Textile preview.",
@@ -24,5 +25,6 @@
 	"configuration.textile.preview.openTextileLinks.inPreview": "Try to open links in the Textile preview.",
 	"configuration.textile.links.openLocation.description": "Controls where links in Textile files should be opened.",
 	"configuration.textile.links.openLocation.currentGroup": "Open links in the active editor group.",
-	"configuration.textile.links.openLocation.beside": "Open links beside the active editor."
+	"configuration.textile.links.openLocation.beside": "Open links beside the active editor.",
+	"workspaceTrust": "Required for loading styles configured in the workspace."
 }

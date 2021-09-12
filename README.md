@@ -72,7 +72,8 @@ Maybe implemented, if requested :
 * Support enabling/disabling 'linkify' = Enable or disable conversion of URL-like text to links in the Textile preview;
 * Some helper functionalities, like link normalization and validation (may allow file:// protocol and absolute paths to images. Currently, http:// protocol, and path relative to Textile file are recognized). Look [here](./src/textileEngine.ts), and search for Disabled and FIXME;
 * Support for integration into [Codespaces browser based editor](https://code.visualstudio.com/api/advanced-topics/remote-extensions);
-* Smart select.
+* Smart select;
+* [Notebook rendering](https://code.visualstudio.com/api/extension-guides/notebook).
 
 ## Release Notes
 

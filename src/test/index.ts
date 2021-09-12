@@ -9,7 +9,7 @@ import * as glob from 'glob';
 
 const options: Mocha.MochaOptions = {
 	ui: 'tdd',
-	useColors: (!process.env.BUILD_ARTIFACTSTAGINGDIRECTORY && process.platform !== 'win32'),
+	color: true,
 	timeout: 60000
 };
 

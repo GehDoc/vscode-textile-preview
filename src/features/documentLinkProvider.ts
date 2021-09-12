@@ -65,19 +65,6 @@ function getWorkspaceFolder(document: vscode.TextDocument) {
 		|| vscode.workspace.workspaceFolders?.[0]?.uri;
 }
 
-function matchAll(
-	pattern: RegExp,
-	text: string
-): Array<RegExpMatchArray> {
-	const out: RegExpMatchArray[] = [];
-	pattern.lastIndex = 0;
-	let match: RegExpMatchArray | null;
-	while ((match = pattern.exec(text))) {
-		out.push(match);
-	}
-	return out;
-}
-
 function extractDocumentLink(
 	document: vscode.TextDocument,
 	pre: number,
@@ -183,7 +170,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 			}
 		}
 
-		for (const match of matchAll(this.linkPattern, text)) {
+		for (const match of text.matchAll(this.linkPattern)) {
 			const matchLink = match[1] && getDocumentLink(document, definitions, match[1].length, match[3], match.index);
 			if (matchLink) {
 				results.push(matchLink);
@@ -193,7 +180,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 				results.push(matchLinkFenced);
 			}
 		}
-		for (const match of matchAll(this.imagePattern, text)) {
+		for (const match of text.matchAll(this.imagePattern)) {
 			const matchImage = extractDocumentLink(document, (match[2] ? match[2].length : 0) + 1, match[3], match.index);
 			if (matchImage) {
 				results.push(matchImage);
@@ -219,7 +206,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 		const results: vscode.DocumentLink[] = [];
 
 		const definitions = this.getDefinitions(text, document);
-		for (const match of matchAll(this.referenceLinkPattern, text)) {
+		for (const match of text.matchAll(this.referenceLinkPattern)) {
 			let linkStart: vscode.Position;
 			let linkEnd: vscode.Position;
 			let reference = match[3];
@@ -266,7 +253,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 
 	private getDefinitions(text: string, document: vscode.TextDocument) {
 		const out = new Map<string, { link: string, linkRange: vscode.Range }>();
-		for (const match of matchAll(this.definitionPattern, text)) {
+		for (const match of text.matchAll(this.definitionPattern)) {
 			// -- Begin: Modified for textile
 			const reference = match[1];
 			const link = match[2].trim();

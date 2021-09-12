@@ -50,8 +50,8 @@ module.exports = {
 		folderName: 'jpn',
 		replacements: [
 			[ /markdown/g, 'textile', 26 ],
-			[ /マークダウン/g, 'Textile', 4 ],
-			[ /Markdown/g, 'Textile', 21 ],
+			[ /マークダウン/g, 'Textile', 3 ],
+			[ /Markdown/g, 'Textile', 22 ],
 		]
 	},
 	'ko':{
