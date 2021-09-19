@@ -13,6 +13,7 @@ const fs = require('fs');
 const merge = require('merge-options');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { NLSBundlePlugin } = require('vscode-nls-dev/lib/webpack-bundler');
+const { DefinePlugin } = require('webpack');
 
 function withNodeDefaults(/**@type WebpackConfig*/extConfig) {
 	// Need to find the top-most `package.json` file
@@ -81,5 +82,63 @@ function withNodeDefaults(/**@type WebpackConfig*/extConfig) {
 }
 
 
+function withBrowserDefaults(/**@type WebpackConfig*/extConfig) {
+	/** @type WebpackConfig */
+	let defaultConfig = {
+		mode: 'none', // this leaves the source code as close as possible to the original (when packaging we set this to 'production')
+		target: 'webworker', // extensions run in a webworker context
+		resolve: {
+			mainFields: ['module', 'main'],
+			extensions: ['.ts', '.js'], // support ts-files and js-files
+			alias: {
+				'vscode-nls': path.resolve(__dirname, './polyfills/vscode-nls.js')
+			}
+		},
+		module: {
+			rules: [{
+				test: /\.ts$/,
+				exclude: /node_modules/,
+				use: [{
+					// configure TypeScript loader:
+					// * enable sources maps for end-to-end source maps
+					loader: 'ts-loader',
+					options: {
+						compilerOptions: {
+							'sourceMap': true,
+						}
+					}
+				}]
+			}]
+		},
+		externals: {
+			'vscode': 'commonjs vscode', // ignored because it doesn't exist
+		},
+		performance: {
+			hints: false
+		},
+		output: {
+			// all output goes into `dist`.
+			// packaging depends on that and this must always be like it
+			filename: '[name].js',
+			path: path.join(extConfig.context, 'dist', 'browser'),
+			libraryTarget: 'commonjs',
+		},
+		// yes, really source maps
+		devtool: 'source-map',
+		plugins: [
+			new CopyWebpackPlugin({
+				patterns: [
+					{ from: './out/nls.*.json', to: '[name].json', globOptions: { ignore: ['**/test/**', '**/*.ts'] }, noErrorOnMissing: true }
+				]
+			}),
+			new DefinePlugin({ WEBWORKER: JSON.stringify(true) })
+		]
+	};
+
+	return merge(defaultConfig, extConfig);
+}
+
+
 module.exports = withNodeDefaults;
 module.exports.node = withNodeDefaults;
+module.exports.browser = withBrowserDefaults;

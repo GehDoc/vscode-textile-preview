@@ -14,6 +14,7 @@
 		"vscode": "^1.56.0"
 	},
 	"main": "./dist/extension",
+	"browser": "./dist/browser/extension",
 	"keywords": [
 		"textile preview",
 		"textile",
@@ -343,6 +344,7 @@
 		"watch": "tsc -watch -p ./",
 		"build-dev": "gulp build-dev",
 		"build": "gulp build",
+		"compile-web": "npx webpack-cli --config extension-browser.webpack.config --mode none",
 		"clean": "gulp clean",
 		"travis-test": "node ./out/test/runTest.js"
 	},

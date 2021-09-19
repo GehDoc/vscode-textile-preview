@@ -16,6 +16,7 @@ i18n/**
 src/**
 preview-src/**
 libs/
+polyfills/
 tools/**
 exemples/**
 
