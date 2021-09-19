@@ -68,11 +68,10 @@ function withNodeDefaults(/**@type WebpackConfig*/extConfig) {
 		// yes, really source maps
 		devtool: 'source-map',
 		plugins: [
+			new CopyWebpackPlugin({patterns: [
+				{ from: './out/nls.*.json', to: '[name].json', globOptions: { ignore: ['**/test/**', '**/*.ts'] }, noErrorOnMissing: true }
+			]}),
 			new NLSBundlePlugin(id),
-			// @ts-expect-error
-			new CopyWebpackPlugin([
-				{ from: './out/nls.*.json', to: '[name].json' }
-			])
 		],
 	};
 
