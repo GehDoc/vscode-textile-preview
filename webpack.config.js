@@ -23,7 +23,6 @@ module.exports = {
 	resolve: {
 		extensions: ['.tsx', '.ts', '.js']
 	},
-	devtool: 'inline-source-map',
 	output: {
 		filename: '[name].js',
 		path: path.resolve(__dirname, 'media')

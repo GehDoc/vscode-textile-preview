@@ -69,12 +69,12 @@ function withNodeDefaults(/**@type WebpackConfig*/extConfig) {
 		// yes, really source maps
 		devtool: 'source-map',
 		plugins: [
+			new NLSBundlePlugin(id),
 			new CopyWebpackPlugin({
 				patterns: [
 					{ from: './out/nls.*.json', to: '[name].json', globOptions: { ignore: ['**/test/**', '**/*.ts'] }, noErrorOnMissing: true }
 				]
 			}),
-			new NLSBundlePlugin(id)
 		],
 	};
 
@@ -88,10 +88,11 @@ function withBrowserDefaults(/**@type WebpackConfig*/extConfig) {
 		mode: 'none', // this leaves the source code as close as possible to the original (when packaging we set this to 'production')
 		target: 'webworker', // extensions run in a webworker context
 		resolve: {
-			mainFields: ['module', 'main'],
+			mainFields: ['browser', 'module', 'main'],
 			extensions: ['.ts', '.js'], // support ts-files and js-files
 			alias: {
-				'vscode-nls': path.resolve(__dirname, './polyfills/vscode-nls.js')
+				'path': require.resolve('path-browserify'),
+				'util': require.resolve('util')
 			}
 		},
 		module: {

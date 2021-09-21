@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [NOT RELEASED]
 ### Changed
 - [INTERNAL] Update build toolchain
+- [TARGET] Build for web/servless extension host
 
 
 ## [1.3.11] - 20210912

@@ -7,7 +7,8 @@
 			"es6",
 			"es2015.promise",
 			"es2019.array",
-			"es2020.string"
+			"es2020.string",
+			"dom"
 		]
 	},
 	"include": [

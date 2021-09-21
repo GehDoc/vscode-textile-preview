@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 const gulp = require('gulp');
-//const path = require('path');
 
 const ts = require('gulp-typescript');
 const typescript = require('typescript');
@@ -16,6 +15,7 @@ const webpack = require('webpack');
 
 const tsProject = ts.createProject('./tsconfig.json', { typescript });
 const configWebpackExt = require('./extension.webpack.config.js');
+const configWebpackExtBrowser = require('./extension-browser.webpack.config.js');
 const configWebpackPreview = require('./webpack.config.js');
 
 const inlineMap = true;
@@ -51,14 +51,14 @@ const buildTask = function( cb ) {
 	configWebpackPreview.mode = "production";
 	configWebpackExt.mode = "production";
 
-	return gulp.series(cleanTask, internalNlsCompileTask, addI18nTask, packPreview, packExt)( cb );
+	return gulp.series(cleanTask, internalNlsCompileTask, addI18nTask, packPreview, packExt, packExtBrowser)( cb );
 };
 
 const buildDevTask = function( cb ) {
 	configWebpackPreview.mode = "development";
 	configWebpackExt.mode = "development";
 
-	return gulp.series(cleanTask, internalNlsCompileTask, addI18nTask, packPreview, packExt)( cb );
+	return gulp.series(cleanTask, internalNlsCompileTask, addI18nTask, packPreview, packExt, packExtBrowser)( cb );
 };
 
 const doCompile = function (buildNls) {
@@ -67,7 +67,8 @@ const doCompile = function (buildNls) {
 		.pipe(tsProject()).js
 		.pipe(buildNls ? nls.rewriteLocalizeCalls() : es.through())
 		.pipe(buildNls ? nls.createAdditionalLanguageFiles(languages, 'i18n', 'out') : es.through())
-		.pipe(buildNls ? nls.bundleLanguageFiles() : es.through());
+		.pipe(buildNls ? nls.bundleLanguageFiles() : es.through())
+		.pipe(buildNls ? nls.bundleMetaDataFiles('GehDoc.vscode-textile-preview', 'out') : es.through());
 
 	if (inlineMap && inlineSource) {
 		r = r.pipe(sourcemaps.write());
@@ -97,6 +98,10 @@ const packExt = function( cb ) {
 
 const packPreview = function( cb ) {
 	webpack(configWebpackPreview).run( cb );
+};
+
+const packExtBrowser = function( cb ) {
+	webpack(configWebpackExtBrowser).run( cb );
 };
 
 gulp.task('default', buildTask);

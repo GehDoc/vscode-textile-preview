@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 
 import * as nls from 'vscode-nls';
-nls.config({ messageFormat: nls.MessageFormat.bundle, bundleFormat: nls.BundleFormat.standalone })();
+nls.config({ messageFormat: nls.MessageFormat.bundle, bundleFormat: nls.BundleFormat.standalone, locale: vscode.env.language })();
 
 import { CommandManager } from './commandManager';
 import * as commands from './commands/index';
