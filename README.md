@@ -46,7 +46,8 @@ To switch between views, press (<kbd>Ctrl+Shift+V</kbd>) in the editor. You can 
 This extension is entirely based on the Markdown preview provided by Visual Studio Code, and offers the same level of functionality :
 * view Textile source and its HTML preview side by side, with synchronised scrolling;
 * include images, from local or network, with manageable security of the preview's content;
-* click on links, in the source view and in the HTML preview.  
+* click on links, in the source view and in the HTML preview;
+* Can be run as a [remote/web extension](https://code.visualstudio.com/api/advanced-topics/remote-extensions).  
 Internal and external links to a paragraph headline of a textile file are supported (slugify);
 * see the document headlines structure in the outline view;
 * fold paragraphs from their headline, multi-line list-items, code blocks, and special HTML comments `<!-- #region [Optional text] -->` and `<!-- #endregion [Optional text] -->`.
@@ -71,7 +72,6 @@ Maybe implemented, if requested :
 * Add other translations than the 9 core languages listed there : https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
 * Support enabling/disabling 'linkify' = Enable or disable conversion of URL-like text to links in the Textile preview;
 * Some helper functionalities, like link normalization and validation (may allow file:// protocol and absolute paths to images. Currently, http:// protocol, and path relative to Textile file are recognized). Look [here](./src/textileEngine.ts), and search for Disabled and FIXME;
-* Support for integration into [Codespaces browser based editor](https://code.visualstudio.com/api/advanced-topics/remote-extensions);
 * Smart select;
 * [Notebook rendering](https://code.visualstudio.com/api/extension-guides/notebook).
 
