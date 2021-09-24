@@ -7,7 +7,7 @@
 # After running this tool, you can compare ./ and ./tools/tmp/out/ to gather
 # new features.
 
-VSCODE_VERSION_GIT_TAG=1.56.2
+VSCODE_VERSION_GIT_TAG=1.60.2
 
 . $(dirname $0)/log.sh
 
