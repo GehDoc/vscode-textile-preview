@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [UNRELEASED]
 ### Changed
 - [INTERNAL] Prepare update to vscode 1.60.2
+- update to vscode 1.60.2
 
 
 ## [1.3.13] - 20210922

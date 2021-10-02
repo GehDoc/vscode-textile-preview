@@ -5,9 +5,9 @@
 
 import * as vscode from 'vscode';
 import { Command } from '../commandManager';
+import { TextilePreviewManager } from '../features/previewManager';
 import { PreviewSecuritySelector } from '../security';
 import { isTextileFile } from '../util/file';
-import { TextilePreviewManager } from '../features/previewManager';
 
 export class ShowPreviewSecuritySelectorCommand implements Command {
 	public readonly id = 'textile.showPreviewSecuritySelector';

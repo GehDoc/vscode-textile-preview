@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { TextileEngine } from '../textileEngine';
-import { TableOfContentsProvider, SkinnyTextDocument, TocEntry } from '../tableOfContentsProvider';
+import { SkinnyTextDocument, TableOfContentsProvider, TocEntry } from '../tableOfContentsProvider';
 
 interface TextileSymbol {
 	readonly level: number;

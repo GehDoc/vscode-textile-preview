@@ -11,29 +11,6 @@ You can split your screen vertically, and keep the Textile source code side by s
 As this extension is based on the [Visual Studio Code's Markdown Language Features](https://github.com/microsoft/vscode/tree/master/extensions/markdown-language-features), it provides **[MUCH MORE than a preview](#features)**.  
 It relies on [a modified version of textile.js Textile parser](https://github.com/GehDoc/textile-js) in order to display a WYSIWYG preview of your textile document.
 
-## Installation
-
-### From Marketplace within VS Code
-
-Launch VS Code Quick Open (<kbd>Ctrl+P</kbd>), paste the following command, and press <kbd>enter</kbd> :
-```
-ext install GehDoc.vscode-textile-preview
-```
-
-### From Marketplace with CLI
-
-In your favorite shell, the following command will download and install the extension :
-```bash
-code --install-extension GehDoc.vscode-textile-preview
-```
-
-### From Github
-
-Download the packaged extension from the [release page](https://github.com/GehDoc/vscode-textile-preview/releases) and install it from the command line :
-```bash
-code --install-extension path/to/vscode-textile-preview-*.vsix
-```
-
 ## Working with Textile
 
 Create or open any file with a .textile extension, and then you can toggle the visualization of the editor between the code and the preview of the Textile file.
@@ -74,6 +51,29 @@ Maybe implemented, if requested :
 * Some helper functionalities, like link normalization and validation (may allow file:// protocol and absolute paths to images. Currently, http:// protocol, and path relative to Textile file are recognized). Look [here](./src/textileEngine.ts), and search for Disabled and FIXME;
 * Smart select;
 * [Notebook rendering](https://code.visualstudio.com/api/extension-guides/notebook).
+
+## Installation
+
+### From Marketplace within VS Code
+
+Launch VS Code Quick Open (<kbd>Ctrl+P</kbd>), paste the following command, and press <kbd>enter</kbd> :
+```
+ext install GehDoc.vscode-textile-preview
+```
+
+### From Marketplace with CLI
+
+In your favorite shell, the following command will download and install the extension :
+```bash
+code --install-extension GehDoc.vscode-textile-preview
+```
+
+### From Github
+
+Download the packaged extension from the [release page](https://github.com/GehDoc/vscode-textile-preview/releases) and install it from the command line :
+```bash
+code --install-extension path/to/vscode-textile-preview-*.vsix
+```
 
 ## Release Notes
 

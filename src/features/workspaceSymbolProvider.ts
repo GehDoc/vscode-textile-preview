@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import { SkinnyTextDocument, SkinnyTextLine } from '../tableOfContentsProvider';
 import { Disposable } from '../util/dispose';
 import { isTextileFile } from '../util/file';
 import { Lazy, lazy } from '../util/lazy';
 import TextileDocumentSymbolProvider from './documentSymbolProvider';
-import { SkinnyTextDocument, SkinnyTextLine } from '../tableOfContentsProvider';
 
 export interface WorkspaceTextileDocumentProvider {
 	getAllTextileDocuments(): Thenable<Iterable<SkinnyTextDocument>>;
@@ -26,10 +26,25 @@ class VSCodeWorkspaceTextileDocumentProvider extends Disposable implements Works
 
 	private _watcher: vscode.FileSystemWatcher | undefined;
 
-	async getAllTextileDocuments() {
-		const resources = await vscode.workspace.findFiles('**/*.textile', '**/node_modules/**'); // changed for textile
-		const docs = await Promise.all(resources.map(doc => this.getTextileDocument(doc)));
-		return docs.filter(doc => !!doc) as SkinnyTextDocument[];
+	private readonly utf8Decoder = new TextDecoder('utf-8');
+
+	/**
+	 * Reads and parses all .md documents in the workspace.
+	 * Files are processed in batches, to keep the number of open files small.
+	 *
+	 * @returns Array of processed .md files.
+	 */
+	async getAllTextileDocuments(): Promise<SkinnyTextDocument[]> {
+		const maxConcurrent = 20;
+		const docList: SkinnyTextDocument[] = [];
+		const resources = await vscode.workspace.findFiles('**/*.textile', '**/node_modules/**');
+
+		for (let i = 0; i < resources.length; i += maxConcurrent) {
+			const resourceBatch = resources.slice(i, i + maxConcurrent);
+			const documentBatch = (await Promise.all(resourceBatch.map(x => this.getTextileDocument(x)))).filter((doc) => !!doc) as SkinnyTextDocument[];
+			docList.push(...documentBatch);
+		}
+		return docList;
 	}
 
 	public get onDidChangeTextileDocument() {
@@ -52,7 +67,7 @@ class VSCodeWorkspaceTextileDocumentProvider extends Disposable implements Works
 			return;
 		}
 
-		this._watcher = this._register(vscode.workspace.createFileSystemWatcher('**/*.textile')); // changed for textile
+		this._watcher = this._register(vscode.workspace.createFileSystemWatcher('**/*.textile'));
 
 		this._watcher.onDidChange(async resource => {
 			const document = await this.getTextileDocument(resource);
@@ -88,7 +103,7 @@ class VSCodeWorkspaceTextileDocumentProvider extends Disposable implements Works
 		const bytes = await vscode.workspace.fs.readFile(resource);
 
 		// We assume that textile is in UTF-8
-		const text = Buffer.from(bytes).toString('utf-8');
+		const text = this.utf8Decoder.decode(bytes);
 
 		const lines: SkinnyTextLine[] = [];
 		const parts = text.split(/(\r?\n)/);

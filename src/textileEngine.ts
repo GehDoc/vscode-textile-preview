@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { TextileJS, Token, Options as TextileJSConfig } from '../libs/textile-js/textile';
-//import * as path from 'path';
 import * as vscode from 'vscode';
 import { TextileContributionProvider as TextileContributionProvider } from './textileExtensions';
 import { Slugifier } from './slugify';
 import { SkinnyTextDocument } from './tableOfContentsProvider';
 import { hash } from './util/hash';
-//import { isOfScheme, TextileFileExtensions, Schemes } from './util/links';
+import { isOfScheme, Schemes } from './util/links';
+import { WebviewResourceProvider } from './util/resources';
 
 const UNICODE_NEWLINE_REGEX = /\u2028|\u2029/g;
 
@@ -65,12 +65,14 @@ export interface RenderOutput {
 
 interface RenderEnv {
 	containingImages: { src: string }[];
+	currentDocument: vscode.Uri | undefined;
+	resourceProvider: WebviewResourceProvider | undefined;
 }
 
 export class TextileEngine {
+
 	private textile?: Promise<TextileJS>;
 
-	// Disabled for textile : private currentDocument?: vscode.Uri;
 	private _slugCount = new Map<string, number>();
 	private _tokenCache = new TokenCache();
 
@@ -98,7 +100,7 @@ export class TextileEngine {
 					}
 				}
 
-				const frontMatterPlugin = require('textile-it-front-matter');
+				const frontMatterPlugin = await import('textile-it-front-matter');
 				// Extract rules from front matter plugin and apply at a lower precedence
 				let fontMatterRule: any;
 				frontMatterPlugin({
@@ -107,7 +109,7 @@ export class TextileEngine {
 							before: (_id: any, _id2: any, rule: any) => { fontMatterRule = rule; }
 						}
 					}
-				}, () => { /* noop * / });
+				}, () => { / * noop * / });
 
 				md.block.ruler.before('fence', 'front_matter', fontMatterRule, {
 					alt: ['paragraph', 'reference', 'blockquote', 'list']
@@ -123,7 +125,7 @@ export class TextileEngine {
 					hooks: [],
 					renderers: []
 				};
-				this.addImageStabilizer(textile, localConfig);
+				this.addImageRenderer(textile, localConfig);
 				this.addFencedRenderer(textile, localConfig);
 				// FIXME ? this.addLinkNormalizer(md);
 				// FIXME ? this.addLinkValidator(md);
@@ -139,6 +141,10 @@ export class TextileEngine {
 		const textile = await this.textile!;
 		textile.setOptions(config); // Changed for texile
 		return textile;
+	}
+
+	public reloadPlugins() {
+		this.textile = undefined;
 	}
 
 	// -- Begin: Keep for Textile
@@ -184,8 +190,6 @@ export class TextileEngine {
 			return cached;
 		}
 
-		// Disabled for textile : this.currentDocument = document.uri;
-
 		const tokens = this.tokenizeString(document.getText(), engine, env);
 		this._tokenCache.update(document, config, tokens);
 		return tokens;
@@ -202,12 +206,14 @@ export class TextileEngine {
 		}, env);
 	}
 
-	public async render(input: SkinnyTextDocument | string): Promise<RenderOutput> {
+	public async render(input: SkinnyTextDocument | string, resourceProvider?: WebviewResourceProvider): Promise<RenderOutput> {
 		const config = this.getConfig(typeof input === 'string' ? undefined : input.uri);
 		const engine = await this.getEngine(config);
 
 		const env: RenderEnv = {
-			containingImages: []
+			containingImages: [],
+			currentDocument: typeof input === 'string' ? undefined : input.uri,
+			resourceProvider,
 		};
 
 		const tokens = typeof input === 'string'
@@ -236,7 +242,7 @@ export class TextileEngine {
 	}
 
 	private getConfig(resource?: vscode.Uri): TextileJSConfig {
-		const config = vscode.workspace.getConfiguration('textile', resource);
+		const config = vscode.workspace.getConfiguration('textile', resource ?? null);
 		// -- Begin : Changed for textile
 		return {
 			breaks: config.get<boolean>('preview.breaks', false),
@@ -249,12 +255,12 @@ export class TextileEngine {
 	}
 
 	/* Disabled for textile : not necessary
-	private addLineNumberRenderer(md: any, ruleName: string): void {
+	private addLineNumberRenderer(md: TextileJS, ruleName: string): void {
 		const original = md.renderer.rules[ruleName];
-		md.renderer.rules[ruleName] = (tokens: any, idx: number, options: any, env: any, self: any) => {
+		md.renderer.rules[ruleName] = (tokens: Token[], idx: number, options: any, env: any, self: any) => {
 			const token = tokens[idx];
 			if (token.map && token.map.length) {
-				token.attrSet('data-line', token.map[0]);
+				token.attrSet('data-line', token.map[0] + '');
 				token.attrJoin('class', 'code-line');
 			}
 
@@ -268,7 +274,7 @@ export class TextileEngine {
 	*/
 
 	// -- Begin : Changed for textile
-	private addImageStabilizer(textile: TextileJS, config: TextileJSConfig): void {
+	private addImageRenderer(textile: TextileJS, config: TextileJSConfig): void {
 		config.hooks!.push(
 			[(tokens: Token[], _attributes, _content, env) => {
 				switch( tokens[0] ) {
@@ -281,6 +287,11 @@ export class TextileEngine {
 							env?.containingImages?.push({ src });
 							const imgHash = hash(src);
 							textile.jsonmlUtils.addAttributes( tokens, {'id': `image-hash-${imgHash}`});
+
+							if (!tokens[1]?.['data-src']) {
+								textile.jsonmlUtils.addAttributes( tokens, {'src': this.toResourceUri(src, env.currentDocument, env.resourceProvider)});
+								textile.jsonmlUtils.addAttributes( tokens, {'data-src': src});
+							}
 						}
 						break;
 					default:
@@ -315,7 +326,7 @@ export class TextileEngine {
 	// -- End : Changed for textile
 
 	/* FIXME ?
-	private addLinkNormalizer(md: any): void {
+	private addLinkNormalizer(md: TextileJS): void {
 		const normalizeLink = md.normalizeLink;
 		md.normalizeLink = (link: string) => {
 			try {
@@ -324,43 +335,6 @@ export class TextileEngine {
 					return normalizeLink(vscode.Uri.parse(link).with({ scheme: vscode.env.uriScheme }).toString());
 				}
 
-				// Support file:// links
-				if (isOfScheme(Schemes.file, link)) {
-					// Ensure link is relative by prepending `/` so that it uses the <base> element URI
-					// when resolving the absolute URL
-					return normalizeLink('/' + link.replace(/^file:/, 'file'));
-				}
-
-				// If original link doesn't look like a url with a scheme, assume it must be a link to a file in workspace
-				if (!/^[a-z\-]+:/i.test(link)) {
-					// Use a fake scheme for parsing
-					let uri = vscode.Uri.parse('textile-link:' + link);
-
-					// Relative paths should be resolved correctly inside the preview but we need to
-					// handle absolute paths specially (for images) to resolve them relative to the workspace root
-					if (uri.path[0] === '/') {
-						const root = vscode.workspace.getWorkspaceFolder(this.currentDocument!);
-						if (root) {
-							const fileUri = vscode.Uri.joinPath(root.uri, uri.fsPath).with({
-								fragment: uri.fragment,
-								query: uri.query,
-							});
-
-							// Ensure fileUri is relative by prepending `/` so that it uses the <base> element URI
-							// when resolving the absolute URL
-							uri = vscode.Uri.parse('textile-link:' + '/' + fileUri.toString(true).replace(/^\S+?:/, fileUri.scheme));
-						}
-					}
-
-					const extname = path.extname(uri.fsPath);
-
-					if (uri.fragment && (extname === '' || TextileFileExtensions.includes(extname))) {
-						uri = uri.with({
-							fragment: this.slugifier.fromHeading(uri.fragment).value
-						});
-					}
-					return normalizeLink(uri.toString(true).replace(/^textile-link:/, ''));
-				}
 			} catch (e) {
 				// noop
 			}
@@ -368,7 +342,7 @@ export class TextileEngine {
 		};
 	}
 
-	private addLinkValidator(md: any): void {
+	private addLinkValidator(md: TextileJS): void {
 		const validateLink = md.validateLink;
 		md.validateLink = (link: string) => {
 			return validateLink(link)
@@ -412,12 +386,12 @@ export class TextileEngine {
 	// -- End : Changed for textile
 
 	/* FIXME ?
-	private addLinkRenderer(md: any): void {
-		const old_render = md.renderer.rules.link_open || ((tokens: any, idx: number, options: any, _env: any, self: any) => {
+	private addLinkRenderer(md: TextileJS): void {
+		const old_render = md.renderer.rules.link_open || ((tokens: Token[], idx: number, options: any, _env: any, self: any) => {
 			return self.renderToken(tokens, idx, options);
 		});
 
-		md.renderer.rules.link_open = (tokens: any, idx: number, options: any, env: any, self: any) => {
+		md.renderer.rules.link_open = (tokens: Token[], idx: number, options: any, env: any, self: any) => {
 			const token = tokens[idx];
 			const hrefIndex = token.attrIndex('href');
 			if (hrefIndex >= 0) {
@@ -428,6 +402,50 @@ export class TextileEngine {
 		};
 	}
 	*/
+
+	private toResourceUri(href: string, currentDocument: vscode.Uri | undefined, resourceProvider: WebviewResourceProvider | undefined): string {
+		try {
+			// Support file:// links
+			if (isOfScheme(Schemes.file, href)) {
+				const uri = vscode.Uri.parse(href);
+				if (resourceProvider) {
+					return resourceProvider.asWebviewUri(uri).toString(true);
+				}
+				// Not sure how to resolve this
+				return href;
+			}
+
+			// If original link doesn't look like a url with a scheme, assume it must be a link to a file in workspace
+			if (!/^[a-z\-]+:/i.test(href)) {
+				// Use a fake scheme for parsing
+				let uri = vscode.Uri.parse('textile-link:' + href);
+
+				// Relative paths should be resolved correctly inside the preview but we need to
+				// handle absolute paths specially to resolve them relative to the workspace root
+				if (uri.path[0] === '/' && currentDocument) {
+					const root = vscode.workspace.getWorkspaceFolder(currentDocument);
+					if (root) {
+						uri = vscode.Uri.joinPath(root.uri, uri.fsPath).with({
+							fragment: uri.fragment,
+							query: uri.query,
+						});
+
+						if (resourceProvider) {
+							return resourceProvider.asWebviewUri(uri).toString(true);
+						} else {
+							uri = uri.with({ scheme: 'textile-link' });
+						}
+					}
+				}
+
+				return uri.toString(true).replace(/^textile-link:/, '');
+			}
+
+			return href;
+		} catch {
+			return href;
+		}
+	}
 }
 
 /* Disabled for textile : Done in addFencedRenderer

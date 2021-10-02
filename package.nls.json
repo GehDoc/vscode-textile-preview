@@ -1,6 +1,6 @@
 {
 	"displayName": "Textile Language Features",
-	"description": "Rich language support for Textile: live preview, code folding, link to headlines, code blocks syntax highlighting...",
+	"description": "Rich language support for Textile: synchronized preview, code folding, link to headlines, code blocks syntax highlighting...",
 	"textile.preview.breaks.desc": "Sets how line-breaks are rendered in the Textile preview. Setting it to 'true' creates a <br> for newlines inside paragraphs.",
 	"textile.preview.linkify": "Enable or disable conversion of URL-like text to links in the Textile preview.",
 	"textile.preview.typographer": "Enable or disable some language-neutral replacement and quotes beautification in the Textile preview.",
@@ -15,7 +15,7 @@
 	"textile.previewSide.title": "Open Preview to the Side",
 	"textile.showLockedPreviewToSide.title": "Open Locked Preview to the Side",
 	"textile.showSource.title": "Show Source",
-	"textile.styles.dec": "A list of URLs or local paths to CSS style sheets to use from the Textile preview. Relative paths are interpreted relative to the folder open in the explorer. If there is no open folder, they are interpreted relative to the location of the Textile file. All '\\' need to be written as '\\\\'.",
+	"textile.styles.dec": "A list of URLs or local paths to CSS style sheets to use from the Textile preview. Relative paths are interpreted relative to the folder open in the Explorer. If there is no open folder, they are interpreted relative to the location of the Textile file. All '\\' need to be written as '\\\\'.",
 	"textile.showPreviewSecuritySelector.title": "Change Preview Security Settings",
 	"textile.trace.desc": "Enable debug logging for the Textile extension.",
 	"textile.preview.refresh.title": "Refresh Preview",

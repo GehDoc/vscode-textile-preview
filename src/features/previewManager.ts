@@ -8,8 +8,9 @@ import { Logger } from '../logger';
 import { TextileEngine } from '../textileEngine';
 import { TextileContributionProvider } from '../textileExtensions';
 import { Disposable, disposeAll } from '../util/dispose';
+import { isTextileFile } from '../util/file';
 import { TopmostLineMonitor } from '../util/topmostLineMonitor';
-import { DynamicTextilePreview, ManagedTextilePreview, StartingScrollFragment, StaticTextilePreview } from './preview';
+import { DynamicTextilePreview, ManagedTextilePreview, scrollEditorToLine, StartingScrollFragment, StaticTextilePreview } from './preview';
 import { TextilePreviewConfigurationManager } from './previewConfig';
 import { TextileContentProvider } from './previewContentProvider';
 
@@ -75,6 +76,17 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 		super();
 		this._register(vscode.window.registerWebviewPanelSerializer(DynamicTextilePreview.viewType, this));
 		this._register(vscode.window.registerCustomEditorProvider(this.customEditorViewType, this));
+
+		this._register(vscode.window.onDidChangeActiveTextEditor(textEditor => {
+
+			// When at a textile file, apply existing scroll settings
+			if (textEditor && textEditor.document && isTextileFile(textEditor.document)) {
+				const line = this._topmostLineMonitor.getPreviousStaticEditorLineByUri(textEditor.document.uri);
+				if (line) {
+					scrollEditorToLine(line, textEditor);
+				}
+			}
+		}));
 	}
 
 	public refresh() {
@@ -160,14 +172,18 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 		document: vscode.TextDocument,
 		webview: vscode.WebviewPanel
 	): Promise<void> {
+		const lineNumber = this._topmostLineMonitor.getPreviousTextEditorLineByUri(document.uri);
 		const preview = StaticTextilePreview.revive(
 			document.uri,
 			webview,
 			this._contentProvider,
 			this._previewConfigurations,
+			this._topmostLineMonitor,
 			this._logger,
 			this._contributions,
-			this._engine);
+			this._engine,
+			lineNumber
+		);
 		this.registerStaticPreview(preview);
 	}
 
@@ -175,11 +191,14 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 		resource: vscode.Uri,
 		previewSettings: DynamicPreviewSettings
 	): DynamicTextilePreview {
+		const activeTextEditorURI = vscode.window.activeTextEditor?.document.uri;
+		const scrollLine = (activeTextEditorURI?.toString() === resource.toString()) ? vscode.window.activeTextEditor?.visibleRanges[0].start.line : undefined;
 		const preview = DynamicTextilePreview.create(
 			{
 				resource,
 				resourceColumn: previewSettings.resourceColumn,
 				locked: previewSettings.locked,
+				line: scrollLine,
 			},
 			previewSettings.previewColumn,
 			this._contentProvider,

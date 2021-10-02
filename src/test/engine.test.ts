@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as assert from 'assert';
-import * as vscode from 'vscode';
 import 'mocha';
-
-import { InMemoryDocument } from './inMemoryDocument';
+import * as vscode from 'vscode';
 import { createNewTextileEngine } from './engine';
+import { InMemoryDocument } from './inMemoryDocument';
+
 
 const testFileName = vscode.Uri.file('test.md');
 
@@ -38,11 +38,11 @@ suite('textile.engine', () => {
 			const engine = createNewTextileEngine();
 			assert.deepStrictEqual((await engine.render(input)), {
 				html: '<p data-line="0" class="code-line">'
-					+ '<img src="img.png" data-line="0" class="code-line loading" alt="" id="image-hash--754511435" /> '
+					+ '<img src="img.png" data-line="0" class="code-line loading" alt="" id="image-hash--754511435" data-src="img.png" /> '
 					+ '<a href="no-img.png">a</a> '
-					+ '<img src="http://example.org/img.png" data-line="0" class="code-line loading" alt="" id="image-hash--1903814170" /> '
-					+ '<img src="img.png" data-line="0" class="code-line loading" alt="" id="image-hash--754511435" /> '
-					+ '<img src="./img2.png" data-line="0" class="code-line loading" alt="" id="image-hash-265238964" />'
+					+ '<img src="http://example.org/img.png" data-line="0" class="code-line loading" alt="" id="image-hash--1903814170" data-src="http://example.org/img.png" /> '
+					+ '<img src="img.png" data-line="0" class="code-line loading" alt="" id="image-hash--754511435" data-src="img.png" /> '
+					+ '<img src="./img2.png" data-line="0" class="code-line loading" alt="" id="image-hash-265238964" data-src="./img2.png" />'
 					+ '</p>'
 				,
 				containingImages: [{ src: 'img.png' }, { src: 'http://example.org/img.png' }, { src: 'img.png' }, { src: './img2.png' }],

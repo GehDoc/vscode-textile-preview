@@ -3,20 +3,20 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as path from 'path';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import { OpenDocumentLinkCommand, resolveLinkToTextileFile } from '../commands/openDocumentLink';
 import { Logger } from '../logger';
+import { TextileEngine } from '../textileEngine';
 import { TextileContributionProvider } from '../textileExtensions';
 import { Disposable } from '../util/dispose';
 import { isTextileFile } from '../util/file';
-import { normalizeResource, WebviewResourceProvider } from '../util/resources';
-import { getVisibleLine, TopmostLineMonitor } from '../util/topmostLineMonitor';
+import * as path from '../util/path';
+import { WebviewResourceProvider } from '../util/resources';
+import { getVisibleLine, LastScrollLocation, TopmostLineMonitor } from '../util/topmostLineMonitor';
+import { urlToUri } from '../util/url';
 import { TextilePreviewConfigurationManager } from './previewConfig';
 import { TextileContentProvider, TextileContentProviderOutput } from './previewContentProvider';
-import { TextileEngine } from '../textileEngine';
-import { urlToUri } from '../util/url';
 
 const localize = nls.loadMessageBundle();
 
@@ -120,6 +120,8 @@ class TextilePreview extends Disposable implements WebviewResourceProvider {
 	private imageInfo: { readonly id: string, readonly width: number, readonly height: number; }[] = [];
 
 	private readonly _fileWatchersBySrc = new Map</* src: */ string, vscode.FileSystemWatcher>();
+	private readonly _onScrollEmitter = this._register(new vscode.EventEmitter<LastScrollLocation>());
+	public readonly onScroll = this._onScrollEmitter.event;
 
 	constructor(
 		webview: vscode.WebviewPanel,
@@ -150,7 +152,7 @@ class TextilePreview extends Disposable implements WebviewResourceProvider {
 		}
 
 		this._register(_contributionProvider.onContributionsChanged(() => {
-			setImmediate(() => this.refresh());
+			setTimeout(() => this.refresh(), 0);
 		}));
 
 		this._register(vscode.workspace.onDidChangeTextDocument(event => {
@@ -324,7 +326,7 @@ class TextilePreview extends Disposable implements WebviewResourceProvider {
 
 	private onDidScrollPreview(line: number) {
 		this.line = line;
-
+		this._onScrollEmitter.fire({ line: this.line, uri: this._resource });
 		const config = this._previewConfigurations.loadAndCacheConfiguration(this._resource);
 		if (!config.scrollEditorWithPreview) {
 			return;
@@ -336,13 +338,7 @@ class TextilePreview extends Disposable implements WebviewResourceProvider {
 			}
 
 			this.isScrolling = true;
-			const sourceLine = Math.floor(line);
-			const fraction = line - sourceLine;
-			const text = editor.document.lineAt(sourceLine).text;
-			const start = Math.floor(fraction * text.length);
-			editor.revealRange(
-				new vscode.Range(sourceLine, start, sourceLine + 1, 0),
-				vscode.TextEditorRevealType.AtTop);
+			scrollEditorToLine(line, editor);
 		}
 	}
 
@@ -427,12 +423,12 @@ class TextilePreview extends Disposable implements WebviewResourceProvider {
 			baseRoots.push(vscode.Uri.file(path.dirname(this._resource.fsPath)));
 		}
 
-		return baseRoots.map(root => normalizeResource(this._resource, root));
+		return baseRoots;
 	}
 
 
 	private async onDidClickPreviewLink(href: string) {
-		let [hrefPath, fragment] = decodeURIComponent(href).split('#');
+		let [hrefPath, fragment] = href.split('#').map(c => decodeURIComponent(c));
 
 		if (hrefPath[0] !== '/') {
 			// We perviously already resolve absolute paths.
@@ -460,7 +456,7 @@ class TextilePreview extends Disposable implements WebviewResourceProvider {
 	//#region WebviewResourceProvider
 
 	asWebviewUri(resource: vscode.Uri) {
-		return this._webviewPanel.webview.asWebviewUri(normalizeResource(this._resource, resource));
+		return this._webviewPanel.webview.asWebviewUri(resource);
 	}
 
 	get cspSource() {
@@ -497,11 +493,13 @@ export class StaticTextilePreview extends Disposable implements ManagedTextilePr
 		webview: vscode.WebviewPanel,
 		contentProvider: TextileContentProvider,
 		previewConfigurations: TextilePreviewConfigurationManager,
+		topmostLineMonitor: TopmostLineMonitor,
 		logger: Logger,
 		contributionProvider: TextileContributionProvider,
 		engine: TextileEngine,
+		scrollLine?: number,
 	): StaticTextilePreview {
-		return new StaticTextilePreview(webview, resource, contentProvider, previewConfigurations, logger, contributionProvider, engine);
+		return new StaticTextilePreview(webview, resource, contentProvider, previewConfigurations, topmostLineMonitor, logger, contributionProvider, engine, scrollLine);
 	}
 
 	private readonly preview: TextilePreview;
@@ -511,13 +509,15 @@ export class StaticTextilePreview extends Disposable implements ManagedTextilePr
 		resource: vscode.Uri,
 		contentProvider: TextileContentProvider,
 		private readonly _previewConfigurations: TextilePreviewConfigurationManager,
+		topmostLineMonitor: TopmostLineMonitor,
 		logger: Logger,
 		contributionProvider: TextileContributionProvider,
 		engine: TextileEngine,
+		scrollLine?: number,
 	) {
 		super();
-
-		this.preview = this._register(new TextilePreview(this._webviewPanel, resource, undefined, {
+		const topScrollLocation = scrollLine ? new StartingScrollLine(scrollLine) : undefined;
+		this.preview = this._register(new TextilePreview(this._webviewPanel, resource, topScrollLocation, {
 			getAdditionalState: () => { return {}; },
 			openPreviewLinkToTextileFile: () => { /* todo */ }
 		}, engine, contentProvider, _previewConfigurations, logger, contributionProvider));
@@ -528,6 +528,16 @@ export class StaticTextilePreview extends Disposable implements ManagedTextilePr
 
 		this._register(this._webviewPanel.onDidChangeViewState(e => {
 			this._onDidChangeViewState.fire(e);
+		}));
+
+		this._register(this.preview.onScroll((scrollInfo) => {
+			topmostLineMonitor.setPreviousStaticEditorLine(scrollInfo);
+		}));
+
+		this._register(topmostLineMonitor.onDidChanged(event => {
+			if (this.preview.isPreviewOf(event.resource)) {
+				this.preview.scrollTo(event.line);
+			}
 		}));
 	}
 
@@ -789,3 +799,18 @@ export class DynamicTextilePreview extends Disposable implements ManagedTextileP
 	}
 }
 
+/**
+ * Change the top-most visible line of `editor` to be at `line`
+ */
+export function scrollEditorToLine(
+	line: number,
+	editor: vscode.TextEditor
+) {
+	const sourceLine = Math.floor(line);
+	const fraction = line - sourceLine;
+	const text = editor.document.lineAt(sourceLine).text;
+	const start = Math.floor(fraction * text.length);
+	editor.revealRange(
+		new vscode.Range(sourceLine, start, sourceLine + 1, 0),
+		vscode.TextEditorRevealType.AtTop);
+}
