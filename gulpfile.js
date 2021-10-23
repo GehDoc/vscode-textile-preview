@@ -56,6 +56,7 @@ const buildTask = function( cb ) {
 
 const buildDevTask = function( cb ) {
 	configWebpackPreview.mode = "development";
+	configWebpackPreview.devtool = 'inline-cheap-source-map';
 	configWebpackExt.mode = "development";
 
 	return gulp.series(cleanTask, internalNlsCompileTask, addI18nTask, packPreview, packExt, packExtBrowser)( cb );
