@@ -276,7 +276,7 @@ export class TextileEngine {
 	// -- Begin : Changed for textile
 	private addImageRenderer(textile: TextileJS, config: TextileJSConfig): void {
 		config.hooks!.push(
-			[(tokens: Token[], _attributes, _content, env) => {
+			[(tokens: Token[], _attributes, _content, env = {}) => {
 				switch( tokens[0] ) {
 					case 'img':
 						let className = (tokens[1]?.class || '') + ' loading';
@@ -284,7 +284,7 @@ export class TextileEngine {
 
 						const src = tokens[1]?.src;
 						if (src) {
-							env?.containingImages?.push({ src });
+							env.containingImages?.push({ src });
 							const imgHash = hash(src);
 							textile.jsonmlUtils.addAttributes( tokens, {'id': `image-hash-${imgHash}`});
 
