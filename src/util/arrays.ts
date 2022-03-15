@@ -16,4 +16,3 @@ export function equals<T>(one: ReadonlyArray<T>, other: ReadonlyArray<T>, itemEq
 
 	return true;
 }
-

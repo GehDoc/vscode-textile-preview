@@ -289,7 +289,7 @@ export class TextileEngine {
 							textile.jsonmlUtils.addAttributes( tokens, {'id': `image-hash-${imgHash}`});
 
 							if (!tokens[1]?.['data-src']) {
-								textile.jsonmlUtils.addAttributes( tokens, {'src': this.toResourceUri(src, env.currentDocument, env.resourceProvider)});
+								textile.jsonmlUtils.addAttributes( tokens, {'src': this.toResourceUri(src, env?.currentDocument, env?.resourceProvider)});
 								textile.jsonmlUtils.addAttributes( tokens, {'data-src': src});
 							}
 						}

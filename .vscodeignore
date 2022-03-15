@@ -1,6 +1,3 @@
-.vscode/**
-.vscode-test/**
-
 .devcontainer/**
 .gitignore
 .github/**
@@ -14,6 +11,7 @@ test-workspace/**
 
 i18n/**
 src/**
+notebook/**
 preview-src/**
 libs/
 tools/**
@@ -22,10 +20,12 @@ exemples/**
 gulpfile.js
 tsconfig.json
 tsconfig.base.json
+tsconfig.browser.json
 shared.webpack.config.js
 extension.webpack.config.js
 extension-browser.webpack.config.js
 webpack.config.js
+esbuild.js
 
 PERSONAL-NOTES.md
 media/textile-mark_logo.svg
