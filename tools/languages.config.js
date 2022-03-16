@@ -17,15 +17,15 @@ module.exports = {
 		id: 'de',
 		folderName: 'deu',
 		replacements: [
-			[ /markdown/g, 'textile', 26 ],
-			[ /Markdown/g, 'Textile', 25 ],
+			[ /markdown/g, 'textile', 27 ],
+			[ /Markdown/g, 'Textile', 26 ],
 		]
 	},
 	'es':{
 		id: 'es',
 		folderName: 'esn',
 		replacements: [
-			[ /markdown/g, 'textile', 26 ],
+			[ /markdown/g, 'textile', 27 ],
 			[ /Markdown/g, 'Textile', 25 ],
 		]
 	},
@@ -33,32 +33,32 @@ module.exports = {
 		id: 'fr',
 		folderName: 'fra',
 		replacements: [
-			[ /markdown/g, 'textile', 26 ],
-			[ /Markdown/g, 'Textile', 25 ],
+			[ /markdown/g, 'textile', 27 ],
+			[ /Markdown/g, 'Textile', 26 ],
 		]
 	},
 	'it':{
 		id: 'it',
 		folderName: 'ita',
 		replacements: [
-			[ /markdown/g, 'textile', 26 ],
-			[ /Markdown/g, 'Textile', 25 ],
+			[ /markdown/g, 'textile', 27 ],
+			[ /Markdown/g, 'Textile', 26 ],
 		]
 	},
 	'ja':{
 		id: 'ja',
 		folderName: 'jpn',
 		replacements: [
-			[ /markdown/g, 'textile', 26 ],
+			[ /markdown/g, 'textile', 27 ],
 			[ /マークダウン/g, 'Textile', 3 ],
-			[ /Markdown/g, 'Textile', 22 ],
+			[ /Markdown/g, 'Textile', 23 ],
 		]
 	},
 	'ko':{
 		id: 'ko',
 		folderName: 'kor',
 		replacements: [
-			[ /markdown/g, 'textile', 26 ],
+			[ /markdown/g, 'textile', 28 ],
 			[ /Markdown/g, 'Textile', 25 ],
 		]
 	},
@@ -66,16 +66,16 @@ module.exports = {
 		id: 'ru',
 		folderName: 'rus',
 		replacements: [
-			[ /markdown/g, 'textile', 26 ],
-			[ /Markdown/g, 'Textile', 25 ],
+			[ /markdown/g, 'textile', 27 ],
+			[ /Markdown/g, 'Textile', 26 ],
 		]
 	},
 	'zh-hant':{
 		id: 'zh-tw',
 		folderName: 'cht',
 		replacements: [
-			[ /markdown/g, 'textile', 26 ],
-			[ /Markdown/g, 'Textile', 25 ],
+			[ /markdown/g, 'textile', 27 ],
+			[ /Markdown/g, 'Textile', 26 ],
 		],
 		transifexId: 'zh-hant'
 	},
@@ -83,8 +83,8 @@ module.exports = {
 		id: 'zh-cn',
 		folderName: 'chs',
 		replacements: [
-			[ /markdown/g, 'textile', 26 ],
-			[ /Markdown/g, 'Textile', 25 ],
+			[ /markdown/g, 'textile', 27 ],
+			[ /Markdown/g, 'Textile', 26 ],
 		],
 		transifexId: 'zh-hans'
 	},

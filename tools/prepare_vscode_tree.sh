@@ -7,7 +7,7 @@
 # After running this tool, you can compare ./ and ./tools/tmp/out/ to gather
 # new features.
 
-VSCODE_VERSION_GIT_TAG=1.60.2
+VSCODE_VERSION_GIT_TAG=1.65.2
 
 . $(dirname $0)/log.sh
 
@@ -20,8 +20,8 @@ function process_dir_src() {
 	DEST_DIR=$OLD_DIR/$out_dir
 
 	# unsafe
-	rm -rf $out_dir
-	mkdir -p $out_dir
+	rm -rf "$out_dir"
+	mkdir -p "$out_dir"
 	if [ $? -ne 0 ]; then
 		fatal_error "cannot mkdir $out_dir"
 	fi
@@ -31,7 +31,7 @@ function process_dir_src() {
 		fatal_error "$dir doesn't exist"
 	fi
 	# After this line, don't forget to `cd $OLD_DIR` before leaving function, and use $DEST_DIR instead of $out_dir
-	cd $dir
+	cd "$dir"
 
 	processed=0
 	for file in $elements; do
@@ -41,7 +41,7 @@ function process_dir_src() {
 		# but, file from ../ will be copied at the root $DEST_DIR
 		dirname=$(dirname ${file})
 		if [ "$dirname" != ".." ]; then
-			mkdir -p $DEST_DIR/$dirname
+			mkdir -p "$DEST_DIR/$dirname"
 			destfile=$DEST_DIR/$file
 		else
 			destfile=$DEST_DIR/$(basename $file)
@@ -50,32 +50,32 @@ function process_dir_src() {
 		extension="${file##*.}"
 		if [ "$extension" = "js" ] || [ "$extension" = "json" ] || [ "$extension" = "ts" ] || [ "$extension" = "css" ]; then
 			# replace markdown by textile
-			sed -e "s/markdown/textile/g" $file > $destfile
-			sed -i -e "s/MarkdownIt/TextileJS/g" $destfile
-			sed -i -e "s/Markdown/Textile/g" $destfile
-			sed -i -e "s/MDDocument/TextileDocument/g" $destfile
-			sed -i -e "s/'.md'/'.textile'/g" $destfile
-			sed -i -e "s/\*.md'/\*.textile'/g" $destfile
-			sed -i -e 's/`.md`/`.textile`/g' $destfile
+			sed -e "s/markdown/textile/g" "$file" > "$destfile"
+			sed -i -e "s/MarkdownIt/TextileJS/g" "$destfile"
+			sed -i -e "s/Markdown/Textile/g" "$destfile"
+			sed -i -e "s/MDDocument/TextileDocument/g" "$destfile"
+			sed -i -e "s/'.md'/'.textile'/g" "$destfile"
+			sed -i -e "s/\*.md'/\*.textile'/g" "$destfile"
+			sed -i -e 's/`.md`/`.textile`/g' "$destfile"
 		else
 			# just copy other kind of files
-			cp $file $destfile
+			cp "$file" "$destfile"
 		fi
 
 		# rename files named "markdown..." to "textile..."
 		# don't bother with files from "../", there is no such case now
 		if [ "$dirname" != ".." ]; then
-			if echo $file | egrep -iq "markdown[a-z]*.[a-z]+$" ; then
+			if echo "$file" | egrep -iq "markdown[a-z]*.[a-z]+$" ; then
 				target="${file/markdown/textile}"
 
 				if [ "$target" = "./media/textile.css" ]; then
 					# main CSS file should be splitted in 2
 					target_end="./media/textile-theming.css"
-					{ sed -n '/body.wordWrap pre {/q;p'; cat > $DEST_DIR/$target_end; } <$destfile >$DEST_DIR/$target
-					sed -i '1ibody.wordWrap pre {' $DEST_DIR/$target_end
-					rm $destfile
+					{ sed -n '/body.wordWrap pre {/q;p'; cat > "$DEST_DIR/$target_end"; } <"$destfile" >"$DEST_DIR/$target"
+					sed -i '1ibody.wordWrap pre {' "$DEST_DIR/$target_end"
+					rm "$destfile"
 				else
-					mv $destfile $DEST_DIR/$target
+					mv "$destfile" "$DEST_DIR/$target"
 				fi
 			fi
 		fi
@@ -102,8 +102,8 @@ function process_dir_i18n() {
 	fi
 
 	# unsafe
-	rm -rf $out_dir
-	mkdir -p $out_dir
+	rm -rf "$out_dir"
+	mkdir -p "$out_dir"
 	if [ $? -ne 0 ]; then
 		fatal_error "cannot mkdir $out_dir"
 	fi
@@ -115,7 +115,7 @@ function process_dir_i18n() {
 		lang=${file%/translations/extensions/markdown-language-features.i18n.json}
 		lang=${lang#$dir/vscode-language-pack-}
 
-		./tools/split_i18n_bundle.js $lang $file $out_dir
+		./tools/split_i18n_bundle.js "$lang" "$file" "$out_dir"
 		if [ $? -eq 0 ]; then
 			let processed++
 		else
@@ -148,7 +148,7 @@ function github_DL() {
 	fi
 	# Checkout to specific tag
 	if [ ! -z "$2" ]; then
-		git checkout tags/$2
+		git checkout "tags/$2"
 	else
 		git pull
 	fi
