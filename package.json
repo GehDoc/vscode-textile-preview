@@ -58,6 +58,9 @@
 				],
 				"extensions": [
 					".textile"
+				],
+				"mimetypes": [
+				    "text/x-textile"
 				]
 			}
 		],

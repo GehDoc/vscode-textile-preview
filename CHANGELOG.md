@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [UNRELEASED]
 ### Changed
 - [INTERNAL] Prepare update to vscode 1.62.3
+- [PACKAGE] Add textile mimetype to the language definition
 
 
 ## [1.3.14] - 20220316
