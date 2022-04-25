@@ -13,9 +13,9 @@ import * as commands from './commands/index';
 import LinkProvider from './features/documentLinkProvider';
 import TextileDocumentSymbolProvider from './features/documentSymbolProvider';
 import TextileFoldingProvider from './features/foldingProvider';
-// import TextileSmartSelect from './features/smartSelect';
 import { TextileContentProvider } from './features/previewContentProvider';
 import { TextilePreviewManager } from './features/previewManager';
+// import TextileSmartSelect from './features/smartSelect';
 import TextileWorkspaceSymbolProvider from './features/workspaceSymbolProvider';
 import { Logger } from './logger';
 import { TextileEngine } from './textileEngine';
@@ -58,12 +58,7 @@ function registerTextileLanguageFeatures(
 ): vscode.Disposable {
 	const selector: vscode.DocumentSelector = { language: 'textile', scheme: '*' };
 
-	const charPattern = '(\\p{Alphabetic}|\\p{Number}|\\p{Nonspacing_Mark})';
-
 	return vscode.Disposable.from(
-		vscode.languages.setLanguageConfiguration('textile', {
-			wordPattern: new RegExp(`${charPattern}((${charPattern}|[_])?${charPattern})*`, 'ug'),
-		}),
 		vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider),
 		vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider()),
 		vscode.languages.registerFoldingRangeProvider(selector, new TextileFoldingProvider(engine)),

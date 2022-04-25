@@ -18,6 +18,7 @@ const UNICODE_NEWLINE_REGEX = /\u2028|\u2029/g;
 interface TextileJSConfig {
 	readonly breaks: boolean;
 	readonly linkify: boolean;
+	readonly typographer: boolean;
 }
 */
 
@@ -246,7 +247,10 @@ export class TextileEngine {
 		// -- Begin : Changed for textile
 		return {
 			breaks: config.get<boolean>('preview.breaks', false),
-			/* Disabled for Textile : linkify: config.get<boolean>('preview.linkify', true), */
+			/* Disabled for Textile :
+			linkify: config.get<boolean>('preview.linkify', true),
+			typographer: config.get<boolean>('preview.typographer', false)
+			 */
 			showOriginalLineNumber: true,
 			cssClassOriginalLineNumber: 'code-line',
 			dontEscapeContentForTags: ['code'],

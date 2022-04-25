@@ -26,6 +26,7 @@ shared.webpack.config.js
 extension.webpack.config.js
 extension-browser.webpack.config.js
 webpack.config.js
+yarn.lock
 
 PERSONAL-NOTES.md
 media/textile-mark_logo.svg
