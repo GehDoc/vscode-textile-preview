@@ -60,7 +60,7 @@
 					".textile"
 				],
 				"mimetypes": [
-				    "text/x-textile"
+					"text/x-textile"
 				]
 			}
 		],
@@ -357,10 +357,9 @@
 		"vscode-nls": "^5.0.0"
 	},
 	"devDependencies": {
-		"@types/highlight.js": "10.1.0",
 		"@types/lodash.throttle": "^4.1.3",
 		"@types/mocha": "^8.2.0",
-		"@types/node": "14.x",
+		"@types/node": "16.x",
 		"@types/vscode": "^1.60.0",
 		"@types/vscode-webview": "^1.57.0",
 		"copy-webpack-plugin": "^6.0.3",
@@ -383,7 +382,7 @@
 		"util": "^0.12.4",
 		"vsce": "^1.100.1",
 		"vscode-nls-dev": "^3.3.2",
-		"vscode-test": "^1.6.1",
+		"@vscode/test-electron": "^2.1.3",
 		"webpack": "^5.42.0",
 		"webpack-cli": "^4.7.2"
 	}

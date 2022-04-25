@@ -90,7 +90,7 @@ const vscePublishTask = function() {
 };
 
 const vscePackageTask = function() {
-	return vsce.createVSIX();
+	return vsce.createVSIX({useYarn: true});
 };
 
 const packExt = function( cb ) {
