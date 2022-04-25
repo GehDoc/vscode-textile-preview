@@ -1,7 +1,7 @@
 language: node_js
 
 node_js:
-  - 12
+  - 16
 
 sudo: false
 
@@ -18,8 +18,8 @@ services:
   - xvfb
 
 install:
-  - npm install
-  - npm run build-dev
+  - yarn install
+  - yarn run build-dev
 
 script:
-  - npm run travis-test
+  - yarn run travis-test
