@@ -43,7 +43,7 @@ To see the full list of features and interactions, you can read the documentatio
 Features considered out of scope of this extension :
 * Textile code snippets / Source syntax coloring : You have to use [other extensions from the marketplace](https://marketplace.visualstudio.com/search?term=textile&target=VSCode&category=All%20categories&sortBy=Relevance) for these purposes;
 * Support plugins, like Mardown-it : Need antother textile to HTML engine;
-* Telemetry reporter : Need a non free Azure account : https://www.npmjs.com/package/vscode-extension-telemetry
+* Telemetry reporter : Need a non free Azure account to use [@vscode/extension-telemetry](https://www.npmjs.com/package/@vscode/extension-telemetry) module.
 
 Maybe implemented, if requested :
 * Add other translations than the 9 core languages listed there : https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
