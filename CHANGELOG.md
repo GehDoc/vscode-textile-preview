@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [UNRELEASED]
 ### Changed
-- [INTERNAL] Prepare update to vscode 1.62.3
+- [INTERNAL] Prepare update to vscode 1.61.2
 - [PACKAGE] Add textile mimetype to the language definition
 - [INTERNAL] Update build toolchain to node 16.x, and replace npm by yarn
 
