@@ -1,0 +1,24 @@
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 16.x
+    - run: yarn install
+    - run: yarn run build-dev
+    - run: xvfb-run -a yarn run ci-test
+      if: runner.os == 'Linux'
+    - run: yarn run ci-test
+      if: runner.os != 'Linux'

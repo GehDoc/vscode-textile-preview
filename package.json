@@ -350,7 +350,7 @@
 		"build": "gulp build",
 		"compile-web": "npx webpack-cli --config extension-browser.webpack.config --mode none",
 		"clean": "gulp clean",
-		"travis-test": "node ./out/test/runTest.js"
+		"ci-test": "node ./out/test/runTest.js"
 	},
 	"dependencies": {
 		"highlight.js": "^10.4.1",

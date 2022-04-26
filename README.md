@@ -1,9 +1,9 @@
 # Textile Language Features
 
-[![Marketplace Version](https://badgen.net/vs-marketplace/v/GehDoc.vscode-textile-preview?label=VS%20marketplace)](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview "View this project on Visual Studio Code Marketplace")
-[![Latest Version](https://badgen.net/github/release/GehDoc/vscode-textile-preview?icon=github)](https://github.com/GehDoc/vscode-textile-preview/releases "View releases on GitHub")
-[![Build Status](https://travis-ci.com/GehDoc/vscode-textile-preview.svg?branch=master)](https://travis-ci.com/GehDoc/vscode-textile-preview)
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3273/badge)](https://bestpractices.coreinfrastructure.org/projects/3273)  
+[![Marketplace version](https://badgen.net/vs-marketplace/v/GehDoc.vscode-textile-preview?label=marketplace&icon=visualstudio)](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview "View this project on Visual Studio Code Marketplace")
+[![Latest version](https://badgen.net/github/release/GehDoc/vscode-textile-preview?icon=github)](https://github.com/GehDoc/vscode-textile-preview/releases "View releases on GitHub")
+[![Check status](https://badgen.net/github/status/GehDoc/vscode-textile-preview/master)](https://github.com/GehDoc/vscode-textile-preview)
+[![OpenSSF best practices](https://bestpractices.coreinfrastructure.org/projects/3273/badge)](https://bestpractices.coreinfrastructure.org/projects/3273)  
 Preview and rich language support, for the [Textile markup language](https://textile-lang.com/).
 
 You can split your screen vertically, and keep the Textile source code side by side with the preview. The preview is updated as you type, and stays synchronized with the source code when you scroll.
@@ -16,7 +16,7 @@ It relies on [a modified version of textile.js Textile parser](https://github.co
 Create or open any file with a .textile extension, and then you can toggle the visualization of the editor between the code and the preview of the Textile file.
 To switch between views, press (<kbd>Ctrl+Shift+V</kbd>) in the editor. You can view the preview side-by-side (<kbd>Ctrl+K</kbd> <kbd>V</kbd>) with the file you are editing and see changes reflected in real-time as you edit.
 
-![Demo](https://raw.githubusercontent.com/GehDoc/vscode-textile-preview/master/media/readme/01-03-2020%2019:04:25.webm.gif)
+![Demo](https://raw.githubusercontent.com/GehDoc/vscode-textile-preview/master/media/readme/01-03-2020.webm.gif)
 
 ## Features
 
