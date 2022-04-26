@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [UNRELEASED]
+### Changed
+- [CI] Replace Travis by Github action
+- [DOC] Update badges
+
+### Added
+- [CI] Run test suite on Windows also
+
+### Fixed
+- [GIT] Rename some media files, whose were incompatible with Windows
+
+
 ## [1.3.15] - 20220425
 ### Changed
 - [INTERNAL] Prepare update to vscode 1.61.2
