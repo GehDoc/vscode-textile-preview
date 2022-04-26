@@ -18,7 +18,7 @@ jobs:
         node-version: 16.x
     - run: yarn install
     - run: yarn run build-dev
-    - run: xvfb-run -a yarn run travis-test
+    - run: xvfb-run -a yarn run ci-test
       if: runner.os == 'Linux'
-    - run: yarn run travis-test
+    - run: yarn run ci-test
       if: runner.os != 'Linux'

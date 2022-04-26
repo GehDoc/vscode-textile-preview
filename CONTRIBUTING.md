@@ -113,7 +113,7 @@ Before submitting Pull Requests, make sure you have :
 * no linting error
 * and, all tests passing :
 	* Open to the "Run and Debug" Window (Ctrl+Shift+D), and choose "Launch Tests" from the dropdown menu.
-	* or, check the Travis-CI build status, if enabled in your repository.
+	* or, check the github checks statuses on your branch.
 
 When you add new functionalities, the tests corresponding to this new functionality must be added to the test suite.
 
