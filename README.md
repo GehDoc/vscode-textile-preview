@@ -16,7 +16,7 @@ It relies on [a modified version of textile.js Textile parser](https://github.co
 Create or open any file with a .textile extension, and then you can toggle the visualization of the editor between the code and the preview of the Textile file.
 To switch between views, press (<kbd>Ctrl+Shift+V</kbd>) in the editor. You can view the preview side-by-side (<kbd>Ctrl+K</kbd> <kbd>V</kbd>) with the file you are editing and see changes reflected in real-time as you edit.
 
-![Demo](https://raw.githubusercontent.com/GehDoc/vscode-textile-preview/master/media/readme/01-03-2020%2019:04:25.webm.gif)
+![Demo](https://raw.githubusercontent.com/GehDoc/vscode-textile-preview/master/media/readme/01-03-2020.webm.gif)
 
 ## Features
 
