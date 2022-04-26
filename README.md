@@ -2,7 +2,7 @@
 
 [![Marketplace version](https://badgen.net/vs-marketplace/v/GehDoc.vscode-textile-preview?label=marketplace&icon=visualstudio)](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview "View this project on Visual Studio Code Marketplace")
 [![Latest version](https://badgen.net/github/release/GehDoc/vscode-textile-preview?icon=github)](https://github.com/GehDoc/vscode-textile-preview/releases "View releases on GitHub")
-[![Check status](https://badgen.net/github/status/GehDoc/vscode-textile-preview/master)](https://github.com/GehDoc/vscode-textile-preview)
+[![Github combined status](https://badgen.net/github/checks/GehDoc/vscode-textile-preview/master)](https://github.com/GehDoc/vscode-textile-preview/commits/master)
 [![OpenSSF best practices](https://bestpractices.coreinfrastructure.org/projects/3273/badge)](https://bestpractices.coreinfrastructure.org/projects/3273)  
 Preview and rich language support, for the [Textile markup language](https://textile-lang.com/).
 
