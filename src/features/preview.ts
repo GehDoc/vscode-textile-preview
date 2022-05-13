@@ -5,12 +5,12 @@
 
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
-import { OpenDocumentLinkCommand, resolveLinkToTextileFile } from '../commands/openDocumentLink';
 import { Logger } from '../logger';
 import { TextileEngine } from '../textileEngine';
 import { TextileContributionProvider } from '../textileExtensions';
 import { Disposable } from '../util/dispose';
 import { isTextileFile } from '../util/file';
+import { openDocumentLink, resolveDocumentLink, resolveLinkToTextileFile } from '../util/openDocumentLink';
 import * as path from '../util/path';
 import { WebviewResourceProvider } from '../util/resources';
 import { getVisibleLine, LastScrollLocation, TopmostLineMonitor } from '../util/topmostLineMonitor';
@@ -429,29 +429,19 @@ class TextilePreview extends Disposable implements WebviewResourceProvider {
 
 
 	private async onDidClickPreviewLink(href: string) {
-		let [hrefPath, fragment] = href.split('#').map(c => decodeURIComponent(c));
-
-		if (hrefPath[0] !== '/') {
-			// We perviously already resolve absolute paths.
-			// Now make sure we handle relative file paths
-			const dirnameUri = vscode.Uri.parse(path.dirname(this.resource.path));
-			hrefPath = vscode.Uri.joinPath(dirnameUri, hrefPath).path;
-		} else {
-			// Handle any normalized file paths
-			hrefPath = vscode.Uri.parse(hrefPath.replace('/file', '')).path;
-		}
+		const targetResource = resolveDocumentLink(href, this.resource);
 
 		const config = vscode.workspace.getConfiguration('textile', this.resource);
 		const openLinks = config.get<string>('preview.openTextileLinks', 'inPreview');
 		if (openLinks === 'inPreview') {
-			const textileLink = await resolveLinkToTextileFile(hrefPath);
+			const textileLink = await resolveLinkToTextileFile(targetResource);
 			if (textileLink) {
-				this.delegate.openPreviewLinkToTextileFile(textileLink, fragment);
+				this.delegate.openPreviewLinkToTextileFile(textileLink, targetResource.fragment);
 				return;
 			}
 		}
 
-		OpenDocumentLinkCommand.execute(this.engine, { parts: { path: hrefPath }, fragment, fromResource: this.resource.toJSON() });
+		return openDocumentLink(this.engine, targetResource, this.resource);
 	}
 
 	//#region WebviewResourceProvider

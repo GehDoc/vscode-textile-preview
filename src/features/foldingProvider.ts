@@ -10,6 +10,10 @@ import { TableOfContentsProvider } from '../tableOfContentsProvider';
 
 const rangeLimit = 5000;
 
+interface TextileTokenWithMap extends Token {
+	map: [number, number];
+}
+
 export default class TextileFoldingProvider implements vscode.FoldingRangeProvider {
 
 	constructor(
@@ -139,8 +143,8 @@ export default class TextileFoldingProvider implements vscode.FoldingRangeProvid
 const isStartRegion = (t: string) => /^\s*#?region\b.*/.test(t);
 const isEndRegion = (t: string) => /^\s*#?endregion\b.*/.test(t);
 
-const isRegionMarker = (token: Token) =>
-	typeof(token[0]) === 'string' && token[0] === '!' && typeof(token[1]) === 'object' && typeof(token[2]) === 'string' && (isStartRegion(token[2]) || isEndRegion(token[2]));
+const isRegionMarker = (token: Token): token is TextileTokenWithMap =>
+	!!token.map && typeof(token[0]) === 'string' && token[0] === '!' && typeof(token[1]) === 'object' && typeof(token[2]) === 'string' && (isStartRegion(token[2]) || isEndRegion(token[2]));
 
 const getLineNumber = (token: Token) =>
 	typeof(token[0]) === 'string' && typeof(token[1]) === 'object' && typeof(token[1]['data-line']) !== 'undefined' ? +token[1]['data-line'] : undefined;
@@ -148,7 +152,11 @@ const getLineNumber = (token: Token) =>
 const getEndLineNumber = (token: Token) =>
 	typeof(token[0]) === 'string' && typeof(token[1]) === 'object' && typeof(token[1]['data-line-end']) !== 'undefined' ? +token[1]['data-line-end'] : undefined;
 
-const isFoldableToken = (token: Token): boolean => {
+const isFoldableToken = (token: Token): token is TextileTokenWithMap => {
+	if (!token.map) {
+		return false;
+	}
+
 	switch (token[0]) {
 		case 'li':
 		case 'pre':

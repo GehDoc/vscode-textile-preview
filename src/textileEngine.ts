@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { TextileJS, Token, Options as TextileJSConfig } from '../libs/textile-js/textile';
+//import Token = require('textile-it/lib/token');
 import * as vscode from 'vscode';
 import { TextileContributionProvider as TextileContributionProvider } from './textileExtensions';
 import { Slugifier } from './slugify';
@@ -15,11 +16,34 @@ import { WebviewResourceProvider } from './util/resources';
 const UNICODE_NEWLINE_REGEX = /\u2028|\u2029/g;
 
 /* Disabled for textile : already defined in textile lib
-interface TextileJSConfig {
-	readonly breaks: boolean;
-	readonly linkify: boolean;
-	readonly typographer: boolean;
-}
+/**
+ * Adds begin line index to the output via the 'data-line' data attribute.
+ * /
+const pluginSourceMap: TextileJS.PluginSimple = (md): void => {
+	// Set the attribute on every possible token.
+	md.core.ruler.push('source_map_data_attribute', (state): void => {
+		for (const token of state.tokens) {
+			if (token.map && token.type !== 'inline') {
+				token.attrSet('data-line', String(token.map[0]));
+				token.attrJoin('class', 'code-line');
+			}
+		}
+	});
+
+	// The 'html_block' renderer doesn't respect `attrs`. We need to insert a marker.
+	const originalHtmlBlockRenderer = md.renderer.rules['html_block'];
+	if (originalHtmlBlockRenderer) {
+		md.renderer.rules['html_block'] = (tokens, idx, options, env, self) => (
+			`<div ${self.renderAttrs(tokens[idx])} ></div>\n` +
+			originalHtmlBlockRenderer(tokens, idx, options, env, self)
+		);
+	}
+};
+
+/**
+ * The textile-it options that we expose in the settings.
+ * /
+type TextileJSConfig = Readonly<Required<Pick<TextileJS.Options, 'breaks' | 'linkify' | 'typographer'>>>;
 */
 
 class TokenCache {
@@ -89,15 +113,16 @@ export class TextileEngine {
 
 	private async getEngine(config: TextileJSConfig): Promise<TextileJS> {
 		if (!this.textile) {
-			this.textile = import('../libs/textile-js/textile').then(async textile => {
+			this.textile = (async () => {
+				const textile = await import('../libs/textile-js/textile');
 				/* -- Begin : changed for Textile :
 				let md: TextileJS = textileIt(await getTextileOptions(() => md));
 
 				for (const plugin of this.contributionProvider.contributions.textileItPlugins.values()) {
 					try {
 						md = (await plugin)(md);
-					} catch {
-						// noop
+					} catch (e) {
+						console.error('Could not load textile it plugin', e);
 					}
 				}
 
@@ -110,15 +135,12 @@ export class TextileEngine {
 							before: (_id: any, _id2: any, rule: any) => { fontMatterRule = rule; }
 						}
 					}
-				}, () => { / * noop * / });
+				}, () => { /* noop * / });
 
 				md.block.ruler.before('fence', 'front_matter', fontMatterRule, {
 					alt: ['paragraph', 'reference', 'blockquote', 'list']
 				});
 
-				for (const renderName of ['paragraph_open', 'heading_open', 'image', 'code_block', 'fence', 'blockquote_open', 'list_item_open']) {
-					this.addLineNumberRenderer(md, renderName);
-				}
 				*/
 
 				// hooks are set only once : don't add them to config member parameter
@@ -131,12 +153,12 @@ export class TextileEngine {
 				// FIXME ? this.addLinkNormalizer(md);
 				// FIXME ? this.addLinkValidator(md);
 				this.addNamedHeaders(textile, localConfig);
-				// disabled for textile : this.addLinkRenderer(md);
+				this.addLinkRenderer(textile, localConfig);
 				textile.setOptions( localConfig );
 				// -- End : changed for textile
 
 				return textile;
-			});
+			})();
 		}
 
 		const textile = await this.textile!;
@@ -258,25 +280,6 @@ export class TextileEngine {
 		// -- End : Changed for textile
 	}
 
-	/* Disabled for textile : not necessary
-	private addLineNumberRenderer(md: TextileJS, ruleName: string): void {
-		const original = md.renderer.rules[ruleName];
-		md.renderer.rules[ruleName] = (tokens: Token[], idx: number, options: any, env: any, self: any) => {
-			const token = tokens[idx];
-			if (token.map && token.map.length) {
-				token.attrSet('data-line', token.map[0] + '');
-				token.attrJoin('class', 'code-line');
-			}
-
-			if (original) {
-				return original(tokens, idx, options, env, self);
-			} else {
-				return self.renderToken(tokens, idx, options, env, self);
-			}
-		};
-	}
-	*/
-
 	// -- Begin : Changed for textile
 	private addImageRenderer(textile: TextileJS, config: TextileJSConfig): void {
 		config.hooks!.push(
@@ -302,8 +305,8 @@ export class TextileEngine {
 						break;
 				}
 				return tokens;
-		 }]
-	 );
+			}]
+		);
 	}
 
 	private async addFencedRenderer(textile: TextileJS, config: TextileJSConfig) {
@@ -387,25 +390,26 @@ export class TextileEngine {
 			}]
 		);
 	}
-	// -- End : Changed for textile
 
-	/* FIXME ?
-	private addLinkRenderer(md: TextileJS): void {
-		const old_render = md.renderer.rules.link_open || ((tokens: Token[], idx: number, options: any, _env: any, self: any) => {
-			return self.renderToken(tokens, idx, options);
-		});
-
-		md.renderer.rules.link_open = (tokens: Token[], idx: number, options: any, env: any, self: any) => {
-			const token = tokens[idx];
-			const hrefIndex = token.attrIndex('href');
-			if (hrefIndex >= 0) {
-				const href = token.attrs[hrefIndex][1];
-				token.attrPush(['data-href', href]);
-			}
-			return old_render(tokens, idx, options, env, self);
-		};
+	private addLinkRenderer(textile: TextileJS, config: TextileJSConfig): void {
+		config.hooks!.push(
+			[(tokens: Token[]) => {
+				switch( tokens[0] ) {
+					case 'a':
+						const href = tokens[1]?.href;
+						// A string, including empty string, may be `href`.
+						if (typeof href === 'string') {
+							textile.jsonmlUtils.addAttributes( tokens, {'data-href': href});
+						}
+						break;
+					default:
+						break;
+				}
+				return tokens;
+			}]
+		);
 	}
-	*/
+	// -- End : Changed for textile
 
 	private toResourceUri(href: string, currentDocument: vscode.Uri | undefined, resourceProvider: WebviewResourceProvider | undefined): string {
 		try {

@@ -95,6 +95,16 @@ suite('Textile Document links', () => {
 		assert.strictEqual(vscode.window.activeTextEditor!.selection.start.line, 1);
 	});
 
+	test('Should navigate to line number within non-md file', async () => {
+		await withFileContents(testFileA, '"b":sub/foo.txt#L3');
+
+		const [link] = await getLinksForFile(testFileA);
+		await executeLink(link);
+
+		assertActiveDocumentUri(workspaceFile('sub', 'foo.txt'));
+		assert.strictEqual(vscode.window.activeTextEditor!.selection.start.line, 2);
+	});
+
 	test('Should navigate to fragment within current file', async () => {
 		await withFileContents(testFileA, joinLines(
 			'"current":a#header',

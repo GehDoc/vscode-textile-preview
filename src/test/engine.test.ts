@@ -39,7 +39,7 @@ suite('textile.engine', () => {
 			assert.deepStrictEqual((await engine.render(input)), {
 				html: '<p data-line="0" class="code-line">'
 					+ '<img src="img.png" data-line="0" class="code-line loading" alt="" id="image-hash--754511435" data-src="img.png" /> '
-					+ '<a href="no-img.png">a</a> '
+					+ '<a href="no-img.png" data-href="no-img.png">a</a> '
 					+ '<img src="http://example.org/img.png" data-line="0" class="code-line loading" alt="" id="image-hash--1903814170" data-src="http://example.org/img.png" /> '
 					+ '<img src="img.png" data-line="0" class="code-line loading" alt="" id="image-hash--754511435" data-src="img.png" /> '
 					+ '<img src="./img2.png" data-line="0" class="code-line loading" alt="" id="image-hash-265238964" data-src="./img2.png" />'
