@@ -73,8 +73,8 @@ body.showEditorSelection tr.code-line:hover td:first-child:before {
 	content: "";
 	display: block;
 	position: absolute;
-	margin-top: -0.5em;
-	left: 52px;
+	margin-top: -0.2em;
+	left: -12px;
 	height: 2em;
 }
 
