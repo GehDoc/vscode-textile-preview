@@ -126,6 +126,7 @@ suite('textile.DocumentLinkProvider', () => {
 		const links = getLinksForFile('a "b":example c\n[example]https://example.com');
 		assert.strictEqual(links.length, 2);
 		const [link1,link2] = links;
+		console.log(links)
 		assertRangeEqual(link1.range, new vscode.Range(0, 6, 0, 13));
 		assert.strictEqual(link1.target?.scheme, "command");
 		assertRangeEqual(link2.range, new vscode.Range(1, 10, 1, 29));
@@ -167,6 +168,23 @@ suite('textile.DocumentLinkProvider', () => {
 			assertRangeEqual(link4.range, new vscode.Range(0, 43, 0, 52));
 		}
 	});
+
+	// -- Begin: Modified for textile
+	// https://github.com/microsoft/vscode/issues/107471
+	test('Can consider link references starting with ^ character valid (#107471)', () => {
+		const links = getLinksForFile('[^reference]https://example.com');
+		assert.strictEqual(links.length, 1);
+	});
+
+	// https://github.com/microsoft/vscode/issues/136073
+	test('Should not find definitions links with spaces in angle brackets (#136073)', () => {
+		const links = getLinksForFile([
+			'[a]<b c>',
+			'[b]<cd>',
+		].join('\n'));
+		assert.strictEqual(links.length, 0);
+	});
+	// -- End: Modified for textile
 });
 
 

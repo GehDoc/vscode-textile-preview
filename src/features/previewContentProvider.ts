@@ -81,8 +81,7 @@ export class TextileContentProvider {
 		const nonce = getNonce();
 		const csp = this.getCsp(resourceProvider, sourceUri, nonce);
 
-		const body = await this.engine.render(textileDocument, resourceProvider);
-		// Changed for Textile :
+		const body = await this.textileBody(textileDocument, resourceProvider);
 		const html = `<!DOCTYPE html>
 			<html style="${escapeAttribute(this.getSettingsOverrideStyles(config))}">
 			<head>
@@ -97,10 +96,7 @@ export class TextileContentProvider {
 				<base href="${resourceProvider.asWebviewUri(textileDocument.uri)}">
 			</head>
 			<body class="vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.markEditorSelection ? 'showEditorSelection' : ''}">
-				<div id="text_preview">
-					${body.html}
-				</div>
-				<div class="code-line" data-line="${textileDocument.lineCount}"></div>
+				${body.html}
 				${this.getScripts(resourceProvider, nonce)}
 			</body>
 			</html>`;
@@ -110,18 +106,26 @@ export class TextileContentProvider {
 		};
 	}
 
+	public async textileBody(
+		textileDocument: vscode.TextDocument,
+		resourceProvider: WebviewResourceProvider,
+	): Promise<TextileContentProviderOutput> {
+		const rendered = await this.engine.render(textileDocument, resourceProvider);
+		const html = `<div class="textile-body">${rendered.html}<div class="code-line" data-line="${textileDocument.lineCount}"></div></div>`;
+		return {
+			html,
+			containingImages: rendered.containingImages
+		};
+	}
 	public provideFileNotFoundContent(
 		resource: vscode.Uri,
 	): string {
 		const resourcePath = basename(resource.fsPath);
 		const body = localize('preview.notFound', '{0} cannot be found', resourcePath);
-		// Changed for Textile :
 		return `<!DOCTYPE html>
 			<html>
 			<body class="vscode-body">
-				<div id="text_preview">
-					${body}
-				</div>
+				${body}
 			</body>
 			</html>`;
 	}

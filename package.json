@@ -334,7 +334,7 @@
 		"customEditors": [
 			{
 				"viewType": "vscode.textile.preview.editor",
-				"displayName": "Textile Preview (Experimental)",
+				"displayName": "Textile Preview",
 				"priority": "option",
 				"selector": [
 					{
@@ -354,6 +354,7 @@
 	},
 	"dependencies": {
 		"highlight.js": "^10.4.1",
+		"morphdom": "^2.6.1",
 		"vscode-nls": "^5.0.0"
 	},
 	"devDependencies": {

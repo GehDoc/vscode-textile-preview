@@ -117,6 +117,7 @@ export class TextileEngine {
 				const textile = await import('../libs/textile-js/textile');
 				/* -- Begin : changed for Textile :
 				let md: TextileJS = textileIt(await getTextileOptions(() => md));
+				md.linkify.set({ fuzzyLink: false });
 
 				for (const plugin of this.contributionProvider.contributions.textileItPlugins.values()) {
 					try {

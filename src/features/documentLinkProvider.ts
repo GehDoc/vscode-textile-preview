@@ -15,8 +15,10 @@ function parseLink(
 	document: vscode.TextDocument,
 	link: string,
 ): { uri: vscode.Uri, tooltip?: string } | undefined {
-	const cleanLink = stripAngleBrackets(link);
-	const externalSchemeUri = getUriForLinkWithKnownExternalScheme(cleanLink);
+	// -- Begin: modified for textile
+	// const cleanLink = stripAngleBrackets(link);
+	const externalSchemeUri = getUriForLinkWithKnownExternalScheme(link);
+	// -- End: modified for textile
 	if (externalSchemeUri) {
 		// Normalize VS Code links to target currently running version
 		if (isOfScheme(Schemes.vscode, link) || isOfScheme(Schemes['vscode-insiders'], link)) {
@@ -90,14 +92,18 @@ function extractDocumentLink(
 	}
 }
 
-/* Used to strip brackets from the textile link
-	<http://example.com> will be transformed to
-	http://example.com
-*/
+/* Disabled for textile
+const angleBracketLinkRe = /^<(.*)>$/;
+
+/**
+ * Used to strip brackets from the textile link
+ *
+ * <http://example.com> will be transformed to http://example.com
+* /
 export function stripAngleBrackets(link: string) {
-	const bracketMatcher = /^<(.*)>$/;
-	return link.replace(bracketMatcher, '$1');
+	return link.replace(angleBracketLinkRe, '$1');
 }
+*/
 
 // -- Begin: Added for textile
 function getDocumentLink(

@@ -80,9 +80,9 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 		this._register(vscode.window.onDidChangeActiveTextEditor(textEditor => {
 
 			// When at a textile file, apply existing scroll settings
-			if (textEditor && textEditor.document && isTextileFile(textEditor.document)) {
+			if (textEditor?.document && isTextileFile(textEditor.document)) {
 				const line = this._topmostLineMonitor.getPreviousStaticEditorLineByUri(textEditor.document.uri);
-				if (line) {
+				if (typeof line === 'number') {
 					scrollEditorToLine(line, textEditor);
 				}
 			}

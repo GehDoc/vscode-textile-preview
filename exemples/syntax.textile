@@ -75,9 +75,11 @@ This is a ["Markdow-style link for local file":./syntax.textile].
 
 This is a ["Markdow-style link to heading of a local file":./syntax.textile#level-4-heading].
 
-This is "a link to main repo":vtp, "another link":vtp and a ["Markdow-style link":vtp] to the same site through on alias.
+This is "a link to main repo":^vtp, "another link":vtp and a ["Markdow-style link":vtp] to the same site through on alias.
 
-[vtp]https://github.com/GehDoc/vscode-textile-preview
+[^vtp]https://github.com/GehDoc/vscode-textile-preview
+
+[b]cd
 
 !../media/textile-mark_logo.png(Offline image)!
 

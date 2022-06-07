@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
 import * as os from 'os';
+import * as vscode from 'vscode';
 export class InMemoryDocument implements vscode.TextDocument {
 	private readonly _lines: string[];
 
@@ -49,7 +49,7 @@ export class InMemoryDocument implements vscode.TextDocument {
 		const before = this._contents.slice(0, offset);
 		const newLines = before.match(/\r\n|\n/g);
 		const line = newLines ? newLines.length : 0;
-		const preCharacters = before.match(/(\r\n|\n|^).*$/g);
+		const preCharacters = before.match(/(\r\n|\n|^).*$/g); // FIXME diff from mardown
 		return new vscode.Position(line, preCharacters ? preCharacters[0].length : 0);
 	}
 	getText(_range?: vscode.Range | undefined): string {

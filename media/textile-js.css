@@ -2,7 +2,7 @@
  * with some colors/sizes removed
  */
 
-#text_preview {
+.textile-body {
   padding: 0 1em 4px 1em;
   /* color: #444; */
   /* Disabled : allow more coherence and dynamic setting via options
@@ -11,68 +11,68 @@
   */
 }
 /* Disabled : allow more coherence and dynamic setting via options
-#text_preview h1 {
+.textile-body h1 {
   line-height: 1.1;
   font-size: 2em;
 }
-#text_preview h2 {
+.textile-body h2 {
   line-height: 1.1;
   font-size: 1.6em;
 }
-#text_preview h3 {
+.textile-body h3 {
   line-height: 1.14;
   font-size: 1.36em;
 }
-#text_preview h4 {
+.textile-body h4 {
   line-height: 1.2;
   font-size: 1.14em;
 }
-#text_preview h5 {
+.textile-body h5 {
   line-height: 1.24;
   font-size: 1em;
 }
-#text_preview h6 {
+.textile-body h6 {
   line-height: 1.24;
   font-size: 1em;
 }
 */
 /*
-#text_preview code {
+.textile-body code {
   background: #f4f4f4;
 }
 */
-#text_preview table {
+.textile-body table {
   border-collapse : collapse;
 }
-#text_preview table th,
-#text_preview table td {
+.textile-body table th,
+.textile-body table td {
   padding : 4px 8px;
   border-width: 1px;
   border-style: solid;
   /*#aaa*/
 }
-#text_preview ul {
+.textile-body ul {
   margin-left: 0;
   padding-left: 2em;
 }
-#text_preview acronym {
+.textile-body acronym {
   text-decoration : none;
   border-bottom-width: 1px;
   border-bottom-style: dotted;
   /*#888*/
   cursor: help;
 }
-#text_preview blockquote {
+.textile-body blockquote {
   margin-left: .6em;
   padding-left: 1em;
   border-left-width: .4em;
   border-left-style: solid;
   /*#ddd*/
 }
-#text_preview pre > code {
+.textile-body pre > code {
   display: block;
 }
-#text_preview .caps {
+.textile-body .caps {
   font-variant: small-caps;
   text-transform: lowercase;
   letter-spacing: .1em;

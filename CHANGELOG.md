@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [UNRELEASED]
+### Changed
+- Update to vscode 1.63.2
+
 ### Fixed
 - [CSS] Correct position of active line marker on tables
 
