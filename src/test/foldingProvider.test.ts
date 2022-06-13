@@ -146,11 +146,10 @@ b`);
 		assert.strictEqual(firstFold.end, 3);
 	});
 
-	/* Disabled for textile : not relevant
 	test('Should fold fenced code blocks', async () => {
-		const folds = await getFoldsForDocument(`~~~ts
+		const folds = await getFoldsForDocument(`bc[ts].
 a
-~~~
+
 b`);
 		assert.strictEqual(folds.length, 1);
 		const firstFold = folds[0];
@@ -163,9 +162,8 @@ b`);
 title: bla
 ---
 
-~~~ts
+bc[ts].
 a
-~~~
 
 a
 a
@@ -176,7 +174,6 @@ a`);
 		assert.strictEqual(firstFold.start, 4);
 		assert.strictEqual(firstFold.end, 6);
 	});
-	*/
 
 	test('Should fold html blocks', async () => {
 		const folds = await getFoldsForDocument(`x
