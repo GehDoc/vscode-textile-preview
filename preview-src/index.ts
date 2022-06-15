@@ -60,7 +60,6 @@ onceDocumentLoaded(() => {
 	// -- Begin: Modified for textile
 	// Allow accurate hover on multi-levels LI
 	let root = document.querySelector('.textile-body');
-	console.log(root)
 	if(root) {
 		root.addEventListener('mouseenter', event => {
 			if (!event || !event.target) {
