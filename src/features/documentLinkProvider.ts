@@ -7,17 +7,11 @@ import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import { OpenDocumentLinkCommand } from '../commands/openDocumentLink';
 import { Token } from '../../libs/textile-js/textile';
-import { TextileEngine } from '../textileEngine';
+import { TextileEngine, getLineNumber, getEndLineNumber } from '../textileEngine';
 import { getUriForLinkWithKnownExternalScheme, isOfScheme, Schemes } from '../util/links';
 import { dirname } from '../util/path';
 
 const localize = nls.loadMessageBundle();
-
-const getLineNumber = (token: Token) =>
-	typeof(token[0]) === 'string' && typeof(token[1]) === 'object' && typeof(token[1]['data-line']) !== 'undefined' ? +token[1]['data-line'] : undefined;
-
-const getEndLineNumber = (token: Token) =>
-	typeof(token[0]) === 'string' && typeof(token[1]) === 'object' && typeof(token[1]['data-line-end']) !== 'undefined' ? +token[1]['data-line-end'] : undefined;
 
 function parseLink(
 	document: vscode.TextDocument,

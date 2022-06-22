@@ -5,7 +5,7 @@
 
 import { Token } from '../../libs/textile-js/textile';
 import * as vscode from 'vscode';
-import { TextileEngine } from '../textileEngine';
+import { TextileEngine, getLineNumber, getEndLineNumber } from '../textileEngine';
 import { TableOfContents } from '../tableOfContentsProvider';
 
 const rangeLimit = 5000;
@@ -144,12 +144,6 @@ const isEndRegion = (t: string) => /^\s*#?endregion\b.*/.test(t);
 
 const isRegionMarker = (token: Token): token is TextileTokenWithMap =>
 	!!token.map && typeof(token[0]) === 'string' && token[0] === '!' && typeof(token[1]) === 'object' && typeof(token[2]) === 'string' && (isStartRegion(token[2]) || isEndRegion(token[2]));
-
-const getLineNumber = (token: Token) =>
-	typeof(token[0]) === 'string' && typeof(token[1]) === 'object' && typeof(token[1]['data-line']) !== 'undefined' ? +token[1]['data-line'] : undefined;
-
-const getEndLineNumber = (token: Token) =>
-	typeof(token[0]) === 'string' && typeof(token[1]) === 'object' && typeof(token[1]['data-line-end']) !== 'undefined' ? +token[1]['data-line-end'] : undefined;
 
 const isFoldableToken = (token: Token): token is TextileTokenWithMap => {
 	if (!token.map) {

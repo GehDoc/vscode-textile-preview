@@ -501,3 +501,11 @@ function normalizeHighlightLang(lang: string | undefined) {
 			return lang;
 	}
 }
+
+// -- Begin : added for Textile
+export const getLineNumber = (token: Token) =>
+	typeof(token[0]) === 'string' && typeof(token[1]) === 'object' && typeof(token[1]['data-line']) !== 'undefined' ? +token[1]['data-line'] : undefined;
+
+export const getEndLineNumber = (token: Token) =>
+	typeof(token[0]) === 'string' && typeof(token[1]) === 'object' && typeof(token[1]['data-line-end']) !== 'undefined' ? +token[1]['data-line-end'] : undefined;
+// -- End : added for Textile
