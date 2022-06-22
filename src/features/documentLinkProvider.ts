@@ -6,15 +6,23 @@
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import { OpenDocumentLinkCommand } from '../commands/openDocumentLink';
+import { Token } from '../../libs/textile-js/textile';
+import { TextileEngine } from '../textileEngine';
 import { getUriForLinkWithKnownExternalScheme, isOfScheme, Schemes } from '../util/links';
 import { dirname } from '../util/path';
 
 const localize = nls.loadMessageBundle();
 
+const getLineNumber = (token: Token) =>
+	typeof(token[0]) === 'string' && typeof(token[1]) === 'object' && typeof(token[1]['data-line']) !== 'undefined' ? +token[1]['data-line'] : undefined;
+
+const getEndLineNumber = (token: Token) =>
+	typeof(token[0]) === 'string' && typeof(token[1]) === 'object' && typeof(token[1]['data-line-end']) !== 'undefined' ? +token[1]['data-line-end'] : undefined;
+
 function parseLink(
 	document: vscode.TextDocument,
 	link: string,
-): { uri: vscode.Uri, tooltip?: string } | undefined {
+): { uri: vscode.Uri; tooltip?: string } | undefined {
 	// -- Begin: modified for textile
 	// const cleanLink = stripAngleBrackets(link);
 	const externalSchemeUri = getUriForLinkWithKnownExternalScheme(link);
@@ -141,40 +149,91 @@ function compareLinkRanges(a: vscode.DocumentLink, b: vscode.DocumentLink): numb
 }
 // -- End: Added for textile
 
+// -- Begin: Modified for textile
+const linkPattern = /("(?!\s)((?:[^"]|"(?![\s:])[^\n"]+"(?!:))+)":)((?:[^\s()]|\([^\s()]+\)|[()])+?)(?=[!-\.:-@\[\\\]-`{-~]+(?:$|\s)|$|\s)|(\["([^\n]+?)":)((?:\[[a-z0-9]*\]|[^\]])+)\]/g
+const imagePattern = /(!(?!\s)((?:\([^\)]+\)|\{[^\}]+\}|\\[[^\[\]]+\]|(?:<>|<|>|=)|[\(\)]+)*(?:\.[^\n\S]|\.(?:[^\.\/]))?)([^!\s]+?) ?(?:\(((?:[^\(\)]|\([^\(\)]+\))+)\))?!)(?::([^\s]+?(?=[!-\.:-@\[\\\]-`{-~](?:$|\s)|\s|$)))?/g
+/* Disabled : not relevant for textile
+const referenceLinkPattern = /(\[((?:\\\]|[^\]])+)\]\[\s*?)([^\s\]]*?)\]/g;
+*/
+const definitionPattern = /^\[([^\]]+)\]((?:https?:\/\/|\/)\S+)(?:\s*(?=\n)|$)/gm;
+const inlineCodePattern = /(?:^|[^@])(@+)(?:.+?|.*?(?:(?:\r?\n).+?)*?)(?:\r?\n)?\1(?:$|[^@])/gm;
+// -- End: Modified for textile
+
+interface CodeInDocument {
+	/**
+	 * code blocks and fences each represented by [line_start,line_end).
+	 */
+	readonly multiline: ReadonlyArray<[number, number]>;
+
+	/**
+	 * inline code spans each represented by {@link vscode.Range}.
+	 */
+	readonly inline: readonly vscode.Range[];
+}
+
+// -- Begin: Modified for textile
+async function findCode(document: vscode.TextDocument, engine: TextileEngine): Promise<CodeInDocument> {
+	const tokens = await engine.parse(document);
+	const jsonmlUtils = await engine.jsonmlUtils();
+	const multiline = [] as [number, number][]
+	jsonmlUtils.applyHooks(tokens, [
+		[(token : Token) => {
+			if (!!token.map && (token[0] === 'code' || token[0] === 'pre')) {
+				const startLine = getLineNumber(token)
+				const endLine = getEndLineNumber(token)
+				if(startLine !== undefined && endLine !== undefined)
+					multiline.push([startLine, endLine])
+			}
+			return token;
+		}]
+	]);
+
+	const text = document.getText();
+	const inline = [...text.matchAll(inlineCodePattern)].map(match => {
+		const start = match.index || 0;
+		return new vscode.Range(document.positionAt(start), document.positionAt(start + match[0].length));
+	});
+
+	return { multiline, inline };
+}
+
+function isLinkInsideCode(code: CodeInDocument, link: vscode.DocumentLink) {
+	return code.multiline.some(interval => link.range.start.line >= interval[0] && link.range.start.line <= interval[1]) ||
+		code.inline.some(position => position.intersection(link.range));
+}
+// -- End: Modified for textile
+
+
 export default class LinkProvider implements vscode.DocumentLinkProvider {
-	// -- Begin: Modified for textile
-	private readonly linkPattern = /("(?!\s)((?:[^"]|"(?![\s:])[^\n"]+"(?!:))+)":)((?:[^\s()]|\([^\s()]+\)|[()])+?)(?=[!-\.:-@\[\\\]-`{-~]+(?:$|\s)|$|\s)|(\["([^\n]+?)":)((?:\[[a-z0-9]*\]|[^\]])+)\]/g
-	private readonly imagePattern = /(!(?!\s)((?:\([^\)]+\)|\{[^\}]+\}|\\[[^\[\]]+\]|(?:<>|<|>|=)|[\(\)]+)*(?:\.[^\n\S]|\.(?:[^\.\/]))?)([^!\s]+?) ?(?:\(((?:[^\(\)]|\([^\(\)]+\))+)\))?!)(?::([^\s]+?(?=[!-\.:-@\[\\\]-`{-~](?:$|\s)|\s|$)))?/g
+	constructor(
+		private readonly engine: TextileEngine
+	) { }
 
-	/* Disabled : not relevant for textile
-	private readonly referenceLinkPattern = /(\[((?:\\\]|[^\]])+)\]\[\s*?)([^\s\]]*?)\]/g; // FIXME : recreate for textile
-	*/
-	private readonly definitionPattern = /^\[([^\]]+)\]((?:https?:\/\/|\/)\S+)(?:\s*(?=\n)|$)/gm;
-	// -- End: Modified for textile
 
-	public provideDocumentLinks(
+	public async provideDocumentLinks(
 		document: vscode.TextDocument,
 		_token: vscode.CancellationToken
-	): vscode.DocumentLink[] {
+	): Promise<vscode.DocumentLink[]> {
 		const text = document.getText();
 
 		return [
-			...this.providerInlineLinks(text, document),
+			...(await this.providerInlineLinks(text, document)),
 			/* Disabled : not relevant for textile
 			...this.provideReferenceLinks(text, document)
 			*/
 		];
 	}
 
-	private providerInlineLinks(
+	private async providerInlineLinks(
 		text: string,
 		document: vscode.TextDocument,
-	): vscode.DocumentLink[] {
+	): Promise<vscode.DocumentLink[]> {
 		const results: vscode.DocumentLink[] = [];
+		const codeInDocument = await findCode(document, this.engine);
 		// -- Begin: Modified for textile
 
 		// pasted from this.provideReferenceLinks
-		const definitions = this.getDefinitions(text, document);
+		const definitions = LinkProvider.getDefinitions(text, document);
 		for (const definition of definitions.values()) {
 			try {
 				const linkData = parseLink(document, definition.link);
@@ -186,23 +245,23 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 			}
 		}
 
-		for (const match of text.matchAll(this.linkPattern)) {
+		for (const match of text.matchAll(linkPattern)) {
 			const matchLink = match[1] && getDocumentLink(document, definitions, match[1].length, match[3], match.index);
-			if (matchLink) {
+			if (matchLink && !isLinkInsideCode(codeInDocument, matchLink)) {
 				results.push(matchLink);
 			}
 			const matchLinkFenced = match[6] && getDocumentLink(document, definitions, match[4].length, match[6], match.index);
-			if (matchLinkFenced) {
+			if (matchLinkFenced && !isLinkInsideCode(codeInDocument, matchLinkFenced)) {
 				results.push(matchLinkFenced);
 			}
 		}
-		for (const match of text.matchAll(this.imagePattern)) {
+		for (const match of text.matchAll(imagePattern)) {
 			const matchImage = extractDocumentLink(document, (match[2] ? match[2].length : 0) + 1, match[3], match.index);
-			if (matchImage) {
+			if (matchImage && !isLinkInsideCode(codeInDocument, matchImage)) {
 				results.push(matchImage);
 			}
 			const matchLink = match[5] && getDocumentLink(document, definitions, match[1].length + 1, match[5], match.index);
-			if (matchLink) {
+			if (matchLink && !isLinkInsideCode(codeInDocument, matchLink)) {
 				results.push(matchLink);
 			}
 		}
@@ -221,8 +280,8 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 	): vscode.DocumentLink[] {
 		const results: vscode.DocumentLink[] = [];
 
-		const definitions = this.getDefinitions(text, document);
-		for (const match of text.matchAll(this.referenceLinkPattern)) {
+		const definitions = LinkProvider.getDefinitions(text, document);
+		for (const match of text.matchAll(referenceLinkPattern)) {
 			let linkStart: vscode.Position;
 			let linkEnd: vscode.Position;
 			let reference = match[3];
@@ -267,9 +326,9 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 	}
 	*/
 
-	private getDefinitions(text: string, document: vscode.TextDocument) {
-		const out = new Map<string, { link: string, linkRange: vscode.Range }>();
-		for (const match of text.matchAll(this.definitionPattern)) {
+	public static getDefinitions(text: string, document: vscode.TextDocument) {
+		const out = new Map<string, { link: string; linkRange: vscode.Range }>();
+		for (const match of text.matchAll(definitionPattern)) {
 			// -- Begin: Modified for textile
 			const reference = match[1];
 			const link = match[2].trim();
@@ -277,11 +336,11 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 			const offset = (match.index || 0) + reference.length + 2;
 			const linkStart = document.positionAt(offset);
 			const linkEnd = document.positionAt(offset + link.length);
-			// -- End: Modified for textile
 			out.set(reference, {
 				link: link,
 				linkRange: new vscode.Range(linkStart, linkEnd)
 			});
+			// -- End: Modified for textile
 		}
 		return out;
 	}

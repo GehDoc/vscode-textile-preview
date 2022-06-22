@@ -97,23 +97,28 @@ a multi-lines
 definition =:
 
 <pre>
-// Pre-formatted text
+// Pre-formatted text, inside <PRE>
 	1 TAB
 			2 TABs
 </pre>
 
+pre.
+// Pre-formatted text, inside "pre."
+	1 TAB
+			2 TABs
+
 <pre><code class="javascript">
-// "CODE" with class="javascript" inside "PRE"
+// <CODE> with class="javascript" inside <PRE>
 document.write('help');
 </code></pre>
 
 <pre><code lang="javascript">
-// "CODE" with lang="javascript" inside "PRE"
+// <CODE> with lang="javascript" inside <PRE>
 document.write('help');
 </code></pre>
 
 bc[javascript].
-// bc[javascript].
+// inside "bc[javascript]."
 document.write('help');
 
 Example of @inline code@ in text block.

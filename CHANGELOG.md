@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [UNRELEASED]
 ### Changed
 - [TEST] Activate fenced code block folding tests, as they are relevant for Textile
+- [INTERNAL] Update textile-js to latest version 2.0.113
+- Update to vscode 1.65.2 : existing features
+
+### Fixed
+- Remove useless console.log
 
 
 ## [1.3.17] - 20220609

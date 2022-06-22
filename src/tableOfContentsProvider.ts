@@ -5,7 +5,9 @@
 
 import * as vscode from 'vscode';
 import { TextileEngine } from './textileEngine';
+import { Token } from '../libs/textile-js/textile'; // Added for Textile
 import { githubSlugifier, Slug } from './slugify';
+import { isTextileFile } from './util/file';
 
 export interface TocEntry {
 	readonly slug: Slug;
@@ -28,46 +30,57 @@ export interface SkinnyTextDocument {
 	getText(): string;
 }
 
-export class TableOfContentsProvider {
-	private toc?: TocEntry[];
+export class TableOfContents {
 
-	public constructor(
-		private engine: TextileEngine,
-		private document: SkinnyTextDocument
-	) { }
-
-	public async getToc(): Promise<TocEntry[]> {
-		if (!this.toc) {
-			try {
-				this.toc = await this.buildToc(this.document);
-			} catch (e) {
-				this.toc = [];
-			}
-		}
-		return this.toc;
+	public static async create(engine: TextileEngine, document: SkinnyTextDocument,): Promise<TableOfContents> {
+		const entries = await this.buildToc(engine, document);
+		return new TableOfContents(entries);
 	}
 
-	public async lookup(fragment: string): Promise<TocEntry | undefined> {
-		const toc = await this.getToc();
+	public static async createForDocumentOrNotebook(engine: TextileEngine, document: SkinnyTextDocument): Promise<TableOfContents> {
+		if (document.uri.scheme === 'vscode-notebook-cell') {
+			const notebook = vscode.workspace.notebookDocuments
+				.find(notebook => notebook.getCells().some(cell => cell.document === document));
+
+			if (notebook) {
+				const entries: TocEntry[] = [];
+
+				for (const cell of notebook.getCells()) {
+					if (cell.kind === vscode.NotebookCellKind.Markup && isTextileFile(cell.document)) {
+						entries.push(...(await this.buildToc(engine, cell.document)));
+					}
+				}
+
+				return new TableOfContents(entries);
+			}
+		}
+		return this.create(engine, document);
+	}
+
+	private constructor(
+		public readonly entries: readonly TocEntry[],
+	) { }
+
+	public lookup(fragment: string): TocEntry | undefined {
 		const slug = githubSlugifier.fromHeading(fragment);
-		return toc.find(entry => entry.slug.equals(slug));
+		return this.entries.find(entry => entry.slug.equals(slug));
 	}
 
 	// -- Begin : modified for textile
-	private async buildToc(document: SkinnyTextDocument): Promise<TocEntry[]> {
+	private static async buildToc(engine: TextileEngine, document: SkinnyTextDocument): Promise<TocEntry[]> {
 		const toc: TocEntry[] = [];
-		const tokens = await this.engine.parse(document);
+		const tokens = await engine.parse(document);
 
 		const existingSlugEntries = new Map<string, { count: number }>();
-		const jsonmlUtils = await this.engine.jsonmlUtils();
+		const jsonmlUtils = await engine.jsonmlUtils();
 		jsonmlUtils.applyHooks(tokens, [
-			[(token) => {
+			[(token : Token) => {
 				let level;
-				if(typeof(token[0]) === 'string' && (level = TableOfContentsProvider.getHeaderLevel( token[0] )) < 7) {
+				if(typeof(token[0]) === 'string' && (level = TableOfContents.getHeaderLevel( token[0] )) < 7) {
 					if( typeof(token[1]) === 'object' && typeof( token[1]['data-line'] ) === 'number' ) {
 						const lineNumber = token[1]['data-line'];
 						const line = document.lineAt(lineNumber);
-						const text = TableOfContentsProvider.getHeaderText(line.text)
+						const text = TableOfContents.getHeaderText(line.text)
 
 						let slug = githubSlugifier.fromHeading(text);
 						const existingSlugEntry = existingSlugEntries.get(slug.value);
@@ -127,7 +140,7 @@ export class TableOfContentsProvider {
 			case 'h6':
 				return 6;
 			default:
-				return 7;						
+				return 7;
 		}
 	}
 

@@ -154,7 +154,7 @@ b`);
 		assert.strictEqual(folds.length, 1);
 		const firstFold = folds[0];
 		assert.strictEqual(firstFold.start, 0);
-		assert.strictEqual(firstFold.end, 2);
+		assert.strictEqual(firstFold.end, 1);
 	});
 
 	test('Should fold fenced code blocks with yaml front matter', async () => {
@@ -172,7 +172,7 @@ a`);
 		assert.strictEqual(folds.length, 1);
 		const firstFold = folds[0];
 		assert.strictEqual(firstFold.start, 4);
-		assert.strictEqual(firstFold.end, 6);
+		assert.strictEqual(firstFold.end, 5);
 	});
 
 	test('Should fold html blocks', async () => {

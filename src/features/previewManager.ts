@@ -65,8 +65,6 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 
 	private _activePreview: ManagedTextilePreview | undefined = undefined;
 
-	private readonly customEditorViewType = 'vscode.textile.preview.editor';
-
 	public constructor(
 		private readonly _contentProvider: TextileContentProvider,
 		private readonly _logger: Logger,
@@ -75,7 +73,9 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 	) {
 		super();
 		this._register(vscode.window.registerWebviewPanelSerializer(DynamicTextilePreview.viewType, this));
-		this._register(vscode.window.registerCustomEditorProvider(this.customEditorViewType, this));
+		this._register(vscode.window.registerCustomEditorProvider(StaticTextilePreview.customEditorViewType, this, {
+			webviewOptions: { enableFindWidget: true }
+		}));
 
 		this._register(vscode.window.onDidChangeActiveTextEditor(textEditor => {
 

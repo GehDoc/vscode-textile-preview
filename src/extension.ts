@@ -60,7 +60,7 @@ function registerTextileLanguageFeatures(
 
 	return vscode.Disposable.from(
 		vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider),
-		vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider()),
+		vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider(engine)),
 		vscode.languages.registerFoldingRangeProvider(selector, new TextileFoldingProvider(engine)),
 		// FIXME: vscode.languages.registerSelectionRangeProvider(selector, new TextileSmartSelect(engine)),
 		vscode.languages.registerWorkspaceSymbolProvider(new TextileWorkspaceSymbolProvider(symbolProvider))

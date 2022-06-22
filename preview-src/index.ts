@@ -156,11 +156,17 @@ window.addEventListener('message', async event => {
 			}
 			return;
 
-		case 'updateContent':
+		case 'updateContent': {
 			const root = document.querySelector('.textile-body')!;
 
 			const parser = new DOMParser();
 			const newContent = parser.parseFromString(event.data.content, 'text/html');
+			// Strip out meta http-equiv tags
+			for (const metaElement of Array.from(newContent.querySelectorAll('meta'))) {
+				if (metaElement.hasAttribute('http-equiv')) {
+					metaElement.remove();
+				}
+			}
 
 			if (event.data.source !== documentResource) {
 				root.replaceWith(newContent.querySelector('.textile-body')!);
@@ -241,6 +247,7 @@ window.addEventListener('message', async event => {
 
 			window.dispatchEvent(new CustomEvent('vscode.textile.updateContent'));
 			break;
+		}
 	}
 }, false);
 

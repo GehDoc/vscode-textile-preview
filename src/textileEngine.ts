@@ -26,6 +26,7 @@ const pluginSourceMap: TextileJS.PluginSimple = (md): void => {
 			if (token.map && token.type !== 'inline') {
 				token.attrSet('data-line', String(token.map[0]));
 				token.attrJoin('class', 'code-line');
+				token.attrJoin('dir', 'auto');
 			}
 		}
 	});
@@ -211,6 +212,7 @@ export class TextileEngine {
 	): Token[] {
 		const cached = this._tokenCache.tryGetCached(document, config);
 		if (cached) {
+			this.resetSlugCount();
 			return cached;
 		}
 
@@ -220,7 +222,7 @@ export class TextileEngine {
 	}
 
 	private tokenizeString(text: string, engine: TextileJS, env?: RenderEnv) {
-		this._slugCount = new Map<string, number>();
+		this.resetSlugCount();
 
 		// Now, always strip frontMatter
 		const textileContent = this.stripFrontmatter(text);
@@ -228,6 +230,10 @@ export class TextileEngine {
 		return engine.tokenize(textileContent.text.replace(UNICODE_NEWLINE_REGEX, ''), {
 			lineOffset: textileContent.offset
 		}, env);
+	}
+
+	public resetSlugCount(): void {
+		this._slugCount = new Map<string, number>();
 	}
 
 	public async render(input: SkinnyTextDocument | string, resourceProvider?: WebviewResourceProvider): Promise<RenderOutput> {

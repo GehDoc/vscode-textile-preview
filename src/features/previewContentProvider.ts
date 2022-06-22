@@ -52,7 +52,14 @@ export class TextileContentProvider {
 		private readonly cspArbiter: ContentSecurityPolicyArbiter,
 		private readonly contributionProvider: TextileContributionProvider,
 		private readonly logger: Logger
-	) { }
+	) {
+		this.iconPath = {
+			dark: vscode.Uri.joinPath(this.context.extensionUri, 'media', 'preview-dark.svg'),
+			light: vscode.Uri.joinPath(this.context.extensionUri, 'media', 'preview-light.svg'),
+		};
+	}
+
+	public readonly iconPath: { light: vscode.Uri; dark: vscode.Uri };
 
 	public async provideTextDocumentContent(
 		textileDocument: vscode.TextDocument,
@@ -111,7 +118,7 @@ export class TextileContentProvider {
 		resourceProvider: WebviewResourceProvider,
 	): Promise<TextileContentProviderOutput> {
 		const rendered = await this.engine.render(textileDocument, resourceProvider);
-		const html = `<div class="textile-body">${rendered.html}<div class="code-line" data-line="${textileDocument.lineCount}"></div></div>`;
+		const html = `<div class="textile-body" dir="auto">${rendered.html}<div class="code-line" data-line="${textileDocument.lineCount}"></div></div>`;
 		return {
 			html,
 			containingImages: rendered.containingImages

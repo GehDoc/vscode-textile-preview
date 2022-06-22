@@ -11,12 +11,24 @@ import { joinLines } from './util';
 // -- Begin: Modified for textile
 const testFileA = workspaceFile('a.textile');
 
+const debug = false;
+
+function debugLog(...args: any[]) {
+	if (debug) {
+		console.log(...args);
+	}
+}
+
+
 function workspaceFile(...segments: string[]) {
 	return vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, ...segments);
 }
 
 async function getLinksForFile(file: vscode.Uri): Promise<vscode.DocumentLink[]> {
-	return (await vscode.commands.executeCommand<vscode.DocumentLink[]>('vscode.executeLinkProvider', file))!;
+	debugLog('getting links', file.toString(), Date.now());
+	const r = (await vscode.commands.executeCommand<vscode.DocumentLink[]>('vscode.executeLinkProvider', file))!;
+	debugLog('got links', file.toString(), Date.now());
+	return r;
 }
 
 suite('Textile Document links', () => {
@@ -150,15 +162,21 @@ function assertActiveDocumentUri(expectedUri: vscode.Uri) {
 }
 
 async function withFileContents(file: vscode.Uri, contents: string): Promise<void> {
+	debugLog('openTextDocument', file.toString(), Date.now());
 	const document = await vscode.workspace.openTextDocument(file);
+	debugLog('showTextDocument', file.toString(), Date.now());
 	const editor = await vscode.window.showTextDocument(document);
+	debugLog('editTextDocument', file.toString(), Date.now());
 	await editor.edit(edit => {
 		edit.replace(new vscode.Range(0, 0, 1000, 0), contents);
 	});
+	debugLog('opened done', vscode.window.activeTextEditor?.document.toString(), Date.now());
 }
 
 async function executeLink(link: vscode.DocumentLink) {
+	debugLog('executeingLink', link.target?.toString(), Date.now());
 	const args = JSON.parse(decodeURIComponent(link.target!.query));
 	await vscode.commands.executeCommand(link.target!.path, args);
+	debugLog('executedLink', vscode.window.activeTextEditor?.document.toString(), Date.now());
 }
 

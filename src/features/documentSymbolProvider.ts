@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { TextileEngine } from '../textileEngine';
-import { SkinnyTextDocument, TableOfContentsProvider, TocEntry } from '../tableOfContentsProvider';
+import { SkinnyTextDocument, TableOfContents, TocEntry } from '../tableOfContentsProvider';
 
 interface TextileSymbol {
 	readonly level: number;
@@ -20,22 +20,22 @@ export default class TextileDocumentSymbolProvider implements vscode.DocumentSym
 	) { }
 
 	public async provideDocumentSymbolInformation(document: SkinnyTextDocument): Promise<vscode.SymbolInformation[]> {
-		const toc = await new TableOfContentsProvider(this.engine, document).getToc();
-		return toc.map(entry => this.toSymbolInformation(entry));
+		const toc = await TableOfContents.create(this.engine, document);
+		return toc.entries.map(entry => this.toSymbolInformation(entry));
 	}
 
 	public async provideDocumentSymbols(document: SkinnyTextDocument): Promise<vscode.DocumentSymbol[]> {
-		const toc = await new TableOfContentsProvider(this.engine, document).getToc();
+		const toc = await TableOfContents.create(this.engine, document);
 		const root: TextileSymbol = {
 			level: -Infinity,
 			children: [],
 			parent: undefined
 		};
-		this.buildTree(root, toc);
+		this.buildTree(root, toc.entries);
 		return root.children;
 	}
 
-	private buildTree(parent: TextileSymbol, entries: TocEntry[]) {
+	private buildTree(parent: TextileSymbol, entries: readonly TocEntry[]) {
 		if (!entries.length) {
 			return;
 		}

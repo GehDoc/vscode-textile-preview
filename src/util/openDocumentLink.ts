@@ -6,7 +6,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { TextileEngine } from '../textileEngine';
-import { TableOfContentsProvider } from '../tableOfContentsProvider';
+import { TableOfContents } from '../tableOfContentsProvider';
 import { isTextileFile } from './file';
 import { extname } from './path';
 
@@ -104,8 +104,8 @@ function getViewColumn(resource: vscode.Uri): vscode.ViewColumn {
 }
 
 async function tryRevealLineUsingTocFragment(engine: TextileEngine, editor: vscode.TextEditor, fragment: string): Promise<boolean> {
-	const toc = new TableOfContentsProvider(engine, editor.document);
-	const entry = await toc.lookup(fragment);
+	const toc = await TableOfContents.create(engine, editor.document);
+	const entry = toc.lookup(fragment);
 	if (entry) {
 		const lineStart = new vscode.Range(entry.line, 0, entry.line, 0);
 		editor.selection = new vscode.Selection(lineStart.start, lineStart.end);
@@ -129,11 +129,11 @@ function tryRevealLineUsingLineFragment(editor: vscode.TextEditor, fragment: str
 	return false;
 }
 
-export async function resolveLinkToTextileFile(resource: vscode.Uri): Promise<vscode.Uri | undefined> {
+export async function resolveUriToTextileFile(resource: vscode.Uri): Promise<vscode.TextDocument | undefined> {
 	try {
-		const standardLink = await tryResolveLinkToTextileFile(resource);
-		if (standardLink) {
-			return standardLink;
+		const doc = await tryResolveUriToTextileFile(resource);
+		if (doc) {
+			return doc;
 		}
 	} catch {
 		// Noop
@@ -141,13 +141,13 @@ export async function resolveLinkToTextileFile(resource: vscode.Uri): Promise<vs
 
 	// If no extension, try with `.textile` extension
 	if (extname(resource.path) === '') {
-		return tryResolveLinkToTextileFile(resource.with({ path: resource.path + '.textile' }));
+		return tryResolveUriToTextileFile(resource.with({ path: resource.path + '.textile' }));
 	}
 
 	return undefined;
 }
 
-async function tryResolveLinkToTextileFile(resource: vscode.Uri): Promise<vscode.Uri | undefined> {
+async function tryResolveUriToTextileFile(resource: vscode.Uri): Promise<vscode.TextDocument | undefined> {
 	let document: vscode.TextDocument;
 	try {
 		document = await vscode.workspace.openTextDocument(resource);
@@ -155,7 +155,7 @@ async function tryResolveLinkToTextileFile(resource: vscode.Uri): Promise<vscode
 		return undefined;
 	}
 	if (isTextileFile(document)) {
-		return document.uri;
+		return document;
 	}
 	return undefined;
 }
