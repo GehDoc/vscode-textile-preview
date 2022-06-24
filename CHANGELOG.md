@@ -13,9 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Remove useless console.log
+- [INTERNAL] package-lock.json should be removed
 
 ### Added
-- [PREVIEW] Add path completion for local links
+- [PREVIEW] Add ppacath completion for local links
 
 
 ## [1.3.17] - 20220609
