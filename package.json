@@ -11,6 +11,7 @@
 	},
 	"license": "SEE LICENSE IN LICENSE.txt",
 	"engines": {
+		"node" : ">=16.0.0",
 		"vscode": "^1.65.0"
 	},
 	"main": "./dist/extension",
@@ -358,6 +359,9 @@
 		"clean": "gulp clean",
 		"ci-test": "node ./out/test/runTest.js"
 	},
+	"sponsor": {
+		"url": "https://patreon patreon.com/geraldhameau"
+	},
 	"dependencies": {
 		"highlight.js": "^10.4.1",
 		"morphdom": "^2.6.1",
@@ -385,9 +389,9 @@
 		"mocha-multi-reporters": "^1.5.1",
 		"path-browserify": "^1.0.1",
 		"ts-loader": "^9.2.3",
-		"typescript": "^4.8.0-dev.20220511",
+		"typescript": "^4.8.0-dev.20220614",
 		"util": "^0.12.4",
-		"vsce": "^1.100.1",
+		"vsce": "^2.9.2",
 		"vscode-nls-dev": "^3.3.2",
 		"@vscode/test-electron": "^2.1.3",
 		"webpack": "^5.42.0",
