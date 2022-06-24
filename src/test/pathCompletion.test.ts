@@ -121,7 +121,7 @@ suite('Textile path completion provider', () => {
 			`[ref-2]http://www.google.com`,
 		));
 
-		assert.strictEqual(completions.length, 5);
+		assert.strictEqual(completions.length, 6);
 		assert.ok(completions.some(x => x.label === 'ref-1'), 'Has ref-1 reference completion');
 		assert.ok(completions.some(x => x.label === 'ref-2'), 'Has ref-2 reference completion');
 	});
@@ -150,9 +150,7 @@ suite('Textile path completion provider', () => {
 		assert.ok(completions.some(x => x.label === 'b.textile'), 'Has b.textile file completion');
 		assert.ok(completions.some(x => x.label === 'sub/'), 'Has sub folder completion');
 	});
-	// -- End : changed for textile
 
-	/* Disabled for textile : not relevant
 	test('Should escape spaces in path names', async () => {
 		const completions = await getCompletionsAtCursor(workspaceFile('new.textile'), joinLines(
 			`"":./sub/${CURSOR} `
@@ -160,7 +158,7 @@ suite('Textile path completion provider', () => {
 
 		assert.ok(completions.some(x => x.insertText === 'file%20with%20space.textile'), 'Has encoded path completion');
 	});
-	*/
+	// -- End : changed for textile
 
 	// -- Begin : added for textile
 	test('Should return completions for image links also', async () => {
