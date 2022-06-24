@@ -12,6 +12,7 @@
 	"configuration.textile.preview.openTextileLinks.description": "Textile プレビューで他のTextile ファイルへのリンクを開く方法を制御します。",
 	"configuration.textile.preview.openTextileLinks.inEditor": "エディターでリンクを開こうとします。",
 	"configuration.textile.preview.openTextileLinks.inPreview": "Textile プレビューでリンクを開こうとします。",
+	"configuration.textile.suggest.paths.enabled.description": "Textile リンクのパス候補を有効または無効にします",
 	"description": "Textile に豊富な言語サポートを提供。",
 	"displayName": "Textile 言語機能",
 	"textile.preview.breaks.desc": "Textile プレビューで改行を表現する方法を設定します。'true' に設定すると、段落内の改行に対して <br> が作成されます。",

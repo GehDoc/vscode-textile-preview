@@ -49,7 +49,7 @@ export class InMemoryDocument implements vscode.TextDocument {
 		const before = this._contents.slice(0, offset);
 		const newLines = before.match(/\r\n|\n/g);
 		const line = newLines ? newLines.length : 0;
-		const preCharacters = before.match(/(\r\n|\n|^).*$/g); // FIXME diff from mardown
+		const preCharacters = before.match(/(?<=\r\n|\n|^).*$/g);
 		return new vscode.Position(line, preCharacters ? preCharacters[0].length : 0);
 	}
 	getText(range?: vscode.Range): string {

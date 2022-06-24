@@ -12,6 +12,7 @@
 	"configuration.textile.preview.openTextileLinks.description": "Contrôle la façon dont les liens vers d'autres fichiers Textile doivent s'ouvrir dans l'aperçu Textile.",
 	"configuration.textile.preview.openTextileLinks.inEditor": "Tente d'ouvrir les liens dans l'éditeur.",
 	"configuration.textile.preview.openTextileLinks.inPreview": "Tente d'ouvrir les liens dans l'aperçu Textile.",
+	"configuration.textile.suggest.paths.enabled.description": "Activer/désactiver les suggestions de chemin d’accès pour les liens Textile",
 	"description": "Fournit une prise en charge riche de langage pour Textile",
 	"displayName": "Fonctionnalités de langage Textile",
 	"textile.preview.breaks.desc": "Définit la façon dont les sauts de ligne sont affichés dans l'aperçu Textile. Si vous affectez la valeur 'true', un <br> est créé pour les nouvelles lignes à l'intérieur des paragraphes.",

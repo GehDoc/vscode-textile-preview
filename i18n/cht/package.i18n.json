@@ -12,6 +12,7 @@
 	"configuration.textile.preview.openTextileLinks.description": "控制應如何開啟 Textile 預覽中其他 Textile 檔案的連結。",
 	"configuration.textile.preview.openTextileLinks.inEditor": "嘗試在編輯器中開啟連結。",
 	"configuration.textile.preview.openTextileLinks.inPreview": "嘗試開啟 Textile 預覽中的連結。",
+	"configuration.textile.suggest.paths.enabled.description": "啟用/停用 Textile 連結的路徑建議",
 	"description": "為 Textile 提供豐富的語言支援。",
 	"displayName": "Textile 語言功能",
 	"textile.preview.breaks.desc": "設定 Textile 預覽中轉譯分行符號的方式。若設定為 'true'，則會為段落內的新行建立 <br>。",

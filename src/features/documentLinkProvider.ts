@@ -149,7 +149,7 @@ const imagePattern = /(!(?!\s)((?:\([^\)]+\)|\{[^\}]+\}|\\[[^\[\]]+\]|(?:<>|<|>|
 /* Disabled : not relevant for textile
 const referenceLinkPattern = /(\[((?:\\\]|[^\]])+)\]\[\s*?)([^\s\]]*?)\]/g;
 */
-const definitionPattern = /^\[([^\]]+)\]((?:https?:\/\/|\/)\S+)(?:\s*(?=\n)|$)/gm;
+const definitionPattern = /^\[([^\]]+)\]((?:https?:\/\/|[.]{1,2}\/|#)\S+)(?:\s*(?=\n)|$)/gm;
 const inlineCodePattern = /(?:^|[^@])(@+)(?:.+?|.*?(?:(?:\r?\n).+?)*?)(?:\r?\n)?\1(?:$|[^@])/gm;
 // -- End: Modified for textile
 

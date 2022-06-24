@@ -12,6 +12,7 @@
 	"configuration.textile.preview.openTextileLinks.description": "Controlla in che modo aprire i collegamenti ad altri file Textile nell'anteprima Textile.",
 	"configuration.textile.preview.openTextileLinks.inEditor": "Prova ad aprire i collegamenti nell'editor.",
 	"configuration.textile.preview.openTextileLinks.inPreview": "Prova ad aprire i collegamenti nell'anteprima Textile.",
+	"configuration.textile.suggest.paths.enabled.description": "Abilita/Disabilita i suggerimenti di percorso per i collegamenti Textile",
 	"description": "Fornisce un supporto avanzato del linguaggio per Textile.",
 	"displayName": "Funzionalità del linguaggio Textile",
 	"textile.preview.breaks.desc": "Imposta il rendering delle interruzioni di riga nell'anteprima Textile. Se è impostato su 'true', viene creato un tag <br> per i caratteri di nuova riga all'interno di paragrafi.",

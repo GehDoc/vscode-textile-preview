@@ -25,11 +25,12 @@ This extension is entirely based on the Markdown preview provided by Visual Stud
 * include images, from local or network, with manageable security of the preview's content;
 * click on links, in the source view and in the HTML preview;
 * Can be run as a [remote/web extension](https://code.visualstudio.com/api/advanced-topics/remote-extensions).  
-Internal and external links to a paragraph headline of a textile file are supported (slugify);
 * see the document headlines structure in the outline view;
 * fold paragraphs from their headline, multi-line list-items, code blocks, and special HTML comments `<!-- #region [Optional text] -->` and `<!-- #endregion [Optional text] -->`.
 * blockquote syntax coloring, with `bc[language].` or `<pre><code class="language">`, or `<pre><code lang="language">`.  
-Look at the official highlight.js documentation for the [list of supported languages](https://highlightjs.org/static/demo/).
+Look at the official highlight.js documentation for the [list of supported languages](https://highlightjs.org/static/demo/),
+* Internal and external links to a paragraph headline of a local textile file are supported (slugify);
+* Path completion for local links.
 
 And also :
 * the HTML preview supports VSCode light and dark themes;

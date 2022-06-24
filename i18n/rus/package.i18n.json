@@ -12,6 +12,7 @@
 	"configuration.textile.preview.openTextileLinks.description": "Указывает, как следует открывать ссылки на другие файлы Textile при предварительном просмотре Textile.",
 	"configuration.textile.preview.openTextileLinks.inEditor": "Пробовать открывать ссылки в редакторе.",
 	"configuration.textile.preview.openTextileLinks.inPreview": "Пробовать открывать ссылки в окне предварительного просмотра Textile.",
+	"configuration.textile.suggest.paths.enabled.description": "Включение или отключение предложений путей для ссылок Textile",
 	"description": "Предоставляет широкую поддержку языка для Textile.",
 	"displayName": "Возможности языка Textile",
 	"textile.preview.breaks.desc": "Задает способ отрисовки разрывов строк для предварительного просмотра Textile. Если задано значение true, для каждой новой строки внутри абзацев создается <br>.",

@@ -12,6 +12,7 @@
 	"configuration.textile.preview.openTextileLinks.description": "Controla cómo deben abrirse los vínculos hacia otros archivos Textile en la vista previa de Textile.",
 	"configuration.textile.preview.openTextileLinks.inEditor": "Intenta abrir los vínculos en el editor.",
 	"configuration.textile.preview.openTextileLinks.inPreview": "Intenta abrir los vínculos en la vista previa de Textile.",
+	"configuration.textile.suggest.paths.enabled.description": "Habilitar o deshabilitar sugerencias de ruta de acceso para vínculos de marcado",
 	"description": "Proporciona un potente soporte de lenguaje para archivos Textile.",
 	"displayName": "Características del lenguaje Textile",
 	"textile.preview.breaks.desc": "Establece cómo se representan los saltos de línea en la vista previa de Textile. Si se establece en \"true\", se crea <br> para las líneas nuevas dentro de los párrafos.",

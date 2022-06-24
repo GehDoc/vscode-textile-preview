@@ -123,7 +123,7 @@ suite('textile.DocumentLinkProvider', () => {
 		const [link1,link2] = links;
 		assertRangeEqual(link1.range, new vscode.Range(0, 6, 0, 13));
 		assert.strictEqual(link1.target?.scheme, "command");
-		assertRangeEqual(link2.range, new vscode.Range(1, 10, 1, 29));
+		assertRangeEqual(link2.range, new vscode.Range(1, 9, 1, 28));
 		assert.strictEqual(link2.target?.scheme, "https");
 	});
 

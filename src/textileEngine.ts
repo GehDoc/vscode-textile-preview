@@ -158,7 +158,6 @@ export class TextileEngine {
 				this.addLinkRenderer(textile, localConfig);
 				textile.setOptions( localConfig );
 				// -- End : changed for textile
-
 				return textile;
 			})();
 		}

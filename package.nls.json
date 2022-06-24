@@ -26,5 +26,6 @@
 	"configuration.textile.links.openLocation.description": "Controls where links in Textile files should be opened.",
 	"configuration.textile.links.openLocation.currentGroup": "Open links in the active editor group.",
 	"configuration.textile.links.openLocation.beside": "Open links beside the active editor.",
+	"configuration.textile.suggest.paths.enabled.description": "Enable/disable path suggestions for textile links",
 	"workspaceTrust": "Required for loading styles configured in the workspace."
 }

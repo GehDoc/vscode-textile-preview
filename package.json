@@ -298,6 +298,12 @@
 						"%configuration.textile.links.openLocation.beside%"
 					]
 				},
+				"textile.suggest.paths.enabled": {
+				  "type": "boolean",
+				  "default": true,
+				  "description": "%configuration.textile.suggest.paths.enabled.description%",
+				  "scope": "resource"
+				},
 				"textile.trace": {
 					"type": "string",
 					"enum": [

@@ -12,6 +12,7 @@
 	"configuration.textile.preview.openTextileLinks.description": "Steuert, wie Links zu anderen Textiledateien in der Textile-Vorschau geöffnet werden sollen.",
 	"configuration.textile.preview.openTextileLinks.inEditor": "Links im Editor öffnen",
 	"configuration.textile.preview.openTextileLinks.inPreview": "Links in der Textile-Vorschau öffnen",
+	"configuration.textile.suggest.paths.enabled.description": "Aktivieren/Deaktivieren von Pfadvorschlägen für Textilelinks",
 	"description": "Bietet umfangreiche Sprachunterstützung für Textile.",
 	"displayName": "Textile-Sprachfeatures",
 	"textile.preview.breaks.desc": "Legt fest, wie Zeilenumbrüche in der Textile-Vorschau gerendert werden. Durch eine Festlegung auf TRUE wird \"<br>\" für Zeilenumbrüche innerhalb von Absätzen erstellt.",
