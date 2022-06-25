@@ -360,7 +360,7 @@
 		"ci-test": "node ./out/test/runTest.js"
 	},
 	"sponsor": {
-		"url": "https://patreon patreon.com/geraldhameau"
+		"url": "https://liberapay.com/GehDoc/donate"
 	},
 	"dependencies": {
 		"highlight.js": "^10.4.1",

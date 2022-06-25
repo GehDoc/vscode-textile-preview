@@ -88,7 +88,7 @@ All [bugs and enhancements](https://github.com/GehDoc/vscode-textile-preview/iss
 
 * Give feedback and rating through [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=GehDoc.vscode-textile-preview).
 * Add stars to [the project on github](https://github.com/GehDoc/vscode-textile-preview ) if you like it !
-* Financially sponsor our project [here](https://www.patreon.com/geraldhameau), or through the GitHub ❤ sponsor button on [the project's repository](https://github.com/GehDoc/vscode-textile-preview/).
+* Financially sponsor my project [here](https://liberapay.com/GehDoc/donate), or through the GitHub ❤ sponsor button on [the project's repository](https://github.com/GehDoc/vscode-textile-preview/).
 
 Your support is greatly appreciated !
 
