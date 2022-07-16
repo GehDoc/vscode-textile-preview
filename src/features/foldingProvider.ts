@@ -144,10 +144,10 @@ export default class TextileFoldingProvider implements vscode.FoldingRangeProvid
 const isStartRegion = (t: string) => /^\s*#?region\b.*/.test(t);
 const isEndRegion = (t: string) => /^\s*#?endregion\b.*/.test(t);
 
-const isRegionMarker = (token: Token) : token is Token =>
+const isRegionMarker = (token: Token) =>
 	!!token.map && typeof(token[0]) === 'string' && token[0] === '!' && typeof(token[1]) === 'object' && typeof(token[2]) === 'string' && (isStartRegion(token[2]) || isEndRegion(token[2]));
 
-const isFoldableToken = (token: Token): token is Token => {
+const isFoldableToken = (token: Token) => {
 	if (!token.map) {
 		return false;
 	}
