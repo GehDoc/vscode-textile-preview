@@ -10,9 +10,11 @@ import { TableOfContents } from '../tableOfContentsProvider';
 
 const rangeLimit = 5000;
 
+/* Disabled for textile : not relevant
 interface TextileTokenWithMap extends Token {
 	map: [number, number];
 }
+*/
 
 export default class TextileFoldingProvider implements vscode.FoldingRangeProvider {
 
@@ -142,10 +144,10 @@ export default class TextileFoldingProvider implements vscode.FoldingRangeProvid
 const isStartRegion = (t: string) => /^\s*#?region\b.*/.test(t);
 const isEndRegion = (t: string) => /^\s*#?endregion\b.*/.test(t);
 
-const isRegionMarker = (token: Token): token is TextileTokenWithMap =>
+const isRegionMarker = (token: Token) : token is Token =>
 	!!token.map && typeof(token[0]) === 'string' && token[0] === '!' && typeof(token[1]) === 'object' && typeof(token[2]) === 'string' && (isStartRegion(token[2]) || isEndRegion(token[2]));
 
-const isFoldableToken = (token: Token): token is TextileTokenWithMap => {
+const isFoldableToken = (token: Token): token is Token => {
 	if (!token.map) {
 		return false;
 	}

@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [UNRELEASED]
+
+### Fixed
+- [LIBRARY] The map property of Textile Token exists only because this Token is an array. Not compatible with Markdown implementation. So just remove its declaration
+
+
 ## [1.3.19] - 20220627
 ### Added
 - [DOC] Add marketplace sponsor link
