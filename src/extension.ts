@@ -16,7 +16,7 @@ import TextileFoldingProvider from './features/foldingProvider';
 import { PathCompletionProvider } from './features/pathCompletions';
 import { TextileContentProvider } from './features/previewContentProvider';
 import { TextilePreviewManager } from './features/previewManager';
-// import TextileSmartSelect from './features/smartSelect';
+import TextileSmartSelect from './features/smartSelect';
 import TextileWorkspaceSymbolProvider from './features/workspaceSymbolProvider';
 import { Logger } from './logger';
 import { TextileEngine } from './textileEngine';
@@ -63,7 +63,7 @@ function registerTextileLanguageFeatures(
 		vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider),
 		vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider(engine)),
 		vscode.languages.registerFoldingRangeProvider(selector, new TextileFoldingProvider(engine)),
-		// FIXME: vscode.languages.registerSelectionRangeProvider(selector, new TextileSmartSelect(engine)),
+		vscode.languages.registerSelectionRangeProvider(selector, new TextileSmartSelect(engine)),
 		vscode.languages.registerWorkspaceSymbolProvider(new TextileWorkspaceSymbolProvider(symbolProvider)),
 		PathCompletionProvider.register(selector, engine),
 	);
