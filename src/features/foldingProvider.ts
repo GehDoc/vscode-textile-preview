@@ -132,7 +132,7 @@ export default class TextileFoldingProvider implements vscode.FoldingRangeProvid
 		});
 	}
 
-	private getFoldingRangeKind(listItem: Token): vscode.FoldingRangeKind | undefined {
+	private getFoldingRangeKind(listItem : {start: number, end: number | undefined, nodeLevel: number, isComment?: boolean}): vscode.FoldingRangeKind | undefined {
 		return listItem.isComment
 			? vscode.FoldingRangeKind.Comment
 			: undefined;
