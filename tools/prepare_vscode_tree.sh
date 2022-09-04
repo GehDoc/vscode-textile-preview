@@ -39,12 +39,12 @@ function process_dir_src() {
 
 		# files will be copied to $DEST_DIR with their directory
 		# but, file from ../ will be copied at the root $DEST_DIR
-		dirname=$(dirname ${file})
+		dirname=$(dirname "$file")
 		if [ "$dirname" != ".." ]; then
 			mkdir -p "$DEST_DIR/$dirname"
 			destfile=$DEST_DIR/$file
 		else
-			destfile=$DEST_DIR/$(basename $file)
+			destfile=$DEST_DIR/$(basename "$file")
 		fi
 
 		extension="${file##*.}"
@@ -165,7 +165,7 @@ echo "Processing src"
 # Download from github : https://github.com/Microsoft/vscode
 github_DL "vscode" tags/$VSCODE_VERSION_GIT_TAG
 
-process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools/tmp/out/  '../shared.webpack.config.js ../tsconfig.base.json ./src/*.* ./src/*/*.* ./media/*.* ./.vscodeignore ./*.json ./*.js ./preview-src/*.* ./schemas/package.schema.json ./test-workspace/*.* ./test-workspace/*/*.*'
+process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools/tmp/out/  '../shared.webpack.config.js ../tsconfig.base.json ./src/*.* ./src/*/*.* ./media/*.* ./notebook/*.* ./.vscodeignore ./*.json ./*.js ./preview-src/*.* ./schemas/package.schema.json ./test-workspace/*.* ./test-workspace/*/*.*'
 
 
 # -----------
