@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [UNRELEASED]
+## [1.3.20] - 20220904
 
 ### Fixed
 - [LIBRARY] The map property of Textile Token exists only because this Token is an array. Not compatible with Markdown implementation. So just remove its declaration
