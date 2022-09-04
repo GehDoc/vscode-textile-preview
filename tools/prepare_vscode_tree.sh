@@ -7,7 +7,7 @@
 # After running this tool, you can compare ./ and ./tools/tmp/out/ to gather
 # new features.
 
-VSCODE_VERSION_GIT_TAG=1.65.2
+VSCODE_VERSION_GIT_TAG=1.66.2
 
 . $(dirname $0)/log.sh
 
@@ -148,7 +148,7 @@ function github_DL() {
 	fi
 	# Checkout to specific tag
 	if [ ! -z "$2" ]; then
-		git checkout "tags/$2"
+		git checkout "$2"
 	else
 		git pull
 	fi
@@ -163,7 +163,7 @@ function github_DL() {
 echo "Processing src"
 
 # Download from github : https://github.com/Microsoft/vscode
-github_DL "vscode" $VSCODE_VERSION_GIT_TAG
+github_DL "vscode" tags/$VSCODE_VERSION_GIT_TAG
 
 process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools/tmp/out/  '../shared.webpack.config.js ../tsconfig.base.json ./src/*.* ./src/*/*.* ./media/*.* ./.vscodeignore ./*.json ./*.js ./preview-src/*.* ./schemas/package.schema.json ./test-workspace/*.* ./test-workspace/*/*.*'
 
@@ -172,7 +172,7 @@ process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools
 echo "Processing locales"
 
 # Download from github : https://github.com/Microsoft/vscode-loc.git
-github_DL "vscode-loc"
+github_DL "vscode-loc" release/$VSCODE_VERSION_GIT_TAG
 
 process_dir_i18n ./tools/tmp/vscode-loc/i18n/ ./tools/tmp/out/i18n/
 

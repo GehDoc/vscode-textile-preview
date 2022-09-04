@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - [LIBRARY] The map property of Textile Token exists only because this Token is an array. Not compatible with Markdown implementation. So just remove its declaration
+- [INTERNAL] Use the same release/tags for vscode and its locale repository
+
+### Changed
+- [INTERNAL] Prepare update to vscode 1.66.2
 
 
 ## [1.3.19] - 20220627
