@@ -18,7 +18,7 @@ suite('textile.WorkspaceSymbolProvider', () => {
 	test('Should not return anything for empty workspace', async () => {
 		const provider = new TextileWorkspaceSymbolProvider(symbolProvider, new InMemoryWorkspaceTextileDocumentProvider([]));
 
-		assert.deepEqual(await provider.provideWorkspaceSymbols(''), []);
+		assert.deepStrictEqual(await provider.provideWorkspaceSymbols(''), []);
 	});
 
 	// -- Begin : changed for textile

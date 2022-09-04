@@ -12,6 +12,7 @@ import { CommandManager } from './commandManager';
 import * as commands from './commands/index';
 import LinkProvider from './features/documentLinkProvider';
 import TextileDocumentSymbolProvider from './features/documentSymbolProvider';
+// import { registerDropIntoEditor } from './features/dropIntoEditor';
 import TextileFoldingProvider from './features/foldingProvider';
 import { PathCompletionProvider } from './features/pathCompletions';
 import { TextileContentProvider } from './features/previewContentProvider';
@@ -51,6 +52,8 @@ export function activate(context: vscode.ExtensionContext) {
 		logger.updateConfiguration();
 		previewManager.updateConfiguration();
 	}));
+
+	// FIXME : context.subscriptions.push(registerDropIntoEditor());
 }
 
 function registerTextileLanguageFeatures(

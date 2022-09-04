@@ -5,11 +5,11 @@
 
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
+import * as uri from 'vscode-uri';
 import { OpenDocumentLinkCommand } from '../commands/openDocumentLink';
 import { Token } from '../../libs/textile-js/textile';
 import { TextileEngine, getLineNumber, getEndLineNumber } from '../textileEngine';
 import { getUriForLinkWithKnownExternalScheme, isOfScheme, Schemes } from '../util/links';
-import { dirname } from '../util/path';
 
 const localize = nls.loadMessageBundle();
 
@@ -48,7 +48,7 @@ function parseLink(
 				resourceUri = vscode.Uri.joinPath(root, tempUri.path);
 			}
 		} else {
-			const base = document.uri.with({ path: dirname(document.uri.fsPath) });
+			const base = uri.Utils.dirname(document.uri);
 			resourceUri = vscode.Uri.joinPath(base, tempUri.path);
 		}
 	}
@@ -147,7 +147,7 @@ function compareLinkRanges(a: vscode.DocumentLink, b: vscode.DocumentLink): numb
 const linkPattern = /("(?!\s)((?:[^"]|"(?![\s:])[^\n"]+"(?!:))+)":)((?:[^\s()]|\([^\s()]+\)|[()])+?)(?=[!-\.:-@\[\\\]-`{-~]+(?:$|\s)|$|\s)|(\["([^\n]+?)":)((?:\[[a-z0-9]*\]|[^\]])+)\]/g
 const imagePattern = /(!(?!\s)((?:\([^\)]+\)|\{[^\}]+\}|\\[[^\[\]]+\]|(?:<>|<|>|=)|[\(\)]+)*(?:\.[^\n\S]|\.(?:[^\.\/]))?)([^!\s]+?) ?(?:\(((?:[^\(\)]|\([^\(\)]+\))+)\))?!)(?::([^\s]+?(?=[!-\.:-@\[\\\]-`{-~](?:$|\s)|\s|$)))?/g
 /* Disabled : not relevant for textile
-const referenceLinkPattern = /(\[((?:\\\]|[^\]])+)\]\[\s*?)([^\s\]]*?)\]/g;
+const referenceLinkPattern = /(?:(\[((?:\\\]|[^\]])+)\]\[\s*?)([^\s\]]*?)\]|\[\s*?([^\s\]]*?)\])(?!\:)/g;
 */
 const definitionPattern = /^\[([^\]]+)\]((?:https?:\/\/|[.]{1,2}\/|#)\S+)(?:\s*(?=\n)|$)/gm;
 const inlineCodePattern = /(?:^|[^@])(@+)(?:.+?|.*?(?:(?:\r?\n).+?)*?)(?:\r?\n)?\1(?:$|[^@])/gm;
@@ -284,11 +284,11 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 				const offset = (match.index || 0) + pre.length;
 				linkStart = document.positionAt(offset);
 				linkEnd = document.positionAt(offset + reference.length);
-			} else if (match[2]) { // [ref][]
-				reference = match[2];
+			} else if (match[4]) { // [ref][], [ref]
+				reference = match[4];
 				const offset = (match.index || 0) + 1;
 				linkStart = document.positionAt(offset);
-				linkEnd = document.positionAt(offset + match[2].length);
+				linkEnd = document.positionAt(offset + reference.length);
 			} else {
 				continue;
 			}

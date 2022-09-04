@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [INTERNAL] Correct importing files with spaces from vscode repository
 
 ### Changed
-- [INTERNAL] Prepare update to vscode 1.66.2
+- [INTERNAL] Update to vscode 1.66.2
 
 
 ## [1.3.19] - 20220627

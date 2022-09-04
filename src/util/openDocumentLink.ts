@@ -5,10 +5,10 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
+import * as uri from 'vscode-uri';
 import { TextileEngine } from '../textileEngine';
 import { TableOfContents } from '../tableOfContentsProvider';
 import { isTextileFile } from './file';
-import { extname } from './path';
 
 export interface OpenDocumentLinkArgs {
 	readonly parts: vscode.Uri;
@@ -53,7 +53,7 @@ export async function openDocumentLink(engine: TextileEngine, targetResource: vs
 
 	if (typeof targetResourceStat === 'undefined') {
 		// We don't think the file exists. If it doesn't already have an extension, try tacking on a `.textile` and using that instead
-		if (extname(targetResource.path) === '') {
+		if (uri.Utils.extname(targetResource) === '') {
 			const dotMdResource = targetResource.with({ path: targetResource.path + '.textile' });
 			try {
 				const stat = await vscode.workspace.fs.stat(dotMdResource);
@@ -140,7 +140,7 @@ export async function resolveUriToTextileFile(resource: vscode.Uri): Promise<vsc
 	}
 
 	// If no extension, try with `.textile` extension
-	if (extname(resource.path) === '') {
+	if (uri.Utils.extname(resource) === '') {
 		return tryResolveUriToTextileFile(resource.with({ path: resource.path + '.textile' }));
 	}
 

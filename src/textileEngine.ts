@@ -316,7 +316,7 @@ export class TextileEngine {
 	}
 
 	private async addFencedRenderer(textile: TextileJS, config: TextileJSConfig) {
-		const hljs = await import('highlight.js');
+		const hljs = (await import('highlight.js')).default;
 		config.renderers!.push(
 			(tag, attributes, content) => {
 				if (tag === 'code') {
@@ -325,7 +325,10 @@ export class TextileEngine {
 						lang = normalizeHighlightLang(lang);
 						if (lang && hljs.getLanguage(lang)) {
 							try {
-								return hljs.highlight(lang, content, true).value;
+								return hljs.highlight(content, {
+									language: lang,
+									ignoreIllegals: true,
+								}).value;
 							}
 							catch (error) { }
 						}
@@ -464,14 +467,18 @@ export class TextileEngine {
 
 /* Disabled for textile : Done in addFencedRenderer
 async function getTextileOptions(md: () => TextileJS) {
-	const hljs = await import('highlight.js');
+	const hljs = (await import('highlight.js')).default;
 	return {
 		html: true,
 		highlight: (str: string, lang?: string) => {
 			lang = normalizeHighlightLang(lang);
 			if (lang && hljs.getLanguage(lang)) {
 				try {
-					return `<div>${hljs.highlight(lang, str, true).value}</div>`;
+					const highlighted = hljs.highlight(str, {
+						language: lang,
+						ignoreIllegals: true,
+					}).value;
+					return `<div>${highlighted}</div>`;
 				}
 				catch (error) { }
 			}

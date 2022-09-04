@@ -179,6 +179,37 @@ suite('textile.DocumentLinkProvider', () => {
 		assert.strictEqual(links.length, 0);
 	});
 
+	// https://github.com/microsoft/vscode/issues/141285
+	test('Should only find one link for reference sources [a]source (#141285)', async () => {
+		const links = await getLinksForFile([
+			'[Works]https://microsoft.com',
+		].join('\n'));
+
+		assert.strictEqual(links.length, 1);
+	});
+
+	// https://github.com/microsoft/vscode/issues/141285
+	test('Should find links for referees with only one [] (#141285)', async () => {
+		// Textile finds only one link
+		let links = await getLinksForFile([
+			'[ref]',
+			'[ref]https://microsoft.com',
+		].join('\n'));
+		assert.strictEqual(links.length, 1);
+
+		links = await getLinksForFile([
+			'[Does Not Work]',
+			'[def]https://microsoft.com',
+		].join('\n'));
+		assert.strictEqual(links.length, 1);
+	});
+
+	// https://github.com/microsoft/vscode/issues/141285
+	test('Should not find link for reference using one [] when source does not exist (#141285)', async () => {
+		const links = await getLinksForFile('[Works]');
+		assert.strictEqual(links.length, 0);
+	});
+
 	test('Should not consider links in code fenced with bc.', async () => {
 		const text = joinLines(
 			'bc. b is',

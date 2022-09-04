@@ -5,14 +5,10 @@
 	"version": "1.3.19",
 	"icon": "media/textile-mark_logo.png",
 	"publisher": "GehDoc",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/GehDoc/vscode-textile-preview.git"
-	},
 	"license": "SEE LICENSE IN LICENSE.txt",
 	"engines": {
 		"node" : ">=16.0.0",
-		"vscode": "^1.65.0"
+		"vscode": "^1.66.0"
 	},
 	"main": "./dist/extension",
 	"browser": "./dist/browser/extension",
@@ -363,15 +359,16 @@
 		"url": "https://liberapay.com/GehDoc/donate"
 	},
 	"dependencies": {
-		"highlight.js": "^10.4.1",
+		"highlight.js": "^11.4.0",
 		"morphdom": "^2.6.1",
-		"vscode-nls": "^5.0.0"
+		"vscode-nls": "^5.0.0",
+		"vscode-uri": "^3.0.3"
 	},
 	"devDependencies": {
 		"@types/lodash.throttle": "^4.1.3",
 		"@types/mocha": "^9.1.1",
 		"@types/node": "16.x",
-		"@types/vscode": "^1.65.0",
+		"@types/vscode": "^1.66.0",
 		"@types/vscode-webview": "^1.57.0",
 		"copy-webpack-plugin": "^6.0.3",
 		"del": "^4.1.1",
@@ -396,5 +393,9 @@
 		"@vscode/test-electron": "^2.1.3",
 		"webpack": "^5.42.0",
 		"webpack-cli": "^4.7.2"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/GehDoc/vscode-textile-preview.git"
 	}
 }

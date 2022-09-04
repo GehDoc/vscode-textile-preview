@@ -172,7 +172,7 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 		document: vscode.TextDocument,
 		webview: vscode.WebviewPanel
 	): Promise<void> {
-		const lineNumber = this._topmostLineMonitor.getPreviousTextEditorLineByUri(document.uri);
+		const lineNumber = this._topmostLineMonitor.getPreviousStaticTextEditorLineByUri(document.uri);
 		const preview = StaticTextilePreview.revive(
 			document.uri,
 			webview,

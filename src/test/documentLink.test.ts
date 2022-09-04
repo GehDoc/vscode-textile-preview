@@ -31,7 +31,7 @@ async function getLinksForFile(file: vscode.Uri): Promise<vscode.DocumentLink[]>
 	return r;
 }
 
-suite('Textile Document links', () => {
+(vscode.env.uiKind === vscode.UIKind.Web ? suite.skip : suite)('Textile Document links', () => {
 
 	setup(async () => {
 		// the tests make the assumption that link providers are already registered
