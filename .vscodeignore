@@ -19,8 +19,7 @@ tools/**
 exemples/**
 
 gulpfile.js
-tsconfig.json
-tsconfig.base.json
+tsconfig.*
 shared.webpack.config.js
 extension.webpack.config.js
 extension-browser.webpack.config.js
