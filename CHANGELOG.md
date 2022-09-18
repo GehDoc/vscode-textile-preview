@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [UNRELEASED]
+## [1.3.21] - 20220918
 
 ### Fixed
 - [CSS] No need to apply any style for word entirelly in captial letters. it looks weird, and textile-lang doesn't apply any style on it. Fixes #67
