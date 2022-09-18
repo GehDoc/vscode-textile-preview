@@ -72,8 +72,10 @@
 .textile-body pre > code {
   display: block;
 }
+/* Disabled : it looks too small, and textile-lang doesn't apply any style on it.
 .textile-body .caps {
   font-variant: small-caps;
   text-transform: lowercase;
   letter-spacing: .1em;
 }
+*/
