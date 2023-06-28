@@ -6,19 +6,18 @@
 import * as assert from 'assert';
 import 'mocha';
 import * as vscode from 'vscode';
-import { PathCompletionProvider } from '../features/pathCompletions';
+import { TextileLinkProvider } from '../languageFeatures/documentLinkProvider';
+import { TextilePathCompletionProvider } from '../languageFeatures/pathCompletions';
+import { InMemoryDocument } from '../util/inMemoryDocument';
 import { createNewTextileEngine } from './engine';
-import { InMemoryDocument } from './inMemoryDocument';
-import { CURSOR, getCursorPositions, joinLines, noopToken } from './util';
+import { CURSOR, getCursorPositions, joinLines, noopToken, workspacePath } from './util';
 
-
-function workspaceFile(...segments: string[]): vscode.Uri {
-	return vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, ...segments);
-}
 
 function getCompletionsAtCursor(resource: vscode.Uri, fileContents: string) {
 	const doc = new InMemoryDocument(resource, fileContents);
-	const provider = new PathCompletionProvider(createNewTextileEngine());
+	const engine = createNewTextileEngine();
+	const linkProvider = new TextileLinkProvider(engine);
+	const provider = new TextilePathCompletionProvider(engine, linkProvider);
 	const cursorPositions = getCursorPositions(fileContents, doc);
 	return provider.provideCompletionItems(doc, cursorPositions[0], noopToken, {
 		triggerCharacter: undefined,
@@ -35,12 +34,12 @@ suite('Textile path completion provider', () => {
 	});
 
 	test('Should not return anything when triggered in empty doc', async () => {
-		const completions = await getCompletionsAtCursor(workspaceFile('new.textile'), `${CURSOR}`);
+		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), `${CURSOR}`);
 		assert.strictEqual(completions.length, 0);
 	});
 
 	test('Should return anchor completions', async () => {
-		const completions = await getCompletionsAtCursor(workspaceFile('new.textile'), joinLines(
+		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), joinLines(
 			`"":#${CURSOR}`,
 			``,
 			`h1. A b C`,
@@ -54,7 +53,7 @@ suite('Textile path completion provider', () => {
 	});
 
 	test('Should not return suggestions for http links', async () => {
-		const completions = await getCompletionsAtCursor(workspaceFile('new.textile'), joinLines(
+		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), joinLines(
 			`"":http:${CURSOR}`,
 			``,
 			`h1. http`,
@@ -68,7 +67,7 @@ suite('Textile path completion provider', () => {
 	});
 
 	test('Should return relative path suggestions', async () => {
-		const completions = await getCompletionsAtCursor(workspaceFile('new.textile'), joinLines(
+		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), joinLines(
 			`"":${CURSOR}`,
 			``,
 			`h1. A b C`,
@@ -80,7 +79,7 @@ suite('Textile path completion provider', () => {
 	});
 
 	test('Should return relative path suggestions using ./', async () => {
-		const completions = await getCompletionsAtCursor(workspaceFile('new.textile'), joinLines(
+		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), joinLines(
 			`"":./${CURSOR}`,
 			``,
 			`h1. A b C`,
@@ -92,7 +91,7 @@ suite('Textile path completion provider', () => {
 	});
 
 	test('Should return absolute path suggestions using /', async () => {
-		const completions = await getCompletionsAtCursor(workspaceFile('sub', 'new.textile'), joinLines(
+		const completions = await getCompletionsAtCursor(workspacePath('sub', 'new.textile'), joinLines(
 			`"":/${CURSOR}`,
 			``,
 			`h1. A b C`,
@@ -105,7 +104,7 @@ suite('Textile path completion provider', () => {
 	});
 
 	test('Should return anchor suggestions in other file', async () => {
-		const completions = await getCompletionsAtCursor(workspaceFile('sub', 'new.textile'), joinLines(
+		const completions = await getCompletionsAtCursor(workspacePath('sub', 'new.textile'), joinLines(
 			`"":/b.textile#${CURSOR}`,
 		));
 
@@ -114,7 +113,7 @@ suite('Textile path completion provider', () => {
 	});
 
 	test('Should reference links for current file', async () => {
-		const completions = await getCompletionsAtCursor(workspaceFile('sub', 'new.textile'), joinLines(
+		const completions = await getCompletionsAtCursor(workspacePath('sub', 'new.textile'), joinLines(
 			`"":${CURSOR}`,
 			``,
 			`[ref-1]http://www.google.com`,
@@ -127,7 +126,7 @@ suite('Textile path completion provider', () => {
 	});
 
 	test('Should complete headers in link definitions', async () => {
-		const completions = await getCompletionsAtCursor(workspaceFile('sub', 'new.textile'), joinLines(
+		const completions = await getCompletionsAtCursor(workspacePath('sub', 'new.textile'), joinLines(
 			`h1. a B c`,
 			``,
 			`h1. x y    Z`,
@@ -140,7 +139,7 @@ suite('Textile path completion provider', () => {
 	});
 
 	test('Should complete relative paths in link definitions', async () => {
-		const completions = await getCompletionsAtCursor(workspaceFile('new.textile'), joinLines(
+		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), joinLines(
 			`h1. a B c`,
 			``,
 			`[ref-1]${CURSOR}`,
@@ -152,7 +151,7 @@ suite('Textile path completion provider', () => {
 	});
 
 	test('Should escape spaces in path names', async () => {
-		const completions = await getCompletionsAtCursor(workspaceFile('new.textile'), joinLines(
+		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), joinLines(
 			`"":./sub/${CURSOR}`
 		));
 
@@ -160,7 +159,7 @@ suite('Textile path completion provider', () => {
 	});
 
 	test('Should complete paths for path with encoded spaces', async () => {
-		const completions = await getCompletionsAtCursor(workspaceFile('new.textile'), joinLines(
+		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), joinLines(
 			`"":./sub%20with%20space/${CURSOR}`
 		));
 
@@ -168,7 +167,7 @@ suite('Textile path completion provider', () => {
 	});
 
 	test('Should complete definition path for path with encoded spaces', async () => {
-		const completions = await getCompletionsAtCursor(workspaceFile('new.textile'), joinLines(
+		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), joinLines(
 			`[def]./sub%20with%20space/${CURSOR}`
 		));
 
@@ -178,7 +177,7 @@ suite('Textile path completion provider', () => {
 
 	// -- Begin : added for textile
 	test('Should return completions for image links also', async () => {
-		const completions = await getCompletionsAtCursor(workspaceFile('new.textile'), joinLines(
+		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), joinLines(
 			`"":${CURSOR}`,
 			``,
 			`h1. A b C`,

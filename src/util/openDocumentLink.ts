@@ -7,7 +7,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as uri from 'vscode-uri';
 import { TextileEngine } from '../textileEngine';
-import { TableOfContents } from '../tableOfContentsProvider';
+import { TableOfContents } from '../tableOfContents';
 import { isTextileFile } from './file';
 
 export interface OpenDocumentLinkArgs {

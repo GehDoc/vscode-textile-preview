@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { Command } from '../commandManager';
-import { DynamicPreviewSettings, TextilePreviewManager } from '../features/previewManager';
+import { DynamicPreviewSettings, TextilePreviewManager } from '../preview/previewManager';
 // Disabled for textile : import { TelemetryReporter } from '../telemetryReporter';
 
 

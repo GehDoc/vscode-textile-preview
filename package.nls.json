@@ -20,6 +20,7 @@
 	"textile.trace.desc": "Enable debug logging for the Textile extension.",
 	"textile.preview.refresh.title": "Refresh Preview",
 	"textile.preview.toggleLock.title": "Toggle Preview Locking",
+	"textile.findAllFileReferences": "Find File References",
 	"configuration.textile.preview.openTextileLinks.description": "Controls how links to other Textile files in the Textile preview should be opened.",
 	"configuration.textile.preview.openTextileLinks.inEditor": "Try to open links in the editor.",
 	"configuration.textile.preview.openTextileLinks.inPreview": "Try to open links in the Textile preview.",
@@ -27,5 +28,6 @@
 	"configuration.textile.links.openLocation.currentGroup": "Open links in the active editor group.",
 	"configuration.textile.links.openLocation.beside": "Open links beside the active editor.",
 	"configuration.textile.suggest.paths.enabled.description": "Enable/disable path suggestions for textile links",
+	"configuration.textile.editor.drop.enabled": "Enable/disable dropping into the textile editor to insert shift. Requires enabling `#workbenck.experimental.editor.dropIntoEditor.enabled#`.",
 	"workspaceTrust": "Required for loading styles configured in the workspace."
 }

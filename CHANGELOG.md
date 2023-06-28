@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [DEPENDENCIES] Update for security fixes
 
 ### Changed
-- [INTERNAL] Prepare update to vscode 1.67
+- [INTERNAL] Update to vscode 1.67, without activating new features
 
 
 ## [1.3.21] - 20220918

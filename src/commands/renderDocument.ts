@@ -5,7 +5,7 @@
 
 import { Command } from '../commandManager';
 import { TextileEngine } from '../textileEngine';
-import { SkinnyTextDocument } from '../tableOfContentsProvider';
+import { SkinnyTextDocument } from '../workspaceContents';
 
 export class RenderDocument implements Command {
 	public readonly id = 'textile.api.render';

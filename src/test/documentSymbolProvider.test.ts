@@ -6,9 +6,9 @@
 import * as assert from 'assert';
 import 'mocha';
 import * as vscode from 'vscode';
-import SymbolProvider from '../features/documentSymbolProvider';
-import { InMemoryDocument } from './inMemoryDocument';
+import { TextileDocumentSymbolProvider } from '../languageFeatures/documentSymbolProvider';
 import { createNewTextileEngine } from './engine';
+import { InMemoryDocument } from '../util/inMemoryDocument';
 
 
 const testFileName = vscode.Uri.file('test.md');
@@ -16,7 +16,7 @@ const testFileName = vscode.Uri.file('test.md');
 
 function getSymbolsForFile(fileContents: string) {
 	const doc = new InMemoryDocument(testFileName, fileContents);
-	const provider = new SymbolProvider(createNewTextileEngine());
+	const provider = new TextileDocumentSymbolProvider(createNewTextileEngine());
 	return provider.provideDocumentSymbols(doc);
 }
 

@@ -6,25 +6,18 @@
 import * as assert from 'assert';
 import 'mocha';
 import * as vscode from 'vscode';
-import LinkProvider from '../features/documentLinkProvider';
+import { TextileLinkProvider } from '../languageFeatures/documentLinkProvider';
 import { createNewTextileEngine } from './engine';
-import { InMemoryDocument } from './inMemoryDocument';
-import { joinLines, noopToken } from './util';
+import { InMemoryDocument } from '../util/inMemoryDocument';
+import { assertRangeEqual, joinLines, noopToken } from './util';
 
 
 const testFile = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'x.textile');
 
 function getLinksForFile(fileContents: string) {
 	const doc = new InMemoryDocument(testFile, fileContents);
-	const provider = new LinkProvider(createNewTextileEngine());
+	const provider = new TextileLinkProvider(createNewTextileEngine());
 	return provider.provideDocumentLinks(doc, noopToken);
-}
-
-function assertRangeEqual(expected: vscode.Range, actual: vscode.Range) {
-	assert.strictEqual(expected.start.line, actual.start.line);
-	assert.strictEqual(expected.start.character, actual.start.character);
-	assert.strictEqual(expected.end.line, actual.end.line);
-	assert.strictEqual(expected.end.character, actual.end.character);
 }
 
 suite('textile.DocumentLinkProvider', () => {
@@ -245,12 +238,32 @@ suite('textile.DocumentLinkProvider', () => {
 		assert.strictEqual(links.length, 0);
 	});
 
-	/* Disabled for textile : Not relevant (or fixme in textile-js)
+	/* FIXME in textile-js
 	test('Should not consider links in multiline inline code span', async () => {
 		const text = joinLines(
-			'`` ',
-			'[b](https://example.com)',
-			'``');
+			'@',
+			'"b":https://example.com',
+			'@');
+		const links = await getLinksForFile(text);
+		assert.strictEqual(links.length, 0);
+	});
+
+	test('Should not consider link references in code fenced with backticks (#146714)', async () => {
+		const text = joinLines(
+			'```',
+			'[a] [bb]',
+			'```');
+		const links = await getLinksForFile(text);
+		assert.strictEqual(links.length, 0);
+	});
+
+	test('Should not consider reference sources in code fenced with backticks (#146714)', async () => {
+		const text = joinLines(
+			'```',
+			'[a]: http://example.com;',
+			'[b]: <http://example.com>;',
+			'[c]: (http://example.com);',
+			'```');
 		const links = await getLinksForFile(text);
 		assert.strictEqual(links.length, 0);
 	});
@@ -280,6 +293,14 @@ suite('textile.DocumentLinkProvider', () => {
 			'``');
 		const links = await getLinksForFile(text);
 		assert.strictEqual(links.length, 1);
+	});
+
+	test('Should find autolinks', async () => {
+		const links = await getLinksForFile('pre <http://example.com> post');
+		assert.strictEqual(links.length, 1);
+
+		const link = links[0];
+		assertRangeEqual(link.range, new vscode.Range(0, 5, 0, 23));
 	});
 	*/
 

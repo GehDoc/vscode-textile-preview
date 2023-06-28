@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Command } from '../commandManager';
-import { TextilePreviewManager } from '../features/previewManager';
+import { TextilePreviewManager } from '../preview/previewManager';
 
 export class ToggleLockCommand implements Command {
 	public readonly id = 'textile.preview.toggleLock';

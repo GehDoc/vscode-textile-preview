@@ -6,17 +6,19 @@
 import * as assert from 'assert';
 import 'mocha';
 import * as vscode from 'vscode';
-import TextileDocumentSymbolProvider from '../features/documentSymbolProvider';
-import TextileWorkspaceSymbolProvider, { WorkspaceTextileDocumentProvider } from '../features/workspaceSymbolProvider';
+import { TextileDocumentSymbolProvider } from '../languageFeatures/documentSymbolProvider';
+import { TextileWorkspaceSymbolProvider } from '../languageFeatures/workspaceSymbolProvider';
+import { SkinnyTextDocument } from '../workspaceContents';
 import { createNewTextileEngine } from './engine';
-import { InMemoryDocument } from './inMemoryDocument';
+import { InMemoryDocument } from '../util/inMemoryDocument';
+import { InMemoryWorkspaceTextileDocuments } from './inMemoryWorkspace';
 
 
 const symbolProvider = new TextileDocumentSymbolProvider(createNewTextileEngine());
 
 suite('textile.WorkspaceSymbolProvider', () => {
 	test('Should not return anything for empty workspace', async () => {
-		const provider = new TextileWorkspaceSymbolProvider(symbolProvider, new InMemoryWorkspaceTextileDocumentProvider([]));
+		const provider = new TextileWorkspaceSymbolProvider(symbolProvider, new InMemoryWorkspaceTextileDocuments([]));
 
 		assert.deepStrictEqual(await provider.provideWorkspaceSymbols(''), []);
 	});
@@ -25,7 +27,7 @@ suite('textile.WorkspaceSymbolProvider', () => {
 	test('Should return symbols from workspace with one textile file', async () => {
 		const testFileName = vscode.Uri.file('test.textile');
 
-		const provider = new TextileWorkspaceSymbolProvider(symbolProvider, new InMemoryWorkspaceTextileDocumentProvider([
+		const provider = new TextileWorkspaceSymbolProvider(symbolProvider, new InMemoryWorkspaceTextileDocuments([
 			new InMemoryDocument(testFileName, `h1. header1\n\nabc\n\nh2. header2`)
 		]));
 
@@ -37,13 +39,13 @@ suite('textile.WorkspaceSymbolProvider', () => {
 
 	test('Should return all content  basic workspace', async () => {
 		const fileNameCount = 10;
-		const files: vscode.TextDocument[] = [];
+		const files: SkinnyTextDocument[] = [];
 		for (let i = 0; i < fileNameCount; ++i) {
 			const testFileName = vscode.Uri.file(`test${i}.textile`);
 			files.push(new InMemoryDocument(testFileName, `h1. common\n\nabc\n\nh2. header${i}`));
 		}
 
-		const provider = new TextileWorkspaceSymbolProvider(symbolProvider, new InMemoryWorkspaceTextileDocumentProvider(files));
+		const provider = new TextileWorkspaceSymbolProvider(symbolProvider, new InMemoryWorkspaceTextileDocuments(files));
 
 		const symbols = await provider.provideWorkspaceSymbols('');
 		assert.strictEqual(symbols.length, fileNameCount * 2);
@@ -52,7 +54,7 @@ suite('textile.WorkspaceSymbolProvider', () => {
 	test('Should update results when textile file changes symbols', async () => {
 		const testFileName = vscode.Uri.file('test.textile');
 
-		const workspaceFileProvider = new InMemoryWorkspaceTextileDocumentProvider([
+		const workspaceFileProvider = new InMemoryWorkspaceTextileDocuments([
 			new InMemoryDocument(testFileName, `h1. header1`, 1 /* version */)
 		]);
 
@@ -71,7 +73,7 @@ suite('textile.WorkspaceSymbolProvider', () => {
 	test('Should remove results when file is deleted', async () => {
 		const testFileName = vscode.Uri.file('test.textile');
 
-		const workspaceFileProvider = new InMemoryWorkspaceTextileDocumentProvider([
+		const workspaceFileProvider = new InMemoryWorkspaceTextileDocuments([
 			new InMemoryDocument(testFileName, `h1. header1`)
 		]);
 
@@ -87,7 +89,7 @@ suite('textile.WorkspaceSymbolProvider', () => {
 	test('Should update results when textile file is created', async () => {
 		const testFileName = vscode.Uri.file('test.textile');
 
-		const workspaceFileProvider = new InMemoryWorkspaceTextileDocumentProvider([
+		const workspaceFileProvider = new InMemoryWorkspaceTextileDocuments([
 			new InMemoryDocument(testFileName, `h1. header1`)
 		]);
 
@@ -101,44 +103,3 @@ suite('textile.WorkspaceSymbolProvider', () => {
 	});
 	// -- End : changed for textile
 });
-
-
-class InMemoryWorkspaceTextileDocumentProvider implements WorkspaceTextileDocumentProvider {
-	private readonly _documents = new Map<string, vscode.TextDocument>();
-
-	constructor(documents: vscode.TextDocument[]) {
-		for (const doc of documents) {
-			this._documents.set(doc.fileName, doc);
-		}
-	}
-
-	async getAllTextileDocuments() {
-		return Array.from(this._documents.values());
-	}
-
-	private readonly _onDidChangeTextileDocumentEmitter = new vscode.EventEmitter<vscode.TextDocument>();
-	public onDidChangeTextileDocument = this._onDidChangeTextileDocumentEmitter.event;
-
-	private readonly _onDidCreateTextileDocumentEmitter = new vscode.EventEmitter<vscode.TextDocument>();
-	public onDidCreateTextileDocument = this._onDidCreateTextileDocumentEmitter.event;
-
-	private readonly _onDidDeleteTextileDocumentEmitter = new vscode.EventEmitter<vscode.Uri>();
-	public onDidDeleteTextileDocument = this._onDidDeleteTextileDocumentEmitter.event;
-
-	public updateDocument(document: vscode.TextDocument) {
-		this._documents.set(document.fileName, document);
-		this._onDidChangeTextileDocumentEmitter.fire(document);
-	}
-
-	public createDocument(document: vscode.TextDocument) {
-		assert.ok(!this._documents.has(document.uri.fsPath));
-
-		this._documents.set(document.uri.fsPath, document);
-		this._onDidCreateTextileDocumentEmitter.fire(document);
-	}
-
-	public deleteDocument(resource: vscode.Uri) {
-		this._documents.delete(resource.fsPath);
-		this._onDidDeleteTextileDocumentEmitter.fire(resource);
-	}
-}

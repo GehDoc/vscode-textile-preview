@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Command } from '../commandManager';
-import { TextilePreviewManager } from '../features/previewManager';
 import { TextileEngine } from '../textileEngine';
+import { TextilePreviewManager } from '../preview/previewManager';
 
 export class ReloadPlugins implements Command {
 	public readonly id = 'textile.api.reloadPlugins';

@@ -5,8 +5,8 @@
 
 import * as vscode from 'vscode';
 import { Command } from '../commandManager';
-import { TextilePreviewManager } from '../features/previewManager';
-import { PreviewSecuritySelector } from '../security';
+import { TextilePreviewManager } from '../preview/previewManager';
+import { PreviewSecuritySelector } from '../preview/security';
 import { isTextileFile } from '../util/file';
 
 export class ShowPreviewSecuritySelectorCommand implements Command {

@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { Command } from '../commandManager';
-import { TextilePreviewManager } from '../features/previewManager';
+import { TextilePreviewManager } from '../preview/previewManager';
 
 export class ShowSourceCommand implements Command {
 	public readonly id = 'textile.showSource';

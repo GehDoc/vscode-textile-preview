@@ -8,10 +8,10 @@ import { TextileJS, Token, Options as TextileJSConfig } from '../libs/textile-js
 import * as vscode from 'vscode';
 import { TextileContributionProvider as TextileContributionProvider } from './textileExtensions';
 import { Slugifier } from './slugify';
-import { SkinnyTextDocument } from './tableOfContentsProvider';
-import { hash } from './util/hash';
-import { isOfScheme, Schemes } from './util/links';
+import { stringHash } from './util/hash';
 import { WebviewResourceProvider } from './util/resources';
+import { isOfScheme, Schemes } from './util/schemes';
+import { SkinnyTextDocument } from './workspaceContents';
 
 const UNICODE_NEWLINE_REGEX = /\u2028|\u2029/g;
 
@@ -231,7 +231,7 @@ export class TextileEngine {
 		}, env);
 	}
 
-	public resetSlugCount(): void {
+	private resetSlugCount(): void {
 		this._slugCount = new Map<string, number>();
 	}
 
@@ -298,7 +298,7 @@ export class TextileEngine {
 						const src = tokens[1]?.src;
 						if (src) {
 							env.containingImages?.push({ src });
-							const imgHash = hash(src);
+							const imgHash = stringHash(src);
 							textile.jsonmlUtils.addAttributes( tokens, {'id': `image-hash-${imgHash}`});
 
 							if (!tokens[1]?.['data-src']) {

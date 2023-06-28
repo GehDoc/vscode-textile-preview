@@ -6,9 +6,10 @@
 import * as assert from 'assert';
 import 'mocha';
 import * as vscode from 'vscode';
-import TextileFoldingProvider from '../features/foldingProvider';
+import { TextileFoldingProvider } from '../languageFeatures/foldingProvider';
+import { InMemoryDocument } from '../util/inMemoryDocument';
 import { createNewTextileEngine } from './engine';
-import { InMemoryDocument } from './inMemoryDocument';
+// FIXME : import { joinLines } from './util';
 
 const testFileName = vscode.Uri.file('test.md');
 
@@ -52,7 +53,7 @@ y`);
 		assert.strictEqual(folds.length, 2);
 		const firstFold = folds[0];
 		assert.strictEqual(firstFold.start, 1);
-		assert.strictEqual(firstFold.end, 4);
+		assert.strictEqual(firstFold.end, 3);
 	});
 
 	test('Should collapse multuple newlines to single newline before next header', async () => {
@@ -69,7 +70,7 @@ y`);
 		assert.strictEqual(folds.length, 2);
 		const firstFold = folds[0];
 		assert.strictEqual(firstFold.start, 1);
-		assert.strictEqual(firstFold.end, 6);
+		assert.strictEqual(firstFold.end, 5);
 	});
 
 	/* Disabled for textile : not relevant, if no newline between text and header, there is simply no header
@@ -142,7 +143,7 @@ b`);
 		assert.strictEqual(folds.length, 1);
 		const firstFold = folds[0];
 		assert.strictEqual(firstFold.start, 0);
-		assert.strictEqual(firstFold.end, 3);
+		assert.strictEqual(firstFold.end, 2);
 	});
 
 	test('Should fold fenced code blocks', async () => {

@@ -8,7 +8,7 @@
 	"license": "SEE LICENSE IN LICENSE.txt",
 	"engines": {
 		"node" : ">=16.0.0",
-		"vscode": "^1.66.0"
+		"vscode": "^1.67.0"
 	},
 	"main": "./dist/extension",
 	"browser": "./dist/browser/extension",
@@ -32,6 +32,7 @@
 		"onCommand:textile.showPreviewSecuritySelector",
 		"onCommand:textile.api.render",
 		"onCommand:textile.api.reloadPlugins",
+    "onCommand:textile.findAllFileReferences",
 		"onWebviewPanel:textile.preview",
 		"onCustomEditor:vscode.textile.preview.editor"
 	],
@@ -103,6 +104,11 @@
 				"command": "textile.preview.toggleLock",
 				"title": "%textile.preview.toggleLock.title%",
 				"category": "Textile"
+      },
+      {
+        "command": "textile.findAllFileReferences",
+        "title": "%textile.findAllFileReferences%",
+        "category": "Textile"
 			}
 		],
 		"menus": {
@@ -139,6 +145,11 @@
 					"command": "textile.showPreview",
 					"when": "resourceLangId == textile",
 					"group": "navigation"
+				},
+				{
+					  "command": "textile.findAllFileReferences",
+					  "when": "resourceLangId == textile",
+					  "group": "4_search"
 				}
 			],
 			"editor/title/context": [
@@ -146,6 +157,10 @@
 					"command": "textile.showPreview",
 					"when": "resourceLangId == textile",
 					"group": "1_open"
+				},
+				{
+				  "command": "textile.findAllFileReferences",
+				  "when": "resourceLangId == textile"
 				}
 			],
 			"commandPalette": [
@@ -188,6 +203,10 @@
 				{
 					"command": "textile.preview.refresh",
 					"when": "textilePreviewFocus"
+				},
+				{
+				  "command": "textile.findAllFileReferences",
+				  "when": "editorLangId == textile"
 				}
 			]
 		},
@@ -310,6 +329,12 @@
 					"default": "off",
 					"description": "%textile.trace.desc%",
 					"scope": "window"
+				},
+				"textile.editor.drop.enabled": {
+				  "type": "boolean",
+				  "default": true,
+				  "textileDescription": "%configuration.textile.editor.drop.enabled%",
+				  "scope": "resource"
 				}
 			}
 		},
@@ -361,6 +386,7 @@
 	"dependencies": {
 		"highlight.js": "^11.4.0",
 		"morphdom": "^2.6.1",
+		"vscode-languageserver-textdocument": "^1.0.4",
 		"vscode-nls": "^5.0.0",
 		"vscode-uri": "^3.0.3"
 	},
@@ -368,7 +394,7 @@
 		"@types/lodash.throttle": "^4.1.3",
 		"@types/mocha": "^9.1.1",
 		"@types/node": "16.x",
-		"@types/vscode": "^1.66.0",
+		"@types/vscode": "^1.67.0",
 		"@types/vscode-webview": "^1.57.0",
 		"copy-webpack-plugin": "^6.0.3",
 		"del": "^4.1.1",
