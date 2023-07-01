@@ -66,7 +66,7 @@ export class VsCodeTextileWorkspaceContents extends Disposable implements Textil
 	 * Reads and parses all .textile documents in the workspace.
 	 * Files are processed in batches, to keep the number of open files small.
 	 *
-	 * @returns Array of processed .md files.
+	 * @returns Array of processed .textile files.
 	 */
 	async getAllTextileDocuments(): Promise<SkinnyTextDocument[]> {
 		const maxConcurrent = 20;

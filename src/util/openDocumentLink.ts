@@ -54,11 +54,11 @@ export async function openDocumentLink(engine: TextileEngine, targetResource: vs
 	if (typeof targetResourceStat === 'undefined') {
 		// We don't think the file exists. If it doesn't already have an extension, try tacking on a `.textile` and using that instead
 		if (uri.Utils.extname(targetResource) === '') {
-			const dotMdResource = targetResource.with({ path: targetResource.path + '.textile' });
+			const dotTextileResource = targetResource.with({ path: targetResource.path + '.textile' });
 			try {
-				const stat = await vscode.workspace.fs.stat(dotMdResource);
+				const stat = await vscode.workspace.fs.stat(dotTextileResource);
 				if (stat.type === vscode.FileType.File) {
-					await tryOpenMdFile(engine, dotMdResource, column);
+					await tryOpenTextileFile(engine, dotTextileResource, column);
 					return;
 				}
 			} catch {
@@ -69,10 +69,10 @@ export async function openDocumentLink(engine: TextileEngine, targetResource: vs
 		return vscode.commands.executeCommand('revealInExplorer', targetResource);
 	}
 
-	await tryOpenMdFile(engine, targetResource, column);
+	await tryOpenTextileFile(engine, targetResource, column);
 }
 
-async function tryOpenMdFile(engine: TextileEngine, resource: vscode.Uri, column: vscode.ViewColumn): Promise<boolean> {
+async function tryOpenTextileFile(engine: TextileEngine, resource: vscode.Uri, column: vscode.ViewColumn): Promise<boolean> {
 	await vscode.commands.executeCommand('vscode.open', resource.with({ fragment: '' }), column);
 	return tryNavigateToFragmentInActiveEditor(engine, resource);
 }

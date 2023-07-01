@@ -67,6 +67,7 @@ function process_dir_src() {
 			sed -i -e "s/MdFoldingProvider/TextileFoldingProvider/g" "$destfile"
 			sed -i -e "s/MdWorkspaceCache/TextileWorkspaceCache/g" "$destfile"
 			sed -i -e "s/dotMdResource/dotTextileResource/g" "$destfile"
+			sed -i -e "s/tryOpenMdFile/tryOpenTextileFile/g" "$destfile"
 			sed -i -e "s/tryFindMdDocumentForLink/tryFindTextileDocumentForLink/g" "$destfile"
 			sed -i -e "s/MdHeaderReference/TextileHeaderReference/g" "$destfile"
 			sed -i -e "s/MdReference/TextileReference/g" "$destfile"
