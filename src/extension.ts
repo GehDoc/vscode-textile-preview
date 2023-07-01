@@ -12,13 +12,13 @@ import { CommandManager } from './commandManager';
 import * as commands from './commands/index';
 import { TextileLinkProvider } from './languageFeatures/documentLinkProvider';
 import { TextileDocumentSymbolProvider } from './languageFeatures/documentSymbolProvider';
-// FIXME: import { registerDropIntoEditor } from './features/dropIntoEditor';
+// FIXME: import { registerDropIntoEditor } from './languageFeatures/dropIntoEditor';
 import { registerFindFileReferences } from './languageFeatures/fileReferences';
 import { TextileFoldingProvider } from './languageFeatures/foldingProvider';
 import { TextilePathCompletionProvider } from './languageFeatures/pathCompletions';
 import { TextileReferencesProvider } from './languageFeatures/references';
-// FIXME: import { TextileRenameProvider } from './languageFeatures/rename';
-// FIXME: import TextileSmartSelect from './features/smartSelect';
+import { TextileRenameProvider } from './languageFeatures/rename';
+// FIXME: import { TextileSmartSelect } from './languageFeatures/smartSelect';
 import { TextileWorkspaceSymbolProvider } from './languageFeatures/workspaceSymbolProvider';
 import { Logger } from './logger';
 import { TextileEngine } from './textileEngine';
@@ -77,7 +77,7 @@ function registerTextileLanguageFeatures(
 		// FIXME: vscode.languages.registerSelectionRangeProvider(selector, new TextileSmartSelect(engine)),
 		vscode.languages.registerWorkspaceSymbolProvider(new TextileWorkspaceSymbolProvider(symbolProvider, workspaceContents)),
 		vscode.languages.registerReferenceProvider(selector, referencesProvider),
-		// FIXME: vscode.languages.registerRenameProvider(selector, new TextileRenameProvider(referencesProvider, workspaceContents, githubSlugifier)),
+		vscode.languages.registerRenameProvider(selector, new TextileRenameProvider(referencesProvider, workspaceContents, githubSlugifier)),
 		TextilePathCompletionProvider.register(selector, engine, linkProvider),
 		// FIXME : registerDropIntoEditor(selector),
 		registerFindFileReferences(commandManager, referencesProvider),

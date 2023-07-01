@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - [FEATURE] Find all references in workspace
+- [FEATURE] Rename references in workspace
 
 
 ## [1.3.21] - 20220918

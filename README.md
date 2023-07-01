@@ -31,7 +31,8 @@ This extension is entirely based on the Markdown preview provided by Visual Stud
 Look at the official highlight.js documentation for the [list of supported languages](https://highlightjs.org/static/demo/);
 * Internal and external links to a paragraph headline of a local textile file are supported (slugify);
 * Path completion for local links;
-* Find all references in workspace.
+* Find all references in workspace;
+* Rename references in workspace.
 
 And also :
 * the HTML preview supports VSCode light and dark themes;
