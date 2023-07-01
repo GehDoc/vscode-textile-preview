@@ -190,7 +190,7 @@ const autoLinkPattern = /\<(\w+:[^\>\s]+)\>/g;
 /**
  * Matches `[text]http://exemple.com`
  */
-const definitionPattern = /^\[([^\]]+)\]((?:https?:\/\/|[.]{1,2}\/|#)\S+)(?:\s*(?=\n)|$)/gm;
+const definitionPattern = /^\[([^\]]+)\]((?:https?:\/\/|[.]{0,2}\/|#)\S+)(?:\s*(?=\n)|$)/gm;
 
 /**
  * Matches `@text@`

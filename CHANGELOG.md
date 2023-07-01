@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - [INTERNAL] Update to vscode 1.67
+- [INTERNAL] Update textile-js to latest version 2.0.115
 
 ### Added
 - [FEATURE] Find all references in workspace
@@ -57,7 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [INTERNAL] package-lock.json should be removed
 
 ### Added
-- [PREVIEW] Add ppacath completion for local links
+- [PREVIEW] Add path completion for local links
 
 
 ## [1.3.17] - 20220609
