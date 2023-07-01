@@ -6,11 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [UNRELEASED]
+
 ### Fixed
 - [DEPENDENCIES] Update for security fixes
 
 ### Changed
-- [INTERNAL] Update to vscode 1.67, without activating new features
+- [INTERNAL] Update to vscode 1.67
+
+### Added
+- [FEATURE] Find all references in workspace
 
 
 ## [1.3.21] - 20220918

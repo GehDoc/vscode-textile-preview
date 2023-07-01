@@ -63,7 +63,7 @@ export class VsCodeTextileWorkspaceContents extends Disposable implements Textil
 	private readonly utf8Decoder = new TextDecoder('utf-8');
 
 	/**
-	 * Reads and parses all .md documents in the workspace.
+	 * Reads and parses all .textile documents in the workspace.
 	 * Files are processed in batches, to keep the number of open files small.
 	 *
 	 * @returns Array of processed .md files.

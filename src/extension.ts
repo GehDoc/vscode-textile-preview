@@ -13,10 +13,10 @@ import * as commands from './commands/index';
 import { TextileLinkProvider } from './languageFeatures/documentLinkProvider';
 import { TextileDocumentSymbolProvider } from './languageFeatures/documentSymbolProvider';
 // FIXME: import { registerDropIntoEditor } from './features/dropIntoEditor';
-// FIXME: import { registerFindFileReferences } from './languageFeatures/fileReferences';
+import { registerFindFileReferences } from './languageFeatures/fileReferences';
 import { TextileFoldingProvider } from './languageFeatures/foldingProvider';
 import { TextilePathCompletionProvider } from './languageFeatures/pathCompletions';
-// FIXME: import { TextileReferencesProvider } from './languageFeatures/references';
+import { TextileReferencesProvider } from './languageFeatures/references';
 // FIXME: import { TextileRenameProvider } from './languageFeatures/rename';
 // FIXME: import TextileSmartSelect from './features/smartSelect';
 import { TextileWorkspaceSymbolProvider } from './languageFeatures/workspaceSymbolProvider';
@@ -50,7 +50,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const previewManager = new TextilePreviewManager(contentProvider, logger, contributions, engine);
 	context.subscriptions.push(previewManager);
 
-	context.subscriptions.push(registerTextileLanguageFeatures(/* FIXME: commandManager, */ symbolProvider, engine));
+	context.subscriptions.push(registerTextileLanguageFeatures(commandManager, symbolProvider, engine));
 	context.subscriptions.push(registerTextileCommands(commandManager, previewManager, /* Disabled for textile : telemetryReporter, */ cspArbiter, engine));
 
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
@@ -60,7 +60,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function registerTextileLanguageFeatures(
-	// FIXME: commandManager: CommandManager,
+	commandManager: CommandManager,
 	symbolProvider: TextileDocumentSymbolProvider,
 	engine: TextileEngine
 ): vscode.Disposable {
@@ -69,18 +69,18 @@ function registerTextileLanguageFeatures(
 	const linkProvider = new TextileLinkProvider(engine);
 	const workspaceContents = new VsCodeTextileWorkspaceContents();
 
-	// FIXME: const referencesProvider = new TextileReferencesProvider(linkProvider, workspaceContents, engine, githubSlugifier);
+	const referencesProvider = new TextileReferencesProvider(linkProvider, workspaceContents, engine, githubSlugifier);
 	return vscode.Disposable.from(
 		vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider),
 		vscode.languages.registerDocumentLinkProvider(selector, linkProvider),
 		vscode.languages.registerFoldingRangeProvider(selector, new TextileFoldingProvider(engine)),
 		// FIXME: vscode.languages.registerSelectionRangeProvider(selector, new TextileSmartSelect(engine)),
 		vscode.languages.registerWorkspaceSymbolProvider(new TextileWorkspaceSymbolProvider(symbolProvider, workspaceContents)),
-		// FIXME: vscode.languages.registerReferenceProvider(selector, referencesProvider),
+		vscode.languages.registerReferenceProvider(selector, referencesProvider),
 		// FIXME: vscode.languages.registerRenameProvider(selector, new TextileRenameProvider(referencesProvider, workspaceContents, githubSlugifier)),
 		TextilePathCompletionProvider.register(selector, engine, linkProvider),
 		// FIXME : registerDropIntoEditor(selector),
-		// FIXME : registerFindFileReferences(commandManager, referencesProvider),
+		registerFindFileReferences(commandManager, referencesProvider),
 	);
 }
 

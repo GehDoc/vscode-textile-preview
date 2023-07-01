@@ -157,6 +157,7 @@ export class TextileEngine {
 				this.addNamedHeaders(textile, localConfig);
 				this.addLinkRenderer(textile, localConfig);
 				textile.setOptions( localConfig );
+				// md.use(pluginSourceMap);
 				// -- End : changed for textile
 				return textile;
 			})();

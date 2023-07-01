@@ -165,8 +165,14 @@ export function stripAngleBrackets(link: string) {
 
 // -- Begin: Modified for textile
 
+/**
+ * Matches `"text":link`
+ */
 const linkPattern = /("(?!\s)((?:[^"]|"(?![\s:])[^\n"]+"(?!:))+)":)((?:[^\s()]|\([^\s()]+\)|[()])+?)(?=[!-\.:-@\[\\\]-`{-~]+(?:$|\s)|$|\s)|(\["([^\n]+?)":)((?:\[[a-z0-9]*\]|[^\]])+)\]/g
 
+/**
+ * Matches `!url(alt)!`
+ */
 const imagePattern = /(!(?!\s)((?:\([^\)]+\)|\{[^\}]+\}|\\[[^\[\]]+\]|(?:<>|<|>|=)|[\(\)]+)*(?:\.[^\n\S]|\.(?:[^\.\/]))?)([^!\s]+?) ?(?:\(((?:[^\(\)]|\([^\(\)]+\))+)\))?!)(?::([^\s]+?(?=[!-\.:-@\[\\\]-`{-~](?:$|\s)|\s|$)))?/g
 
 /* Disabled : not relevant for textile
@@ -182,10 +188,13 @@ const autoLinkPattern = /\<(\w+:[^\>\s]+)\>/g;
 */
 
 /**
- * Matches `[alias]http://exemple.com`
+ * Matches `[text]http://exemple.com`
  */
 const definitionPattern = /^\[([^\]]+)\]((?:https?:\/\/|[.]{1,2}\/|#)\S+)(?:\s*(?=\n)|$)/gm;
 
+/**
+ * Matches `@text@`
+ */
 const inlineCodePattern = /(?:^|[^@])(@+)(?:.+?|.*?(?:(?:\r?\n).+?)*?)(?:\r?\n)?\1(?:$|[^@])/gm;
 // -- End: Modified for textile
 
@@ -254,6 +263,24 @@ export class TextileLinkProvider implements vscode.DocumentLinkProvider {
 			.map(data => this.toValidDocumentLink(data, definitionSet)));
 	}
 
+	// -- Begin: Modified for textile
+	private toReferenceLink(link: TextileLink, definitionSet: LinkDefinitionSet): TextileLink {
+		if (link.href.kind === 'internal') {
+			const def = definitionSet.lookup(link.source.text);
+			if (def) {
+				return {
+					kind: 'link',
+					href: {
+						kind: 'reference',
+						ref: link.source.text,
+					},
+					source: link.source,
+				};
+			}
+		}
+		return link;
+	}
+
 	private toValidDocumentLink(link: TextileLink, definitionSet: LinkDefinitionSet): vscode.DocumentLink | undefined {
 		switch (link.href.kind) {
 			case 'external': {
@@ -280,18 +307,18 @@ export class TextileLinkProvider implements vscode.DocumentLinkProvider {
 
 	public async getAllLinks(document: SkinnyTextDocument): Promise<TextileLink[]> {
 		const codeInDocument = await findCode(document, this.engine);
-		return Array.from([
+		const allLinks = Array.from([
 			...this.getInlineLinks(document, codeInDocument),
 			// Disabled for Textile : ...this.getReferenceLinks(document, codeInDocument),
 			...this.getLinkDefinitions2(document, codeInDocument),
 			// FIXME for Textile : ...this.getAutoLinks(document, codeInDocument),
 		]);
+		const definitionSet = new LinkDefinitionSet(allLinks);
+		return allLinks.map((link) => this.toReferenceLink(link, definitionSet));
 	}
 
 	private *getInlineLinks(document: SkinnyTextDocument, codeInDocument: CodeInDocument): Iterable<TextileLink> {
 		const text = document.getText();
-		// -- Begin: Modified for textile
-
 		for (const match of text.matchAll(linkPattern)) {
 			const matchLink = match[1] && extractDocumentLink(document, match[1].length, match[3], match.index);
 			if (matchLink && !isLinkInsideCode(codeInDocument, matchLink.source.hrefRange)) {
@@ -312,8 +339,8 @@ export class TextileLinkProvider implements vscode.DocumentLinkProvider {
 				yield matchLink;
 			}
 		}
-		// -- End: Modified for textile
 	}
+	// -- End: Modified for textile
 
 	/* Disabled : not relevant for textile
 	private *getAutoLinks(document: SkinnyTextDocument, codeInDocument: CodeInDocument): Iterable<TextileLink> {
@@ -418,7 +445,7 @@ export class TextileLinkProvider implements vscode.DocumentLinkProvider {
 						text: link,
 						resource: document.uri,
 						hrefRange,
-						fragmentRange: getFragmentRange(link, linkStart, linkEnd)
+						fragmentRange: getFragmentRange(link, linkStart, linkEnd),
 					},
 					ref: { text: reference, range: refRange },
 					href: target,

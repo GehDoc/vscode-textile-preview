@@ -66,9 +66,15 @@ function process_dir_src() {
 			sed -i -e "s/MdPathCompletionProvider/TextilePathCompletionProvider/g" "$destfile"
 			sed -i -e "s/MdFoldingProvider/TextileFoldingProvider/g" "$destfile"
 			sed -i -e "s/MdWorkspaceCache/TextileWorkspaceCache/g" "$destfile"
+			sed -i -e "s/dotMdResource/dotTextileResource/g" "$destfile"
+			sed -i -e "s/tryFindMdDocumentForLink/tryFindTextileDocumentForLink/g" "$destfile"
+			sed -i -e "s/MdHeaderReference/TextileHeaderReference/g" "$destfile"
+			sed -i -e "s/MdReference/TextileReference/g" "$destfile"
 			sed -i -e "s/'.md'/'.textile'/g" "$destfile"
 			sed -i -e "s/\*.md'/\*.textile'/g" "$destfile"
 			sed -i -e 's/`.md`/`.textile`/g' "$destfile"
+			sed -i -e "s/'doc.md'/'doc.textile'/g" "$destfile"
+			sed -i -e "s/'other.md'/'other.textile'/g" "$destfile"
 		else
 			# just copy other kind of files
 			cp "$file" "$destfile"

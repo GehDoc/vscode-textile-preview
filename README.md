@@ -24,13 +24,14 @@ This extension is entirely based on the Markdown preview provided by Visual Stud
 * view Textile source and its HTML preview side by side, with synchronised scrolling;
 * include images, from local or network, with manageable security of the preview's content;
 * click on links, in the source view and in the HTML preview;
-* Can be run as a [remote/web extension](https://code.visualstudio.com/api/advanced-topics/remote-extensions).  
+* Can be run as a [remote/web extension](https://code.visualstudio.com/api/advanced-topics/remote-extensions);
 * see the document headlines structure in the outline view;
 * fold paragraphs from their headline, multi-line list-items, code blocks, and special HTML comments `<!-- #region [Optional text] -->` and `<!-- #endregion [Optional text] -->`.
 * blockquote syntax coloring, with `bc[language].` or `<pre><code class="language">`, or `<pre><code lang="language">`.  
-Look at the official highlight.js documentation for the [list of supported languages](https://highlightjs.org/static/demo/),
+Look at the official highlight.js documentation for the [list of supported languages](https://highlightjs.org/static/demo/);
 * Internal and external links to a paragraph headline of a local textile file are supported (slugify);
-* Path completion for local links.
+* Path completion for local links;
+* Find all references in workspace.
 
 And also :
 * the HTML preview supports VSCode light and dark themes;
@@ -52,6 +53,9 @@ Maybe implemented, if requested :
 * Some helper functionalities, like link normalization and validation (may allow file:// protocol and absolute paths to images. Currently, http:// protocol, and path relative to Textile file are recognized). Look [here](./src/textileEngine.ts), and search for Disabled and FIXME;
 * Smart select;
 * [Notebook rendering](https://code.visualstudio.com/api/extension-guides/notebook).
+
+Waiting for a release of some VS Code internal APIs :
+- Support for file droping;
 
 ## Installation
 
