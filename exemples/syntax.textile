@@ -61,9 +61,9 @@ p=. centered aligned paragraph
 
 p<>. justified text paragraph
 
-|_. head |_. table |_. row |
-| a | table | row 1 |
-| a | table | row 2 |
+|_=. centered head |_. head |_. head |
+| a table first column cell | a table cell | row 1 |
+| a table first column cell | a table cell | row 2 |
 
 "link text for URl":https://github.com/GehDoc/vscode-textile-preview
 

@@ -15,6 +15,11 @@ body {
 	padding-top: 1em;
 }
 
+/* Ignore user-agent default text-alignment for element */
+th {
+	text-align: unset;
+}
+
 /* Reset margin top for elements */
 h1, h2, h3, h4, h5, h6,
 p, ol, ul, pre {
