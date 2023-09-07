@@ -7,7 +7,8 @@
 # After running this tool, you can compare ./ and ./tools/tmp/out/ to gather
 # new features.
 
-VSCODE_VERSION_GIT_TAG=1.67.0
+VSCODE_VERSION_GIT_TAG=1.68.0
+VSCODE_LOC_VERSION_GIT_TAG=1.68.3
 
 . $(dirname $0)/log.sh
 
@@ -89,7 +90,7 @@ function process_dir_src() {
 		# rename files named "markdown..." to "textile..."
 		# don't bother with files from "../", there is no such case now
 		if [ "$dirname" != ".." ]; then
-			if echo "$file" | egrep -iq "markdown[a-z]*.[a-z]+$" ; then
+			if echo "$file" | grep -iE "markdown[a-z]*.[a-z]+$" ; then
 				target="${file/markdown/textile}"
 
 				if [ "$target" = "./media/textile.css" ]; then
@@ -196,7 +197,7 @@ process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools
 echo "Processing locales"
 
 # Download from github : https://github.com/Microsoft/vscode-loc.git
-github_DL "vscode-loc" release/$VSCODE_VERSION_GIT_TAG
+github_DL "vscode-loc" release/$VSCODE_LOC_VERSION_GIT_TAG
 
 process_dir_i18n ./tools/tmp/vscode-loc/i18n/ ./tools/tmp/out/i18n/
 

@@ -12,70 +12,86 @@
 // - https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
 //
 // Note : usually, 49 replacements
+
+const DEFAULT_REPLACEMENTS = [
+	[ /\[link\]\(\/path\/to\/file\.md\)/g, '\\"link\\":/path/to/file.textile' , 1 ],
+	[ /\[(link|vínculo)\]\(#header\)/g , '\\"link\\":#header', 1 ],
+	[ /\[about\]\(\/about\)/g , '\\"about\\":/about', 1 ],
+	[ /\[link\]\[ref\]/g, '\\"link\\":ref', 1 ],
+];
+
 module.exports = {
 	'de':{
 		id: 'de',
 		folderName: 'deu',
 		replacements: [
-			[ /markdown/g, 'textile', 29 ],
-			[ /Markdown/g, 'Textile', 27 ],
+			...DEFAULT_REPLACEMENTS,
+			[ /markdown/g, 'textile', 39 ],
+			[ /Markdown/g, 'Textile', 32 ],
 		]
 	},
 	'es':{
 		id: 'es',
 		folderName: 'esn',
 		replacements: [
-			[ /markdown/g, 'textile', 29 ],
-			[ /Markdown/g, 'Textile', 26 ],
+			...DEFAULT_REPLACEMENTS,
+			[ /markdown/g, 'textile', 39 ],
+			[ /Markdown/g, 'Textile', 31 ],
 		]
 	},
 	'fr':{
 		id: 'fr',
 		folderName: 'fra',
 		replacements: [
-			[ /markdown/g, 'textile', 29 ],
-			[ /Markdown/g, 'Textile', 27 ],
+			...DEFAULT_REPLACEMENTS,
+			[ /markdown/g, 'textile', 39 ],
+			[ /Markdown/g, 'Textile', 32 ],
 		]
 	},
 	'it':{
 		id: 'it',
 		folderName: 'ita',
 		replacements: [
-			[ /markdown/g, 'textile', 29 ],
-			[ /Markdown/g, 'Textile', 27 ],
+			...DEFAULT_REPLACEMENTS,
+			[ /markdown/g, 'textile', 39 ],
+			[ /Markdown/g, 'Textile', 32 ],
 		]
 	},
 	'ja':{
 		id: 'ja',
 		folderName: 'jpn',
 		replacements: [
-			[ /markdown/g, 'textile', 29 ],
+			...DEFAULT_REPLACEMENTS,
+			[ /markdown/g, 'textile', 39 ],
 			[ /マークダウン/g, 'Textile', 4 ],
-			[ /Markdown/g, 'Textile', 23 ],
+			[ /Markdown/g, 'Textile', 28 ],
 		]
 	},
 	'ko':{
 		id: 'ko',
 		folderName: 'kor',
 		replacements: [
-			[ /markdown/g, 'textile', 30 ],
-			[ /Markdown/g, 'Textile', 26 ],
+			...DEFAULT_REPLACEMENTS,
+			[ /markdown/g, 'textile', 40 ],
+			[ /Markdown/g, 'Textile', 31 ],
 		]
 	},
 	'ru':{
 		id: 'ru',
 		folderName: 'rus',
 		replacements: [
-			[ /markdown/g, 'textile', 29 ],
-			[ /Markdown/g, 'Textile', 27 ],
+			...DEFAULT_REPLACEMENTS,
+			[ /markdown/g, 'textile', 39 ],
+			[ /Markdown/g, 'Textile', 32 ],
 		]
 	},
 	'zh-hant':{
 		id: 'zh-tw',
 		folderName: 'cht',
 		replacements: [
-			[ /markdown/g, 'textile', 29 ],
-			[ /Markdown/g, 'Textile', 27 ],
+			...DEFAULT_REPLACEMENTS,
+			[ /markdown/g, 'textile', 39 ],
+			[ /Markdown/g, 'Textile', 32 ],
 		],
 		transifexId: 'zh-hant'
 	},
@@ -83,8 +99,9 @@ module.exports = {
 		id: 'zh-cn',
 		folderName: 'chs',
 		replacements: [
-			[ /markdown/g, 'textile', 29 ],
-			[ /Markdown/g, 'Textile', 27 ],
+			...DEFAULT_REPLACEMENTS,
+			[ /markdown/g, 'textile', 39 ],
+			[ /Markdown/g, 'Textile', 32 ],
 		],
 		transifexId: 'zh-hans'
 	},
