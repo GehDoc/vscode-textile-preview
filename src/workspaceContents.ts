@@ -42,6 +42,7 @@ export interface TextileWorkspaceContents {
 
 	getTextileDocument(resource: vscode.Uri): Promise<SkinnyTextDocument | undefined>;
 
+	pathExists(resource: vscode.Uri): Promise<boolean>;
 	readonly onDidChangeTextileDocument: vscode.Event<SkinnyTextDocument>;
 	readonly onDidCreateTextileDocument: vscode.Event<SkinnyTextDocument>;
 	readonly onDidDeleteTextileDocument: vscode.Event<vscode.Uri>;
@@ -71,13 +72,25 @@ export class VsCodeTextileWorkspaceContents extends Disposable implements Textil
 	async getAllTextileDocuments(): Promise<SkinnyTextDocument[]> {
 		const maxConcurrent = 20;
 
-		const resources = await vscode.workspace.findFiles('**/*.textile', '**/node_modules/**');
+		const foundFiles = new Set<string>();
 
 		const limiter = new Limiter<SkinnyTextDocument | undefined>(maxConcurrent);
-		const results = await Promise.all(resources.map(resource => {
-			return limiter.queue(() => this.getTextileDocument(resource));
+		// Add files on disk
+		const resources = await vscode.workspace.findFiles('**/*.textile', '**/node_modules/**');
+		const onDiskResults = await Promise.all(resources.map(resource => {
+			return limiter.queue(async () => {
+				const doc = await this.getTextileDocument(resource);
+				if (doc) {
+					foundFiles.add(doc.uri.toString());
+				}
+				return doc;
+			});
 		}));
-		return coalesce(results);
+		// Add opened files (such as untitled files)
+		const openTextDocumentResults = await Promise.all(vscode.workspace.textDocuments
+			.filter(doc => !foundFiles.has(doc.uri.toString()) && this.isRelevantTextileDocument(doc)));
+
+		return coalesce([...onDiskResults, ...openTextDocumentResults]);
 	}
 
 	public get onDidChangeTextileDocument() {
@@ -121,14 +134,18 @@ export class VsCodeTextileWorkspaceContents extends Disposable implements Textil
 		}));
 
 		this._register(vscode.workspace.onDidChangeTextDocument(e => {
-			if (isTextileFile(e.document)) {
+			if (this.isRelevantTextileDocument(e.document)) {
 				this._onDidChangeTextileDocumentEmitter.fire(e.document);
 			}
 		}));
 	}
 
+	private isRelevantTextileDocument(doc: vscode.TextDocument) {
+		return isTextileFile(doc) && doc.uri.scheme !== 'vscode-bulkeditpreview';
+	}
+
 	public async getTextileDocument(resource: vscode.Uri): Promise<SkinnyTextDocument | undefined> {
-		const matchingDocument = vscode.workspace.textDocuments.find((doc) => doc.uri.toString() === resource.toString());
+		const matchingDocument = vscode.workspace.textDocuments.find((doc) => this.isRelevantTextileDocument(doc) && doc.uri.toString() === resource.toString());
 		if (matchingDocument) {
 			return matchingDocument;
 		}
@@ -142,5 +159,15 @@ export class VsCodeTextileWorkspaceContents extends Disposable implements Textil
 		} catch {
 			return undefined;
 		}
+	}
+
+	public async pathExists(target: vscode.Uri): Promise<boolean> {
+		let targetResourceStat: vscode.FileStat | undefined;
+		try {
+			targetResourceStat = await vscode.workspace.fs.stat(target);
+		} catch {
+			return false;
+		}
+		return targetResourceStat.type === vscode.FileType.File || targetResourceStat.type === vscode.FileType.Directory;
 	}
 }

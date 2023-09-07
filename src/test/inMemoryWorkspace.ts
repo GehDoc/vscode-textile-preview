@@ -25,6 +25,9 @@ export class InMemoryWorkspaceTextileDocuments implements TextileWorkspaceConten
 		return this._documents.get(this.getKey(resource));
 	}
 
+	public async pathExists(resource: vscode.Uri): Promise<boolean> {
+		return this._documents.has(this.getKey(resource));
+	}
 	private readonly _onDidChangeTextileDocumentEmitter = new vscode.EventEmitter<SkinnyTextDocument>();
 	public onDidChangeTextileDocument = this._onDidChangeTextileDocumentEmitter.event;
 

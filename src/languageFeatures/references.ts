@@ -7,6 +7,7 @@ import * as uri from 'vscode-uri';
 import { TextileEngine } from '../textileEngine';
 import { Slugifier } from '../slugify';
 import { TableOfContents, TocEntry } from '../tableOfContents';
+import { noopToken } from '../util/cancellation';
 import { Disposable } from '../util/dispose';
 import { TextileWorkspaceContents, SkinnyTextDocument } from '../workspaceContents';
 import { InternalHref, TextileLink, TextileLinkProvider } from './documentLinkProvider';
@@ -70,7 +71,7 @@ export class TextileReferencesProvider extends Disposable implements vscode.Refe
 	) {
 		super();
 
-		this._linkCache = this._register(new TextileWorkspaceCache(workspaceContents, doc => linkProvider.getAllLinks(doc)));
+		this._linkCache = this._register(new TextileWorkspaceCache(workspaceContents, doc => linkProvider.getAllLinks(doc, noopToken)));
 	}
 
 	async provideReferences(document: SkinnyTextDocument, position: vscode.Position, context: vscode.ReferenceContext, token: vscode.CancellationToken): Promise<vscode.Location[] | undefined> {
@@ -128,7 +129,7 @@ export class TextileReferencesProvider extends Disposable implements vscode.Refe
 	}
 
 	private async getReferencesToLinkAtPosition(document: SkinnyTextDocument, position: vscode.Position, token: vscode.CancellationToken): Promise<TextileReference[]> {
-		const docLinks = await this.linkProvider.getAllLinks(document);
+		const docLinks = await this.linkProvider.getAllLinks(document, token);
 
 		for (const link of docLinks) {
 			if (link.kind === 'definition') {

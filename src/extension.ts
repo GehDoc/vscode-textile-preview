@@ -10,6 +10,9 @@ nls.config({ messageFormat: nls.MessageFormat.bundle, bundleFormat: nls.BundleFo
 
 import { CommandManager } from './commandManager';
 import * as commands from './commands/index';
+// FIXME: import { registerPasteProvider } from './languageFeatures/copyPaste';
+import { MdDefinitionProvider } from './languageFeatures/definitionProvider';
+import { register as registerDiagnostics } from './languageFeatures/diagnostics';
 import { TextileLinkProvider } from './languageFeatures/documentLinkProvider';
 import { TextileDocumentSymbolProvider } from './languageFeatures/documentSymbolProvider';
 // FIXME: import { registerDropIntoEditor } from './languageFeatures/dropIntoEditor';
@@ -78,8 +81,11 @@ function registerTextileLanguageFeatures(
 		vscode.languages.registerWorkspaceSymbolProvider(new TextileWorkspaceSymbolProvider(symbolProvider, workspaceContents)),
 		vscode.languages.registerReferenceProvider(selector, referencesProvider),
 		vscode.languages.registerRenameProvider(selector, new TextileRenameProvider(referencesProvider, workspaceContents, githubSlugifier)),
+		vscode.languages.registerDefinitionProvider(selector, new MdDefinitionProvider(referencesProvider)),
 		TextilePathCompletionProvider.register(selector, engine, linkProvider),
+		registerDiagnostics(selector, engine, workspaceContents, linkProvider, commandManager),
 		// FIXME : registerDropIntoEditor(selector),
+		// FIXME : registerPasteProvider(selector),
 		registerFindFileReferences(commandManager, referencesProvider),
 	);
 }

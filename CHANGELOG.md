@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [UNRELEASED]
+
+### Changed
+- [DEPENDENCIES] Update eslint
+- [INTERNAL] Update textile-js to latest version 2.0.117
+- [INTERNAL] Update to vscode 1.68
+
+
 ## [1.3.23] - 20230829
 
 ### Fixed

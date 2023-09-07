@@ -9,11 +9,12 @@ import * as vscode from 'vscode';
 import { TextileLinkProvider } from '../languageFeatures/documentLinkProvider';
 import { TextileReferencesProvider } from '../languageFeatures/references';
 import { githubSlugifier } from '../slugify';
+import { noopToken } from '../util/cancellation';
 import { InMemoryDocument } from '../util/inMemoryDocument';
 import { TextileWorkspaceContents } from '../workspaceContents';
 import { createNewTextileEngine } from './engine';
 import { InMemoryWorkspaceTextileDocuments } from './inMemoryWorkspace';
-import { joinLines, noopToken, workspacePath } from './util';
+import { joinLines, workspacePath } from './util';
 
 
 function getReferences(doc: InMemoryDocument, pos: vscode.Position, workspaceContents: TextileWorkspaceContents) {
@@ -511,6 +512,41 @@ suite('textile: find all references', () => {
 			);
 		});
 
+		test('Should find reference links using shorthand', async () => {
+			const docUri = workspacePath('doc.textile');
+			const doc = new InMemoryDocument(docUri, joinLines(
+				'', // Not relevant for Textile `[ref]`, // trigger 1
+				``,
+				`"yes":ref`, // trigger 2
+				``,
+				`[ref]/Hello.textile` // trigger 3
+			));
+
+			/*{
+				const refs = await getReferences(doc, new vscode.Position(0, 2), new InMemoryWorkspaceTextileDocuments([doc]));
+				assertReferencesEqual(refs!,
+					{ uri: docUri, line: 0 },
+					{ uri: docUri, line: 2 },
+					{ uri: docUri, line: 4 },
+				);
+			}*/
+			{
+				const refs = await getReferences(doc, new vscode.Position(2, 7), new InMemoryWorkspaceTextileDocuments([doc]));
+				assertReferencesEqual(refs!,
+					//{ uri: docUri, line: 0 },
+					{ uri: docUri, line: 2 },
+					{ uri: docUri, line: 4 },
+				);
+			}
+			{
+				const refs = await getReferences(doc, new vscode.Position(4, 2), new InMemoryWorkspaceTextileDocuments([doc]));
+				assertReferencesEqual(refs!,
+					//{ uri: docUri, line: 0 },
+					{ uri: docUri, line: 2 },
+					{ uri: docUri, line: 4 },
+				);
+			}
+		});
 		test('Should find reference links within file from definition', async () => {
 			const docUri = workspacePath('doc.textile');
 			const doc = new InMemoryDocument(docUri, joinLines(
@@ -547,5 +583,21 @@ suite('textile: find all references', () => {
 				{ uri: docUri, line: 2 },
 			);
 		});
+
+		/* Disabled : not relevant for Textile
+		test('Should not consider checkboxes as reference links', async () => {
+			const docUri = workspacePath('doc.textile');
+			const doc = new InMemoryDocument(docUri, joinLines(
+				`- [x]`,
+				`- [X]`,
+				`- [ ]`,
+				``,
+				`[x]: https://example.com`
+			));
+
+			const refs = await getReferences(doc, new vscode.Position(0, 4), new InMemoryWorkspaceTextileDocuments([doc]));
+			assert.strictEqual(refs?.length!, 0);
+		});
+		*/
 	});
 });

@@ -8,9 +8,10 @@ import 'mocha';
 import * as vscode from 'vscode';
 import { TextileLinkProvider } from '../languageFeatures/documentLinkProvider';
 import { TextilePathCompletionProvider } from '../languageFeatures/pathCompletions';
+import { noopToken } from '../util/cancellation';
 import { InMemoryDocument } from '../util/inMemoryDocument';
 import { createNewTextileEngine } from './engine';
-import { CURSOR, getCursorPositions, joinLines, noopToken, workspacePath } from './util';
+import { CURSOR, getCursorPositions, joinLines, workspacePath } from './util';
 
 
 function getCompletionsAtCursor(resource: vscode.Uri, fileContents: string) {

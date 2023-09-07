@@ -7,9 +7,10 @@ import * as assert from 'assert';
 import 'mocha';
 import * as vscode from 'vscode';
 import { TextileLinkProvider } from '../languageFeatures/documentLinkProvider';
-import { createNewTextileEngine } from './engine';
+import { noopToken } from '../util/cancellation';
 import { InMemoryDocument } from '../util/inMemoryDocument';
-import { assertRangeEqual, joinLines, noopToken } from './util';
+import { createNewTextileEngine } from './engine';
+import { assertRangeEqual, joinLines } from './util';
 
 
 const testFile = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'x.textile');
@@ -247,27 +248,25 @@ suite('textile.DocumentLinkProvider', () => {
 		const links = await getLinksForFile(text);
 		assert.strictEqual(links.length, 0);
 	});
+	*/
 
-	test('Should not consider link references in code fenced with backticks (#146714)', async () => {
+	test('Should not consider link references in code fenced with bc.', async () => {
 		const text = joinLines(
-			'```',
-			'[a] [bb]',
-			'```');
+			'bc. "a":bb',
+			'');
 		const links = await getLinksForFile(text);
 		assert.strictEqual(links.length, 0);
 	});
 
 	test('Should not consider reference sources in code fenced with backticks (#146714)', async () => {
 		const text = joinLines(
-			'```',
-			'[a]: http://example.com;',
-			'[b]: <http://example.com>;',
-			'[c]: (http://example.com);',
-			'```');
+			'bc. [a]http://example.com',
+			'');
 		const links = await getLinksForFile(text);
 		assert.strictEqual(links.length, 0);
 	});
 
+	/* FIXME in textile-js
 	test('Should not consider links in multiline inline code span between between text', async () => {
 		const text = joinLines(
 			'"b":https://1.com @"b":https://2.com',
@@ -301,6 +300,72 @@ suite('textile.DocumentLinkProvider', () => {
 
 		const link = links[0];
 		assertRangeEqual(link.range, new vscode.Range(0, 5, 0, 23));
+	});
+	*/
+
+	test('Should not detect links inside html comment blocks', async () => {
+		const links = await getLinksForFile(joinLines(
+			`<!-- "text":./foo.textile -->`,
+			`<!-- [text]./foo.textile -->`,
+			``,
+			`<!--`,
+			`"text":./foo.textile`,
+			`-->`,
+			``,
+			`<!--`,
+			`[text]./foo.textile`,
+			`-->`,
+		));
+		assert.strictEqual(links.length, 0);
+	});
+
+	test('Should not detect links inside inline html comments', async () => {
+		const links = await getLinksForFile(joinLines(
+			`text <!-- "text":./foo.textile --> text`,
+			`text <!-- [text]./foo.textile --> text`,
+			``,
+			`text <!--`,
+			`"text":./foo.textile`,
+			`--> text`,
+			``,
+			`text <!--`,
+			`[text]./foo.textile`,
+			`--> text`,
+		));
+		assert.strictEqual(links.length, 0);
+	});
+
+	/* Disabled : not relevant for Textile
+	test('Should not mark checkboxes as links', async () => {
+		const links = await getLinksForFile(joinLines(
+			'- [x]',
+			'- [X]',
+			'- [ ]',
+			'* [x]',
+			'* [X]',
+			'* [ ]',
+			``,
+			`[x]: http://example.com`
+		));
+		assert.strictEqual(links.length, 1);
+		assertRangeEqual(links[0].range, new vscode.Range(7, 5, 7, 23));
+
+	});
+
+	test('Should still find links on line with checkbox', async () => {
+		const links = await getLinksForFile(joinLines(
+			'- [x] [x]',
+			'- [X] [x]',
+			'- [] [x]',
+			``,
+			`[x]: http://example.com`
+		));
+		assert.strictEqual(links.length, 4);
+
+		assertRangeEqual(links[0].range, new vscode.Range(0, 7, 0, 8));
+		assertRangeEqual(links[1].range, new vscode.Range(1, 7, 1, 8));
+		assertRangeEqual(links[2].range, new vscode.Range(2, 6, 2, 7));
+		assertRangeEqual(links[3].range, new vscode.Range(4, 5, 4, 23));
 	});
 	*/
 

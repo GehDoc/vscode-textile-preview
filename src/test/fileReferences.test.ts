@@ -9,11 +9,12 @@ import * as vscode from 'vscode';
 import { TextileLinkProvider } from '../languageFeatures/documentLinkProvider';
 import { TextileReference, TextileReferencesProvider } from '../languageFeatures/references';
 import { githubSlugifier } from '../slugify';
+import { noopToken } from '../util/cancellation';
 import { InMemoryDocument } from '../util/inMemoryDocument';
 import { TextileWorkspaceContents } from '../workspaceContents';
 import { createNewTextileEngine } from './engine';
 import { InMemoryWorkspaceTextileDocuments } from './inMemoryWorkspace';
-import { joinLines, noopToken, workspacePath } from './util';
+import { joinLines, workspacePath } from './util';
 
 
 function getFileReferences(resource: vscode.Uri, workspaceContents: TextileWorkspaceContents) {

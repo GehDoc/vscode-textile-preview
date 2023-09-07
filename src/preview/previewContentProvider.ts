@@ -66,7 +66,8 @@ export class TextileContentProvider {
 		resourceProvider: WebviewResourceProvider,
 		previewConfigurations: TextilePreviewConfigurationManager,
 		initialLine: number | undefined = undefined,
-		state?: any
+		state: any | undefined,
+		token: vscode.CancellationToken
 	): Promise<TextileContentProviderOutput> {
 		const sourceUri = textileDocument.uri;
 		const config = previewConfigurations.loadAndCacheConfiguration(sourceUri);
@@ -89,6 +90,9 @@ export class TextileContentProvider {
 		const csp = this.getCsp(resourceProvider, sourceUri, nonce);
 
 		const body = await this.textileBody(textileDocument, resourceProvider);
+		if (token.isCancellationRequested) {
+			return { html: '', containingImages: [] };
+		}
 		const html = `<!DOCTYPE html>
 			<html style="${escapeAttribute(this.getSettingsOverrideStyles(config))}">
 			<head>
