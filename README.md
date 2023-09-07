@@ -57,6 +57,7 @@ Maybe implemented, if requested :
 
 Waiting for a release of some VS Code internal APIs :
 - Support for file droping;
+- Pasting file as link.
 
 ## Installation
 
