@@ -10,5 +10,5 @@
 	"invalidHeaderLink": "找不到標頭: '{0}'",
 	"invalidLinkToHeaderInOtherFile": "標頭不存在於檔案中: {0}",
 	"invalidPathLink": "檔案不存在於路徑: {0}",
-	"invalidReferenceLink": "No link definition found: '{0}'"
+	"invalidReferenceLink": "找不到連結定義: '{0}'"
 }

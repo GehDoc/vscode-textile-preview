@@ -10,5 +10,5 @@
 	"invalidHeaderLink": "Kein Header gefunden: „{0}“",
 	"invalidLinkToHeaderInOtherFile": "Der Header ist in der Datei nicht vorhanden: {0}",
 	"invalidPathLink": "Die Datei ist unter dem Pfad nicht vorhanden: {0}",
-	"invalidReferenceLink": "No link definition found: '{0}'"
+	"invalidReferenceLink": "Keine Linkdefinition gefunden: „{0}“"
 }

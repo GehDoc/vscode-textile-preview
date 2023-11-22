@@ -12,6 +12,7 @@ import throttle = require('lodash.throttle');
 import morphdom from 'morphdom';
 
 let scrollDisabledCount = 0;
+
 const marker = new ActiveLineMarker();
 const settings = new SettingsManager();
 
@@ -34,7 +35,6 @@ const messaging = createPosterForVsCode(vscode, settings);
 
 window.cspAlerter.setPoster(messaging);
 window.styleLoadingMonitor.setPoster(messaging);
-
 
 
 function doAfterImagesLoaded(cb: () => void) {
@@ -135,7 +135,6 @@ const onUpdateView = (() => {
 	};
 })();
 
-
 window.addEventListener('resize', () => {
 	scrollDisabledCount += 1;
 	updateScrollProgress();
@@ -161,6 +160,7 @@ window.addEventListener('message', async event => {
 
 			const parser = new DOMParser();
 			const newContent = parser.parseFromString(event.data.content, 'text/html');
+
 			// Strip out meta http-equiv tags
 			for (const metaElement of Array.from(newContent.querySelectorAll('meta'))) {
 				if (metaElement.hasAttribute('http-equiv')) {
@@ -250,6 +250,8 @@ window.addEventListener('message', async event => {
 		}
 	}
 }, false);
+
+
 
 document.addEventListener('dblclick', event => {
 	if (!settings.settings.doubleClickToSwitchToEditor) {

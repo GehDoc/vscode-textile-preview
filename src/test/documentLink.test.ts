@@ -19,7 +19,6 @@ function debugLog(...args: any[]) {
 	}
 }
 
-
 function workspaceFile(...segments: string[]) {
 	return vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, ...segments);
 }
@@ -175,8 +174,8 @@ async function withFileContents(file: vscode.Uri, contents: string): Promise<voi
 
 async function executeLink(link: vscode.DocumentLink) {
 	debugLog('executeingLink', link.target?.toString(), Date.now());
+
 	const args = JSON.parse(decodeURIComponent(link.target!.query));
 	await vscode.commands.executeCommand(link.target!.path, args);
 	debugLog('executedLink', vscode.window.activeTextEditor?.document.toString(), Date.now());
 }
-

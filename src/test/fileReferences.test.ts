@@ -6,22 +6,23 @@
 import * as assert from 'assert';
 import 'mocha';
 import * as vscode from 'vscode';
-import { TextileLinkProvider } from '../languageFeatures/documentLinkProvider';
 import { TextileReference, TextileReferencesProvider } from '../languageFeatures/references';
-import { githubSlugifier } from '../slugify';
+import { TextileTableOfContentsProvider } from '../tableOfContents';
 import { noopToken } from '../util/cancellation';
+import { DisposableStore } from '../util/dispose';
 import { InMemoryDocument } from '../util/inMemoryDocument';
-import { TextileWorkspaceContents } from '../workspaceContents';
+import { ITextileWorkspace } from '../workspace';
 import { createNewTextileEngine } from './engine';
-import { InMemoryWorkspaceTextileDocuments } from './inMemoryWorkspace';
-import { joinLines, workspacePath } from './util';
+import { InMemoryTextileWorkspace } from './inMemoryWorkspace';
+import { nulLogger } from './nulLogging';
+import { joinLines, withStore, workspacePath } from './util';
 
 
-function getFileReferences(resource: vscode.Uri, workspaceContents: TextileWorkspaceContents) {
+function getFileReferences(store: DisposableStore, resource: vscode.Uri, workspace: ITextileWorkspace) {
 	const engine = createNewTextileEngine();
-	const linkProvider = new TextileLinkProvider(engine);
-	const provider = new TextileReferencesProvider(linkProvider, workspaceContents, engine, githubSlugifier);
-	return provider.getAllReferencesToFile(resource, noopToken);
+	const tocProvider = store.add(new TextileTableOfContentsProvider(engine, workspace, nulLogger));
+	const computer = store.add(new TextileReferencesProvider(engine, workspace, tocProvider, nulLogger));
+	return computer.getReferencesToFileInWorkspace(resource, noopToken);
 }
 
 function assertReferencesEqual(actualRefs: readonly TextileReference[], ...expectedRefs: { uri: vscode.Uri; line: number }[]) {
@@ -38,11 +39,10 @@ function assertReferencesEqual(actualRefs: readonly TextileReference[], ...expec
 
 suite('textile: find file references', () => {
 
-	test('Should find basic references', async () => {
+	test('Should find basic references', withStore(async (store) => {
 		const docUri = workspacePath('doc.textile');
 		const otherUri = workspacePath('other.textile');
-
-		const refs = await getFileReferences(otherUri, new InMemoryWorkspaceTextileDocuments([
+		const workspace = store.add(new InMemoryTextileWorkspace([
 			new InMemoryDocument(docUri, joinLines(
 				`h1. header`,
 				`"link 1":./other.textile`,
@@ -56,18 +56,18 @@ suite('textile: find file references', () => {
 			)),
 		]));
 
-		assertReferencesEqual(refs!,
+		const refs = await getFileReferences(store, otherUri, workspace);
+		assertReferencesEqual(refs,
 			{ uri: docUri, line: 1 },
 			{ uri: docUri, line: 2 },
 			{ uri: otherUri, line: 2 },
 		);
-	});
+	}));
 
-	test('Should find references with and without file extensions', async () => {
+	test('Should find references with and without file extensions', withStore(async (store) => {
 		const docUri = workspacePath('doc.textile');
 		const otherUri = workspacePath('other.textile');
-
-		const refs = await getFileReferences(otherUri, new InMemoryWorkspaceTextileDocuments([
+		const workspace = store.add(new InMemoryTextileWorkspace([
 			new InMemoryDocument(docUri, joinLines(
 				`h1. header`,
 				`"link 1":./other.textile`,
@@ -82,19 +82,19 @@ suite('textile: find file references', () => {
 			)),
 		]));
 
-		assertReferencesEqual(refs!,
+		const refs = await getFileReferences(store, otherUri, workspace);
+		assertReferencesEqual(refs,
 			{ uri: docUri, line: 1 },
 			{ uri: docUri, line: 2 },
 			{ uri: otherUri, line: 2 },
 			{ uri: otherUri, line: 3 },
 		);
-	});
+	}));
 
-	test('Should find references with headers on links', async () => {
+	test('Should find references with headers on links', withStore(async (store) => {
 		const docUri = workspacePath('doc.textile');
 		const otherUri = workspacePath('other.textile');
-
-		const refs = await getFileReferences(otherUri, new InMemoryWorkspaceTextileDocuments([
+		const workspace = store.add(new InMemoryTextileWorkspace([
 			new InMemoryDocument(docUri, joinLines(
 				`h1. header`,
 				`"link 1":./other.textile#sub-bla`,
@@ -109,11 +109,12 @@ suite('textile: find file references', () => {
 			)),
 		]));
 
-		assertReferencesEqual(refs!,
+		const refs = await getFileReferences(store, otherUri, workspace);
+		assertReferencesEqual(refs,
 			{ uri: docUri, line: 1 },
 			{ uri: docUri, line: 2 },
 			{ uri: otherUri, line: 2 },
 			{ uri: otherUri, line: 3 },
 		);
-	});
+	}));
 });

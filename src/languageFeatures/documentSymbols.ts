@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { TextileEngine } from '../textileEngine';
-import { TableOfContents, TocEntry } from '../tableOfContents';
-import { SkinnyTextDocument } from '../workspaceContents';
+import { ILogger } from '../logging';
+import { TextileTableOfContentsProvider, TocEntry } from '../tableOfContents';
+import { ITextDocument } from '../types/textDocument';
 
 interface TextileSymbol {
 	readonly level: number;
@@ -17,16 +17,18 @@ interface TextileSymbol {
 export class TextileDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
 
 	constructor(
-		private readonly engine: TextileEngine
+		private readonly tocProvider: TextileTableOfContentsProvider,
+		private readonly logger: ILogger,
 	) { }
 
-	public async provideDocumentSymbolInformation(document: SkinnyTextDocument): Promise<vscode.SymbolInformation[]> {
-		const toc = await TableOfContents.create(this.engine, document);
+	public async provideDocumentSymbolInformation(document: ITextDocument): Promise<vscode.SymbolInformation[]> {
+		this.logger.verbose('DocumentSymbolProvider', `provideDocumentSymbolInformation - ${document.uri}`);
+		const toc = await this.tocProvider.getForDocument(document);
 		return toc.entries.map(entry => this.toSymbolInformation(entry));
 	}
 
-	public async provideDocumentSymbols(document: SkinnyTextDocument): Promise<vscode.DocumentSymbol[]> {
-		const toc = await TableOfContents.create(this.engine, document);
+	public async provideDocumentSymbols(document: ITextDocument): Promise<vscode.DocumentSymbol[]> {
+		const toc = await this.tocProvider.getForDocument(document);
 		const root: TextileSymbol = {
 			level: -Infinity,
 			children: [],
@@ -45,13 +47,12 @@ export class TextileDocumentSymbolProvider implements vscode.DocumentSymbolProvi
 		const symbol = this.toDocumentSymbol(entry);
 		symbol.children = [];
 
-		while (parent && entry.level <= parent.level) {
+		while (entry.level <= parent.level) {
 			parent = parent.parent!;
 		}
 		parent.children.push(symbol);
 		this.buildTree({ level: entry.level, children: symbol.children, parent }, entries.slice(1));
 	}
-
 
 	private toSymbolInformation(entry: TocEntry): vscode.SymbolInformation {
 		return new vscode.SymbolInformation(
@@ -71,6 +72,14 @@ export class TextileDocumentSymbolProvider implements vscode.DocumentSymbolProvi
 	}
 
 	private getSymbolName(entry: TocEntry): string {
-		return 'h' + entry.level + '. ' + entry.text; // changed for textile
+		return 'h' + entry.level + '. ' + entry.text; // changed for Textile
 	}
+}
+
+export function registerDocumentSymbolSupport(
+	selector: vscode.DocumentSelector,
+	tocProvider: TextileTableOfContentsProvider,
+	logger: ILogger,
+): vscode.Disposable {
+	return vscode.languages.registerDocumentSymbolProvider(selector, new TextileDocumentSymbolProvider(tocProvider, logger));
 }

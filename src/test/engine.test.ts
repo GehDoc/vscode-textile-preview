@@ -6,8 +6,8 @@
 import * as assert from 'assert';
 import 'mocha';
 import * as vscode from 'vscode';
-import { createNewTextileEngine } from './engine';
 import { InMemoryDocument } from '../util/inMemoryDocument';
+import { createNewTextileEngine } from './engine';
 
 
 const testFileName = vscode.Uri.file('test.md');

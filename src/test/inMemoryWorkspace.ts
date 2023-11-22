@@ -4,57 +4,80 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as assert from 'assert';
+import * as path from 'path';
 import * as vscode from 'vscode';
-import { TextileWorkspaceContents, SkinnyTextDocument } from '../workspaceContents';
+import { ITextDocument } from '../types/textDocument';
+import { Disposable } from '../util/dispose';
+import { ResourceMap } from '../util/resourceMap';
+import { ITextileWorkspace } from '../workspace';
 
 
-export class InMemoryWorkspaceTextileDocuments implements TextileWorkspaceContents {
-	private readonly _documents = new Map<string, SkinnyTextDocument>();
+export class InMemoryTextileWorkspace extends Disposable implements ITextileWorkspace {
+	private readonly _documents = new ResourceMap<ITextDocument>(uri => uri.fsPath);
 
-	constructor(documents: SkinnyTextDocument[]) {
+	constructor(documents: ITextDocument[]) {
+		super();
 		for (const doc of documents) {
-			this._documents.set(this.getKey(doc.uri), doc);
+			this._documents.set(doc.uri, doc);
 		}
 	}
 
-	public async getAllTextileDocuments() {
+	public values() {
 		return Array.from(this._documents.values());
 	}
 
-	public async getTextileDocument(resource: vscode.Uri): Promise<SkinnyTextDocument | undefined> {
-		return this._documents.get(this.getKey(resource));
+	public async getAllTextileDocuments() {
+		return this.values();
+	}
+
+	public async getOrLoadTextileDocument(resource: vscode.Uri): Promise<ITextDocument | undefined> {
+		return this._documents.get(resource);
+	}
+
+	public hasTextileDocument(resolvedHrefPath: vscode.Uri): boolean {
+		return this._documents.has(resolvedHrefPath);
 	}
 
 	public async pathExists(resource: vscode.Uri): Promise<boolean> {
-		return this._documents.has(this.getKey(resource));
+		return this._documents.has(resource);
 	}
-	private readonly _onDidChangeTextileDocumentEmitter = new vscode.EventEmitter<SkinnyTextDocument>();
+
+	public async readDirectory(resource: vscode.Uri): Promise<[string, vscode.FileType][]> {
+		const files = new Map<string, vscode.FileType>();
+		const pathPrefix = resource.fsPath + (resource.fsPath.endsWith('/') || resource.fsPath.endsWith('\\') ? '' : path.sep);
+		for (const doc of this._documents.values()) {
+			const path = doc.uri.fsPath;
+			if (path.startsWith(pathPrefix)) {
+				const parts = path.slice(pathPrefix.length).split(/\/|\\/g);
+				files.set(parts[0], parts.length > 1 ? vscode.FileType.Directory : vscode.FileType.File);
+			}
+		}
+		return Array.from(files.entries());
+	}
+
+	private readonly _onDidChangeTextileDocumentEmitter = this._register(new vscode.EventEmitter<ITextDocument>());
 	public onDidChangeTextileDocument = this._onDidChangeTextileDocumentEmitter.event;
 
-	private readonly _onDidCreateTextileDocumentEmitter = new vscode.EventEmitter<SkinnyTextDocument>();
+	private readonly _onDidCreateTextileDocumentEmitter = this._register(new vscode.EventEmitter<ITextDocument>());
 	public onDidCreateTextileDocument = this._onDidCreateTextileDocumentEmitter.event;
 
-	private readonly _onDidDeleteTextileDocumentEmitter = new vscode.EventEmitter<vscode.Uri>();
+	private readonly _onDidDeleteTextileDocumentEmitter = this._register(new vscode.EventEmitter<vscode.Uri>());
 	public onDidDeleteTextileDocument = this._onDidDeleteTextileDocumentEmitter.event;
 
-	public updateDocument(document: SkinnyTextDocument) {
-		this._documents.set(this.getKey(document.uri), document);
+	public updateDocument(document: ITextDocument) {
+		this._documents.set(document.uri, document);
 		this._onDidChangeTextileDocumentEmitter.fire(document);
 	}
 
-	public createDocument(document: SkinnyTextDocument) {
-		assert.ok(!this._documents.has(this.getKey(document.uri)));
+	public createDocument(document: ITextDocument) {
+		assert.ok(!this._documents.has(document.uri));
 
-		this._documents.set(this.getKey(document.uri), document);
+		this._documents.set(document.uri, document);
 		this._onDidCreateTextileDocumentEmitter.fire(document);
 	}
 
 	public deleteDocument(resource: vscode.Uri) {
-		this._documents.delete(this.getKey(resource));
+		this._documents.delete(resource);
 		this._onDidDeleteTextileDocumentEmitter.fire(resource);
-	}
-
-	private getKey(resource: vscode.Uri): string {
-		return resource.fsPath;
 	}
 }

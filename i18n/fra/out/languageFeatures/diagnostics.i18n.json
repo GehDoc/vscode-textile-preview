@@ -10,5 +10,5 @@
 	"invalidHeaderLink": "En-tête introuvable : « {0} »",
 	"invalidLinkToHeaderInOtherFile": "L’en-tête n’existe pas dans le fichier : {0}",
 	"invalidPathLink": "Le fichier n’existe pas dans le chemin d’accès : {0}",
-	"invalidReferenceLink": "No link definition found: '{0}'"
+	"invalidReferenceLink": "Définition de lien introuvable : '{0}'"
 }

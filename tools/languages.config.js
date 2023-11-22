@@ -26,8 +26,8 @@ module.exports = {
 		folderName: 'deu',
 		replacements: [
 			...DEFAULT_REPLACEMENTS,
-			[ /markdown/g, 'textile', 39 ],
-			[ /Markdown/g, 'Textile', 32 ],
+			[ /markdown/g, 'textile', 41 ],
+			[ /Markdown/g, 'Textile', 34 ],
 		]
 	},
 	'es':{
@@ -35,8 +35,8 @@ module.exports = {
 		folderName: 'esn',
 		replacements: [
 			...DEFAULT_REPLACEMENTS,
-			[ /markdown/g, 'textile', 39 ],
-			[ /Markdown/g, 'Textile', 31 ],
+			[ /markdown/g, 'textile', 41 ],
+			[ /Markdown/g, 'Textile', 33 ],
 		]
 	},
 	'fr':{
@@ -44,8 +44,8 @@ module.exports = {
 		folderName: 'fra',
 		replacements: [
 			...DEFAULT_REPLACEMENTS,
-			[ /markdown/g, 'textile', 39 ],
-			[ /Markdown/g, 'Textile', 32 ],
+			[ /markdown/g, 'textile', 41 ],
+			[ /Markdown/g, 'Textile', 34 ],
 		]
 	},
 	'it':{
@@ -53,8 +53,8 @@ module.exports = {
 		folderName: 'ita',
 		replacements: [
 			...DEFAULT_REPLACEMENTS,
-			[ /markdown/g, 'textile', 39 ],
-			[ /Markdown/g, 'Textile', 32 ],
+			[ /markdown/g, 'textile', 42 ],
+			[ /Markdown/g, 'Textile', 33 ],
 		]
 	},
 	'ja':{
@@ -62,8 +62,8 @@ module.exports = {
 		folderName: 'jpn',
 		replacements: [
 			...DEFAULT_REPLACEMENTS,
-			[ /markdown/g, 'textile', 39 ],
-			[ /マークダウン/g, 'Textile', 4 ],
+			[ /markdown/g, 'textile', 41 ],
+			[ /マークダウン/g, 'Textile', 6 ],
 			[ /Markdown/g, 'Textile', 28 ],
 		]
 	},
@@ -72,8 +72,8 @@ module.exports = {
 		folderName: 'kor',
 		replacements: [
 			...DEFAULT_REPLACEMENTS,
-			[ /markdown/g, 'textile', 40 ],
-			[ /Markdown/g, 'Textile', 31 ],
+			[ /markdown/g, 'textile', 42 ],
+			[ /Markdown/g, 'Textile', 33 ],
 		]
 	},
 	'ru':{
@@ -81,8 +81,8 @@ module.exports = {
 		folderName: 'rus',
 		replacements: [
 			...DEFAULT_REPLACEMENTS,
-			[ /markdown/g, 'textile', 39 ],
-			[ /Markdown/g, 'Textile', 32 ],
+			[ /markdown/g, 'textile', 41 ],
+			[ /Markdown/g, 'Textile', 34 ],
 		]
 	},
 	'zh-hant':{
@@ -90,8 +90,8 @@ module.exports = {
 		folderName: 'cht',
 		replacements: [
 			...DEFAULT_REPLACEMENTS,
-			[ /markdown/g, 'textile', 39 ],
-			[ /Markdown/g, 'Textile', 32 ],
+			[ /markdown/g, 'textile', 41 ],
+			[ /Markdown/g, 'Textile', 34 ],
 		],
 		transifexId: 'zh-hant'
 	},
@@ -100,8 +100,8 @@ module.exports = {
 		folderName: 'chs',
 		replacements: [
 			...DEFAULT_REPLACEMENTS,
-			[ /markdown/g, 'textile', 39 ],
-			[ /Markdown/g, 'Textile', 32 ],
+			[ /markdown/g, 'textile', 41 ],
+			[ /Markdown/g, 'Textile', 34 ],
 		],
 		transifexId: 'zh-hans'
 	},

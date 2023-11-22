@@ -10,5 +10,5 @@
 	"invalidHeaderLink": "Nessuna intestazione trovata: '{0}'",
 	"invalidLinkToHeaderInOtherFile": "Intestazione inesistente nel file: {0}",
 	"invalidPathLink": "Il file non esiste nel percorso: {0}",
-	"invalidReferenceLink": "No link definition found: '{0}'"
+	"invalidReferenceLink": "Non è stata trovata alcuna definizione di collegamento: '{0}'"
 }

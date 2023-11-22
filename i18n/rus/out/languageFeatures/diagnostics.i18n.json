@@ -10,5 +10,5 @@
 	"invalidHeaderLink": "Заголовок не найден: \\\"{0}\\\"",
 	"invalidLinkToHeaderInOtherFile": "Заголовок не существует в файле: {0}",
 	"invalidPathLink": "Файл не существует по пути: {0}",
-	"invalidReferenceLink": "No link definition found: '{0}'"
+	"invalidReferenceLink": "Не найдено определение ссылки: \"{0}\""
 }

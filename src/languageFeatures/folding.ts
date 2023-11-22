@@ -3,16 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Token } from '../../libs/textile-js/textile';
+import { type Token } from '../../libs/textile-js/textile';
 import * as vscode from 'vscode';
-import { TextileEngine, getLineNumber, getEndLineNumber } from '../textileEngine';
-import { TableOfContents } from '../tableOfContents';
-import { SkinnyTextDocument } from '../workspaceContents';
+import { ITextileParser, getLineNumber, getEndLineNumber } from '../textileEngine';
+import { TextileTableOfContentsProvider } from '../tableOfContents';
+import { ITextDocument } from '../types/textDocument';
 
 const rangeLimit = 5000;
 
 /* Disabled for textile : not relevant
-interface TextileTokenWithMap extends Token {
+interface TextileJSTokenWithMap extends Token {
 	map: [number, number];
 }
 */
@@ -20,12 +20,13 @@ interface TextileTokenWithMap extends Token {
 export class TextileFoldingProvider implements vscode.FoldingRangeProvider {
 
 	constructor(
-		private readonly engine: TextileEngine
+		private readonly parser: ITextileParser,
+		private readonly tocProvide: TextileTableOfContentsProvider,
 	) { }
 
 	// --- Begin : modified for textile
 	public async provideFoldingRanges(
-		document: SkinnyTextDocument,
+		document: ITextDocument,
 		_: vscode.FoldingContext,
 		_token: vscode.CancellationToken
 	): Promise<vscode.FoldingRange[]> {
@@ -37,10 +38,10 @@ export class TextileFoldingProvider implements vscode.FoldingRangeProvider {
 		return foldables.flat().slice(0, rangeLimit);
 	}
 
-	private async getRegions(document: SkinnyTextDocument): Promise<vscode.FoldingRange[]> {
-		const tokens = await this.engine.parse(document);
+	private async getRegions(document: ITextDocument): Promise<vscode.FoldingRange[]> {
+		const tokens = await this.parser.tokenize(document);
 		const regionMarkers :{line: number, isStart: boolean}[] = [];
-		const jsonmlUtils = await this.engine.jsonmlUtils();
+		const jsonmlUtils = await this.parser.jsonmlUtils();
 		jsonmlUtils.applyHooks(tokens, [
 			[(token) => {
 				if( isRegionMarker(token) ) {
@@ -69,8 +70,8 @@ export class TextileFoldingProvider implements vscode.FoldingRangeProvider {
 	}
 	// --- End : modified for textile
 
-	private async getHeaderFoldingRanges(document: SkinnyTextDocument) {
-		const toc = await TableOfContents.create(this.engine, document);
+	private async getHeaderFoldingRanges(document: ITextDocument): Promise<vscode.FoldingRange[]> {
+		const toc = await this.tocProvide.getForDocument(document);
 		return toc.entries.map(entry => {
 			let endLine = entry.sectionLocation.range.end.line;
 			if (document.lineAt(endLine).isEmptyOrWhitespace && endLine >= entry.line + 1) {
@@ -81,9 +82,9 @@ export class TextileFoldingProvider implements vscode.FoldingRangeProvider {
 	}
 
 	// --- Begin : modified for textile
-	private async getBlockFoldingRanges(document: SkinnyTextDocument): Promise<vscode.FoldingRange[]> {
-		const tokens = await this.engine.parse(document);
-		const jsonmlUtils = await this.engine.jsonmlUtils();
+	private async getBlockFoldingRanges(document: ITextDocument): Promise<vscode.FoldingRange[]> {
+		const tokens = await this.parser.tokenize(document);
+		const jsonmlUtils = await this.parser.jsonmlUtils();
 		const multiLineListItems :{start: number, end: number | undefined, nodeLevel: number, isComment?: boolean}[] = [];
 		let undefinedEndCount = 0;
 		const setEndForPreviousItems = (nodeLevel: number, end: number) => {
@@ -164,3 +165,11 @@ const isFoldableToken = (token: Token) => {
 	}
 };
 // --- End : modified for textile
+
+export function registerFoldingSupport(
+	selector: vscode.DocumentSelector,
+	parser: ITextileParser,
+	tocProvider: TextileTableOfContentsProvider,
+): vscode.Disposable {
+	return vscode.languages.registerFoldingRangeProvider(selector, new TextileFoldingProvider(parser, tocProvider));
+}

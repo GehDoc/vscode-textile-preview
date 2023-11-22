@@ -6,13 +6,13 @@
 import * as assert from 'assert';
 import 'mocha';
 import * as vscode from 'vscode';
-import { TextileLinkProvider } from '../languageFeatures/documentLinkProvider';
+import { TextileLinkProvider } from '../languageFeatures/documentLinks';
 import { TextileReferencesProvider } from '../languageFeatures/references';
 import { TextileRenameProvider, TextileWorkspaceEdit } from '../languageFeatures/rename';
 import { githubSlugifier } from '../slugify';
 import { noopToken } from '../util/cancellation';
 import { InMemoryDocument } from '../util/inMemoryDocument';
-import { TextileWorkspaceContents } from '../workspaceContents';
+import { TextileWorkspaceContents } from '../workspace';
 import { createNewTextileEngine } from './engine';
 import { InMemoryWorkspaceTextileDocuments } from './inMemoryWorkspace';
 import { assertRangeEqual, joinLines, workspacePath } from './util';

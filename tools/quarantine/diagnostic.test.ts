@@ -6,35 +6,50 @@
 import * as assert from 'assert';
 import 'mocha';
 import * as vscode from 'vscode';
-import { DiagnosticComputer, DiagnosticConfiguration, DiagnosticLevel, DiagnosticManager, DiagnosticOptions } from '../languageFeatures/diagnostics';
-import { TextileLinkProvider } from '../languageFeatures/documentLinkProvider';
+import { DiagnosticCollectionReporter, DiagnosticComputer, DiagnosticConfiguration, DiagnosticLevel, DiagnosticManager, DiagnosticOptions, DiagnosticReporter } from '../languageFeatures/diagnostics';
+import { TextileLinkProvider } from '../languageFeatures/documentLinks';
+import { TextileReferencesProvider } from '../languageFeatures/references';
+import { TextileTableOfContentsProvider } from '../tableOfContents';
+import { ITextDocument } from '../types/textDocument';
 import { noopToken } from '../util/cancellation';
+import { DisposableStore } from '../util/dispose';
 import { InMemoryDocument } from '../util/inMemoryDocument';
-import { TextileWorkspaceContents } from '../workspaceContents';
+import { ResourceMap } from '../util/resourceMap';
+import { ITextileWorkspace } from '../workspace';
 import { createNewTextileEngine } from './engine';
-import { InMemoryWorkspaceTextileDocuments } from './inMemoryWorkspace';
-import { assertRangeEqual, joinLines, workspacePath } from './util';
+import { InMemoryMdWorkspace } from './inMemoryWorkspace';
+import { nulLogger } from './nulLogging';
+import { assertRangeEqual, joinLines, withStore, workspacePath } from './util';
 
+const defaultDiagnosticsOptions = Object.freeze<DiagnosticOptions>({
+	enabled: true,
+	validateFileLinks: DiagnosticLevel.warning,
+	validateTextileFileLinkFragments: undefined,
+	validateFragmentLinks: DiagnosticLevel.warning,
+	validateReferences: DiagnosticLevel.warning,
+	ignoreLinks: [],
+});
 
-async function getComputedDiagnostics(doc: InMemoryDocument, workspaceContents: TextileWorkspaceContents): Promise<vscode.Diagnostic[]> {
+async function getComputedDiagnostics(store: DisposableStore, doc: InMemoryDocument, workspace: ITextileWorkspace, options: Partial<DiagnosticOptions> = {}): Promise<vscode.Diagnostic[]> {
 	const engine = createNewTextileEngine();
-	const linkProvider = new TextileLinkProvider(engine);
-	const computer = new DiagnosticComputer(engine, workspaceContents, linkProvider);
+	const linkProvider = store.add(new TextileLinkProvider(engine, workspace, nulLogger));
+	const tocProvider = store.add(new TextileTableOfContentsProvider(engine, workspace, nulLogger));
+	const computer = new DiagnosticComputer(workspace, linkProvider, tocProvider);
 	return (
-		await computer.getDiagnostics(doc, {
-			enabled: true,
-			validateFilePaths: DiagnosticLevel.warning,
-			validateOwnHeaders: DiagnosticLevel.warning,
-			validateReferences: DiagnosticLevel.warning,
-			ignoreLinks: [],
-		}, noopToken)
+		await computer.getDiagnostics(doc, { ...defaultDiagnosticsOptions, ...options, }, noopToken)
 	).diagnostics;
 }
 
-function createDiagnosticsManager(workspaceContents: TextileWorkspaceContents, configuration = new MemoryDiagnosticConfiguration()) {
-	const engine = createNewTextileEngine();
-	const linkProvider = new TextileLinkProvider(engine);
-	return new DiagnosticManager(new DiagnosticComputer(engine, workspaceContents, linkProvider), configuration);
+function assertDiagnosticsEqual(actual: readonly vscode.Diagnostic[], expectedRanges: readonly vscode.Range[]) {
+	assert.strictEqual(actual.length, expectedRanges.length, "Diagnostic count equal");
+
+	for (let i = 0; i < actual.length; ++i) {
+		assertRangeEqual(actual[i].range, expectedRanges[i], `Range ${i} to be equal`);
+	}
+}
+
+function orderDiagnosticsByRange(diagnostics: Iterable<vscode.Diagnostic>): readonly vscode.Diagnostic[] {
+	return Array.from(diagnostics).sort((a, b) => a.range.start.compareTo(b.range.start));
 }
 
 class MemoryDiagnosticConfiguration implements DiagnosticConfiguration {
@@ -42,37 +57,73 @@ class MemoryDiagnosticConfiguration implements DiagnosticConfiguration {
 	private readonly _onDidChange = new vscode.EventEmitter<void>();
 	public readonly onDidChange = this._onDidChange.event;
 
-	constructor(
-		private readonly enabled: boolean = true,
-		private readonly ignoreLinks: string[] = [],
-	) { }
+	private _options: Partial<DiagnosticOptions>;
 
-	getOptions(_resource: vscode.Uri): DiagnosticOptions {
-		if (!this.enabled) {
-			return {
-				enabled: false,
-				validateFilePaths: DiagnosticLevel.ignore,
-				validateOwnHeaders: DiagnosticLevel.ignore,
-				validateReferences: DiagnosticLevel.ignore,
-				ignoreLinks: this.ignoreLinks,
-			};
-		}
+	constructor(options: Partial<DiagnosticOptions>) {
+		this._options = options;
+	}
+
+	public getOptions(_resource: vscode.Uri): DiagnosticOptions {
 		return {
-			enabled: true,
-			validateFilePaths: DiagnosticLevel.warning,
-			validateOwnHeaders: DiagnosticLevel.warning,
-			validateReferences: DiagnosticLevel.warning,
-			ignoreLinks: this.ignoreLinks,
+			...defaultDiagnosticsOptions,
+			...this._options,
 		};
+	}
+
+	public update(newOptions: Partial<DiagnosticOptions>) {
+		this._options = newOptions;
+		this._onDidChange.fire();
 	}
 }
 
+class MemoryDiagnosticReporter extends DiagnosticReporter {
 
-suite('textile: Diagnostics', () => {
-	test('Should not return any diagnostics for empty document', async () => {
+	private readonly diagnostics = new ResourceMap<readonly vscode.Diagnostic[]>();
+
+	constructor(
+		private readonly workspace: InMemoryMdWorkspace,
+	) {
+		super();
+	}
+
+	override dispose(): void {
+		super.clear();
+		this.clear();
+	}
+
+	override clear(): void {
+		super.clear();
+		this.diagnostics.clear();
+	}
+
+	set(uri: vscode.Uri, diagnostics: readonly vscode.Diagnostic[]): void {
+		this.diagnostics.set(uri, diagnostics);
+	}
+
+	isOpen(_uri: vscode.Uri): boolean {
+		return true;
+	}
+
+	delete(uri: vscode.Uri): void {
+		this.diagnostics.delete(uri);
+	}
+
+	get(uri: vscode.Uri): readonly vscode.Diagnostic[] {
+		return orderDiagnosticsByRange(this.diagnostics.get(uri) ?? []);
+	}
+
+	getOpenDocuments(): ITextDocument[] {
+		return this.workspace.values();
+	}
+}
+
+suite('textile: Diagnostic Computer', () => {
+
+	test('Should not return any diagnostics for empty document', withStore(async (store) => {
 		const doc = new InMemoryDocument(workspacePath('doc.textile'), joinLines(
 			`text`,
 		));
+		const workspace = store.add(new InMemoryMdWorkspace([doc]));
 
 		const diagnostics = await getComputedDiagnostics(doc, new InMemoryWorkspaceTextileDocuments([doc]));
 		assert.deepStrictEqual(diagnostics, []);

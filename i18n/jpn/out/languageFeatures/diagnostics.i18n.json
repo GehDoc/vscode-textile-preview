@@ -10,5 +10,5 @@
 	"invalidHeaderLink": "ヘッダーが見つかりません: '{0}'",
 	"invalidLinkToHeaderInOtherFile": "ヘッダーがファイルに存在しません: {0}",
 	"invalidPathLink": "パスにファイルが存在しません: {0}",
-	"invalidReferenceLink": "No link definition found: '{0}'"
+	"invalidReferenceLink": "リンク定義が見つかりません: '{0}'"
 }

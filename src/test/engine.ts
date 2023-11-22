@@ -4,10 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { TextileEngine } from '../textileEngine';
+import { TextileJSEngine } from '../textileEngine';
 import { TextileContributionProvider, TextileContributions } from '../textileExtensions';
 import { githubSlugifier } from '../slugify';
 import { Disposable } from '../util/dispose';
+import { nulLogger } from './nulLogging';
 
 const emptyContributions = new class extends Disposable implements TextileContributionProvider {
 	readonly extensionUri = vscode.Uri.file('/');
@@ -15,6 +16,6 @@ const emptyContributions = new class extends Disposable implements TextileContri
 	readonly onContributionsChanged = this._register(new vscode.EventEmitter<this>()).event;
 };
 
-export function createNewTextileEngine(): TextileEngine {
-	return new TextileEngine(emptyContributions, githubSlugifier);
+export function createNewTextileEngine(): TextileJSEngine {
+	return new TextileJSEngine(emptyContributions, githubSlugifier, nulLogger);
 }

@@ -6,8 +6,9 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as uri from 'vscode-uri';
-import { TextileEngine } from '../textileEngine';
-import { TableOfContents } from '../tableOfContents';
+import { TextileTableOfContentsProvider } from '../tableOfContents';
+import { ITextDocument } from '../types/textDocument';
+import { ITextileWorkspace } from '../workspace';
 import { isTextileFile } from './file';
 
 export interface OpenDocumentLinkArgs {
@@ -22,7 +23,7 @@ enum OpenTextileLinks {
 }
 
 export function resolveDocumentLink(href: string, textileFile: vscode.Uri): vscode.Uri {
-	let [hrefPath, fragment] = href.split('#').map(c => decodeURIComponent(c));
+	const [hrefPath, fragment] = href.split('#').map(c => decodeURIComponent(c));
 
 	if (hrefPath[0] === '/') {
 		// Absolute path. Try to resolve relative to the workspace
@@ -32,15 +33,15 @@ export function resolveDocumentLink(href: string, textileFile: vscode.Uri): vsco
 		}
 	}
 
-	// Relative path. Resolve relative to the md file
+	// Relative path. Resolve relative to the textile file
 	const dirnameUri = textileFile.with({ path: path.dirname(textileFile.path) });
 	return vscode.Uri.joinPath(dirnameUri, hrefPath).with({ fragment });
 }
 
-export async function openDocumentLink(engine: TextileEngine, targetResource: vscode.Uri, fromResource: vscode.Uri): Promise<void> {
+export async function openDocumentLink(tocProvider: TextileTableOfContentsProvider, targetResource: vscode.Uri, fromResource: vscode.Uri): Promise<void> {
 	const column = getViewColumn(fromResource);
 
-	if (await tryNavigateToFragmentInActiveEditor(engine, targetResource)) {
+	if (await tryNavigateToFragmentInActiveEditor(tocProvider, targetResource)) {
 		return;
 	}
 
@@ -58,7 +59,7 @@ export async function openDocumentLink(engine: TextileEngine, targetResource: vs
 			try {
 				const stat = await vscode.workspace.fs.stat(dotTextileResource);
 				if (stat.type === vscode.FileType.File) {
-					await tryOpenTextileFile(engine, dotTextileResource, column);
+					await tryOpenTextileFile(tocProvider, dotTextileResource, column);
 					return;
 				}
 			} catch {
@@ -69,25 +70,33 @@ export async function openDocumentLink(engine: TextileEngine, targetResource: vs
 		return vscode.commands.executeCommand('revealInExplorer', targetResource);
 	}
 
-	await tryOpenTextileFile(engine, targetResource, column);
+	await tryOpenTextileFile(tocProvider, targetResource, column);
 }
 
-async function tryOpenTextileFile(engine: TextileEngine, resource: vscode.Uri, column: vscode.ViewColumn): Promise<boolean> {
+async function tryOpenTextileFile(tocProvider: TextileTableOfContentsProvider, resource: vscode.Uri, column: vscode.ViewColumn): Promise<boolean> {
 	await vscode.commands.executeCommand('vscode.open', resource.with({ fragment: '' }), column);
-	return tryNavigateToFragmentInActiveEditor(engine, resource);
+	return tryNavigateToFragmentInActiveEditor(tocProvider, resource);
 }
 
-async function tryNavigateToFragmentInActiveEditor(engine: TextileEngine, resource: vscode.Uri): Promise<boolean> {
+async function tryNavigateToFragmentInActiveEditor(tocProvider: TextileTableOfContentsProvider, resource: vscode.Uri): Promise<boolean> {
+	const notebookEditor = vscode.window.activeNotebookEditor;
+	if (notebookEditor?.notebook.uri.fsPath === resource.fsPath) {
+		if (await tryRevealLineInNotebook(tocProvider, notebookEditor, resource.fragment)) {
+			return true;
+		}
+	}
+
 	const activeEditor = vscode.window.activeTextEditor;
 	if (activeEditor?.document.uri.fsPath === resource.fsPath) {
 		if (isTextileFile(activeEditor.document)) {
-			if (await tryRevealLineUsingTocFragment(engine, activeEditor, resource.fragment)) {
+			if (await tryRevealLineUsingTocFragment(tocProvider, activeEditor, resource.fragment)) {
 				return true;
 			}
 		}
 		tryRevealLineUsingLineFragment(activeEditor, resource.fragment);
 		return true;
 	}
+
 	return false;
 }
 
@@ -103,8 +112,26 @@ function getViewColumn(resource: vscode.Uri): vscode.ViewColumn {
 	}
 }
 
-async function tryRevealLineUsingTocFragment(engine: TextileEngine, editor: vscode.TextEditor, fragment: string): Promise<boolean> {
-	const toc = await TableOfContents.create(engine, editor.document);
+async function tryRevealLineInNotebook(tocProvider: TextileTableOfContentsProvider, editor: vscode.NotebookEditor, fragment: string): Promise<boolean> {
+	const toc = await tocProvider.createForNotebook(editor.notebook);
+	const entry = toc.lookup(fragment);
+	if (!entry) {
+		return false;
+	}
+
+	const cell = editor.notebook.getCells().find(cell => cell.document.uri.toString() === entry.sectionLocation.uri.toString());
+	if (!cell) {
+		return false;
+	}
+
+	const range = new vscode.NotebookRange(cell.index, cell.index);
+	editor.selection = range;
+	editor.revealRange(range);
+	return true;
+}
+
+async function tryRevealLineUsingTocFragment(tocProvider: TextileTableOfContentsProvider, editor: vscode.TextEditor, fragment: string): Promise<boolean> {
+	const toc = await tocProvider.getForDocument(editor.document);
 	const entry = toc.lookup(fragment);
 	if (entry) {
 		const lineStart = new vscode.Range(entry.line, 0, entry.line, 0);
@@ -129,9 +156,9 @@ function tryRevealLineUsingLineFragment(editor: vscode.TextEditor, fragment: str
 	return false;
 }
 
-export async function resolveUriToTextileFile(resource: vscode.Uri): Promise<vscode.TextDocument | undefined> {
+export async function resolveUriToTextileFile(workspace: ITextileWorkspace, resource: vscode.Uri): Promise<ITextDocument | undefined> {
 	try {
-		const doc = await tryResolveUriToTextileFile(resource);
+		const doc = await workspace.getOrLoadTextileDocument(resource);
 		if (doc) {
 			return doc;
 		}
@@ -141,21 +168,8 @@ export async function resolveUriToTextileFile(resource: vscode.Uri): Promise<vsc
 
 	// If no extension, try with `.textile` extension
 	if (uri.Utils.extname(resource) === '') {
-		return tryResolveUriToTextileFile(resource.with({ path: resource.path + '.textile' }));
+		return workspace.getOrLoadTextileDocument(resource.with({ path: resource.path + '.textile' }));
 	}
 
-	return undefined;
-}
-
-async function tryResolveUriToTextileFile(resource: vscode.Uri): Promise<vscode.TextDocument | undefined> {
-	let document: vscode.TextDocument;
-	try {
-		document = await vscode.workspace.openTextDocument(resource);
-	} catch {
-		return undefined;
-	}
-	if (isTextileFile(document)) {
-		return document;
-	}
 	return undefined;
 }

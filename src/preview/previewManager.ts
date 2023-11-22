@@ -4,14 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { Logger } from '../logger';
-import { TextileEngine } from '../textileEngine';
+import { ILogger } from '../logging';
 import { TextileContributionProvider } from '../textileExtensions';
+import { TextileTableOfContentsProvider } from '../tableOfContents';
 import { Disposable, disposeAll } from '../util/dispose';
 import { isTextileFile } from '../util/file';
-import { DynamicTextilePreview, ManagedTextilePreview, StaticTextilePreview } from './preview';
+import { ITextileWorkspace } from '../workspace';
+import { TextileDocumentRenderer } from './documentRenderer';
+import { DynamicTextilePreview, IManagedTextilePreview, StaticTextilePreview } from './preview';
 import { TextilePreviewConfigurationManager } from './previewConfig';
-import { TextileContentProvider } from './previewContentProvider';
 import { scrollEditorToLine, StartingScrollFragment } from './scrolling';
 import { TopmostLineMonitor } from './topmostLineMonitor';
 
@@ -21,7 +22,7 @@ export interface DynamicPreviewSettings {
 	readonly locked: boolean;
 }
 
-class PreviewStore<T extends ManagedTextilePreview> extends Disposable {
+class PreviewStore<T extends IManagedTextilePreview> extends Disposable {
 
 	private readonly _previews = new Set<T>();
 
@@ -56,6 +57,7 @@ class PreviewStore<T extends ManagedTextilePreview> extends Disposable {
 }
 
 export class TextilePreviewManager extends Disposable implements vscode.WebviewPanelSerializer, vscode.CustomTextEditorProvider {
+
 	private static readonly textilePreviewActiveContextKey = 'textilePreviewFocus';
 
 	private readonly _topmostLineMonitor = new TopmostLineMonitor();
@@ -64,22 +66,24 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 	private readonly _dynamicPreviews = this._register(new PreviewStore<DynamicTextilePreview>());
 	private readonly _staticPreviews = this._register(new PreviewStore<StaticTextilePreview>());
 
-	private _activePreview: ManagedTextilePreview | undefined = undefined;
+	private _activePreview: IManagedTextilePreview | undefined = undefined;
 
 	public constructor(
-		private readonly _contentProvider: TextileContentProvider,
-		private readonly _logger: Logger,
+		private readonly _contentProvider: TextileDocumentRenderer,
+		private readonly _workspace: ITextileWorkspace,
+		private readonly _logger: ILogger,
 		private readonly _contributions: TextileContributionProvider,
-		private readonly _engine: TextileEngine,
+		private readonly _tocProvider: TextileTableOfContentsProvider,
 	) {
 		super();
+
 		this._register(vscode.window.registerWebviewPanelSerializer(DynamicTextilePreview.viewType, this));
+
 		this._register(vscode.window.registerCustomEditorProvider(StaticTextilePreview.customEditorViewType, this, {
 			webviewOptions: { enableFindWidget: true }
 		}));
 
 		this._register(vscode.window.onDidChangeActiveTextEditor(textEditor => {
-
 			// When at a textile file, apply existing scroll settings
 			if (textEditor?.document && isTextileFile(textEditor.document)) {
 				const line = this._topmostLineMonitor.getPreviousStaticEditorLineByUri(textEditor.document.uri);
@@ -161,10 +165,11 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 			webview,
 			this._contentProvider,
 			this._previewConfigurations,
+			this._workspace,
 			this._logger,
 			this._topmostLineMonitor,
 			this._contributions,
-			this._engine);
+			this._tocProvider);
 
 		this.registerDynamicPreview(preview);
 	}
@@ -180,9 +185,10 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 			this._contentProvider,
 			this._previewConfigurations,
 			this._topmostLineMonitor,
+			this._workspace,
 			this._logger,
 			this._contributions,
-			this._engine,
+			this._tocProvider,
 			lineNumber
 		);
 		this.registerStaticPreview(preview);
@@ -204,10 +210,11 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 			previewSettings.previewColumn,
 			this._contentProvider,
 			this._previewConfigurations,
+			this._workspace,
 			this._logger,
 			this._topmostLineMonitor,
 			this._contributions,
-			this._engine);
+			this._tocProvider);
 
 		this.setPreviewActiveContext(true);
 		this._activePreview = preview;
@@ -241,7 +248,7 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 		return preview;
 	}
 
-	private trackActive(preview: ManagedTextilePreview): void {
+	private trackActive(preview: IManagedTextilePreview): void {
 		preview.onDidChangeViewState(({ webviewPanel }) => {
 			this.setPreviewActiveContext(webviewPanel.active);
 			this._activePreview = webviewPanel.active ? preview : undefined;
@@ -259,4 +266,3 @@ export class TextilePreviewManager extends Disposable implements vscode.WebviewP
 		vscode.commands.executeCommand('setContext', TextilePreviewManager.textilePreviewActiveContextKey, value);
 	}
 }
-

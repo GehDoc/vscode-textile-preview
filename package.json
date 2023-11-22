@@ -8,7 +8,7 @@
   "license": "SEE LICENSE IN LICENSE.txt",
   "engines": {
     "node" : ">=16.0.0",
-    "vscode": "^1.68.0"
+    "vscode": "^1.69.0"
   },
   "main": "./dist/extension",
   "browser": "./dist/browser/extension",
@@ -330,21 +330,6 @@
           "description": "%textile.trace.desc%",
           "scope": "window"
         },
-        "textile.editor.drop.enabled": {
-          "type": "boolean",
-          "default": true,
-          "textileDescription": "%configuration.textile.editor.drop.enabled%",
-          "scope": "resource"
-        },
-        "textile.experimental.editor.pasteLinks.enabled": {
-          "type": "boolean",
-          "scope": "resource",
-          "textileDescription": "%configuration.textile.editor.pasteLinks.enabled%",
-          "default": false,
-          "tags": [
-            "experimental"
-          ]
-        },
         "textile.experimental.validate.enabled": {
           "type": "boolean",
           "scope": "resource",
@@ -368,10 +353,10 @@
             "experimental"
           ]
         },
-        "textile.experimental.validate.headerLinks.enabled": {
+        "textile.experimental.validate.fragmentLinks.enabled": {
           "type": "string",
           "scope": "resource",
-          "textileDescription": "%configuration.textile.experimental.validate.headerLinks.enabled.description%",
+          "textileDescription": "%configuration.textile.experimental.validate.fragmentLinks.enabled.description%",
           "default": "warning",
           "enum": [
             "ignore",
@@ -387,6 +372,19 @@
           "scope": "resource",
           "textileDescription": "%configuration.textile.experimental.validate.fileLinks.enabled.description%",
           "default": "warning",
+          "enum": [
+            "ignore",
+            "warning",
+            "error"
+          ],
+          "tags": [
+            "experimental"
+          ]
+        },
+        "textile.experimental.validate.fileLinks.textileFragmentLinks": {
+          "type": "string",
+          "scope": "resource",
+          "textileDescription": "%configuration.textile.experimental.validate.fileLinks.textileFragmentLinks.description%",
           "enum": [
             "ignore",
             "warning",
@@ -467,7 +465,7 @@
     "@types/mocha": "^9.1.1",
     "@types/node": "16.x",
     "@types/picomatch": "^2.3.0",
-    "@types/vscode": "^1.68.0",
+    "@types/vscode": "^1.69.0",
     "@types/vscode-webview": "^1.57.0",
     "copy-webpack-plugin": "^6.0.3",
     "del": "^4.1.1",

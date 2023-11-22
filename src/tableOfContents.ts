@@ -4,11 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { TextileEngine } from './textileEngine';
+import { ILogger } from './logging';
+import { ITextileParser } from './textileEngine';
 import { Token } from '../libs/textile-js/textile'; // Added for Textile
-import { githubSlugifier, Slug } from './slugify';
+import { githubSlugifier, Slug, Slugifier } from './slugify';
+import { ITextDocument } from './types/textDocument';
+import { Disposable } from './util/dispose';
 import { isTextileFile } from './util/file';
-import { SkinnyTextDocument } from './workspaceContents';
+import { Schemes } from './util/schemes';
+import { TextileDocumentInfoCache } from './util/workspaceCache';
+import { ITextileWorkspace } from './workspace';
 
 export interface TocEntry {
 	readonly slug: Slug;
@@ -66,38 +71,42 @@ export interface TocEntry {
 
 export class TableOfContents {
 
-	public static async create(engine: TextileEngine, document: SkinnyTextDocument,): Promise<TableOfContents> {
-		const entries = await this.buildToc(engine, document);
-		return new TableOfContents(entries);
+	public static async create(parser: ITextileParser, document: ITextDocument,): Promise<TableOfContents> {
+		const entries = await this.buildToc(parser, document);
+		return new TableOfContents(entries, parser.slugifier);
 	}
 
-	public static async createForDocumentOrNotebook(engine: TextileEngine, document: SkinnyTextDocument): Promise<TableOfContents> {
-		if (document.uri.scheme === 'vscode-notebook-cell') {
+	public static async createForDocumentOrNotebook(parser: ITextileParser, document: ITextDocument): Promise<TableOfContents> {
+		if (document.uri.scheme === Schemes.notebookCell) {
 			const notebook = vscode.workspace.notebookDocuments
 				.find(notebook => notebook.getCells().some(cell => cell.document === document));
 
 			if (notebook) {
-				const entries: TocEntry[] = [];
-
-				for (const cell of notebook.getCells()) {
-					if (cell.kind === vscode.NotebookCellKind.Markup && isTextileFile(cell.document)) {
-						entries.push(...(await this.buildToc(engine, cell.document)));
-					}
-				}
-
-				return new TableOfContents(entries);
+				return TableOfContents.createForNotebook(parser, notebook);
 			}
 		}
-		return this.create(engine, document);
+
+		return this.create(parser, document);
+	}
+
+	public static async createForNotebook(parser: ITextileParser, notebook: vscode.NotebookDocument): Promise<TableOfContents> {
+		const entries: TocEntry[] = [];
+
+		for (const cell of notebook.getCells()) {
+			if (cell.kind === vscode.NotebookCellKind.Markup && isTextileFile(cell.document)) {
+				entries.push(...(await this.buildToc(parser, cell.document)));
+			}
+		}
+		return new TableOfContents(entries, parser.slugifier);
 	}
 
 	// -- Begin : modified for textile
-	private static async buildToc(engine: TextileEngine, document: SkinnyTextDocument): Promise<TocEntry[]> {
+	private static async buildToc(parser: ITextileParser, document: ITextDocument): Promise<TocEntry[]> {
 		const toc: TocEntry[] = [];
-		const tokens = await engine.parse(document);
+		const tokens = await parser.tokenize(document);
 
 		const existingSlugEntries = new Map<string, { count: number }>();
-		const jsonmlUtils = await engine.jsonmlUtils();
+		const jsonmlUtils = await parser.jsonmlUtils();
 		jsonmlUtils.applyHooks(tokens, [
 			[(token : Token) => {
 				let level;
@@ -180,13 +189,45 @@ export class TableOfContents {
 		return header.replace(/^\s*h[1-6]\.\s*(.*?)\s*$/, (_, word) => word.trim());
 	}
 
+	public static readonly empty = new TableOfContents([], githubSlugifier);
+
 	private constructor(
 		public readonly entries: readonly TocEntry[],
+		private readonly slugifier: Slugifier,
 	) { }
 
 	public lookup(fragment: string): TocEntry | undefined {
-		const slug = githubSlugifier.fromHeading(fragment);
+		const slug = this.slugifier.fromHeading(fragment);
 		return this.entries.find(entry => entry.slug.equals(slug));
 	}
 	// -- End : modified for textile
+}
+
+export class TextileTableOfContentsProvider extends Disposable {
+
+	private readonly _cache: TextileDocumentInfoCache<TableOfContents>;
+
+	constructor(
+		private readonly parser: ITextileParser,
+		workspace: ITextileWorkspace,
+		private readonly logger: ILogger,
+	) {
+		super();
+		this._cache = this._register(new TextileDocumentInfoCache<TableOfContents>(workspace, doc => {
+			this.logger.verbose('TableOfContentsProvider', `create - ${doc.uri}`);
+			return TableOfContents.create(parser, doc);
+		}));
+	}
+
+	public async get(resource: vscode.Uri): Promise<TableOfContents> {
+		return await this._cache.get(resource) ?? TableOfContents.empty;
+	}
+
+	public getForDocument(doc: ITextDocument): Promise<TableOfContents> {
+		return this._cache.getForDocument(doc);
+	}
+
+	public createForNotebook(notebook: vscode.NotebookDocument): Promise<TableOfContents> {
+		return TableOfContents.createForNotebook(this.parser, notebook);
+	}
 }

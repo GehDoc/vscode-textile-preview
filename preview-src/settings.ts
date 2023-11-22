@@ -15,7 +15,6 @@ export interface PreviewSettings {
 	readonly webviewResourceRoot: string;
 }
 
-
 export function getData<T = {}>(key: string): T {
 	const element = document.getElementById('vscode-textile-preview-data');
 	if (element) {

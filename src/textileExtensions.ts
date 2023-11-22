@@ -118,6 +118,7 @@ export interface TextileContributionProvider {
 }
 
 class VSCodeExtensionTextileContributionProvider extends Disposable implements TextileContributionProvider {
+
 	private _contributions?: TextileContributions;
 
 	public constructor(

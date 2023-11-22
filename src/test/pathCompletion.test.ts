@@ -6,27 +6,45 @@
 import * as assert from 'assert';
 import 'mocha';
 import * as vscode from 'vscode';
-import { TextileLinkProvider } from '../languageFeatures/documentLinkProvider';
-import { TextilePathCompletionProvider } from '../languageFeatures/pathCompletions';
+import { TextileLinkProvider } from '../languageFeatures/documentLinks';
+import { TextileVsCodePathCompletionProvider } from '../languageFeatures/pathCompletions';
 import { noopToken } from '../util/cancellation';
 import { InMemoryDocument } from '../util/inMemoryDocument';
+import { ITextileWorkspace } from '../workspace';
 import { createNewTextileEngine } from './engine';
+import { InMemoryTextileWorkspace } from './inMemoryWorkspace';
+import { nulLogger } from './nulLogging';
 import { CURSOR, getCursorPositions, joinLines, workspacePath } from './util';
 
 
-function getCompletionsAtCursor(resource: vscode.Uri, fileContents: string) {
+async function getCompletionsAtCursor(resource: vscode.Uri, fileContents: string, workspace?: ITextileWorkspace) {
 	const doc = new InMemoryDocument(resource, fileContents);
+
 	const engine = createNewTextileEngine();
-	const linkProvider = new TextileLinkProvider(engine);
-	const provider = new TextilePathCompletionProvider(engine, linkProvider);
+	const ws = workspace ?? new InMemoryTextileWorkspace([doc]);
+	const linkProvider = new TextileLinkProvider(engine, ws, nulLogger);
+	const provider = new TextileVsCodePathCompletionProvider(ws, engine, linkProvider);
 	const cursorPositions = getCursorPositions(fileContents, doc);
-	return provider.provideCompletionItems(doc, cursorPositions[0], noopToken, {
+	const completions = await provider.provideCompletionItems(doc, cursorPositions[0], noopToken, {
 		triggerCharacter: undefined,
 		triggerKind: vscode.CompletionTriggerKind.Invoke,
 	});
+
+	return completions.sort((a, b) => (a.label as string).localeCompare(b.label as string));
 }
 
-suite('Textile path completion provider', () => {
+function assertCompletionsEqual(actual: readonly vscode.CompletionItem[], expected: readonly { label: string; insertText?: string }[]) {
+	assert.strictEqual(actual.length, expected.length, 'Completion counts should be equal');
+
+	for (let i = 0; i < actual.length; ++i) {
+		assert.strictEqual(actual[i].label, expected[i].label, `Completion labels ${i} should be equal`);
+		if (typeof expected[i].insertText !== 'undefined') {
+			assert.strictEqual(actual[i].insertText, expected[i].insertText, `Completion insert texts ${i} should be equal`);
+		}
+	}
+}
+
+suite('Textile: Path completions', () => {
 
 	// -- Begin : changed for textile
 	setup(async () => {
@@ -36,7 +54,7 @@ suite('Textile path completion provider', () => {
 
 	test('Should not return anything when triggered in empty doc', async () => {
 		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), `${CURSOR}`);
-		assert.strictEqual(completions.length, 0);
+		assertCompletionsEqual(completions, []);
 	});
 
 	test('Should return anchor completions', async () => {
@@ -48,9 +66,10 @@ suite('Textile path completion provider', () => {
 			`h1. x y Z`,
 		));
 
-		assert.strictEqual(completions.length, 2);
-		assert.ok(completions.some(x => x.label === '#a-b-c'), 'Has a-b-c anchor completion');
-		assert.ok(completions.some(x => x.label === '#x-y-z'), 'Has x-y-z anchor completion');
+		assertCompletionsEqual(completions, [
+			{ label: '#a-b-c' },
+			{ label: '#x-y-z' },
+		]);
 	});
 
 	test('Should not return suggestions for http links', async () => {
@@ -64,53 +83,86 @@ suite('Textile path completion provider', () => {
 			`h1. https:`,
 		));
 
-		assert.strictEqual(completions.length, 0);
+		assertCompletionsEqual(completions, []);
 	});
 
 	test('Should return relative path suggestions', async () => {
+		const workspace = new InMemoryTextileWorkspace([
+			new InMemoryDocument(workspacePath('a.textile'), ''),
+			new InMemoryDocument(workspacePath('b.textile'), ''),
+			new InMemoryDocument(workspacePath('sub/foo.textile'), ''),
+		]);
 		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), joinLines(
 			`"":${CURSOR}`,
 			``,
 			`h1. A b C`,
-		));
+		), workspace);
 
-		assert.ok(completions.some(x => x.label === 'a.textile'), 'Has a.textile file completion');
-		assert.ok(completions.some(x => x.label === 'b.textile'), 'Has b.textile file completion');
-		assert.ok(completions.some(x => x.label === 'sub/'), 'Has sub folder completion');
+		assertCompletionsEqual(completions, [
+			{ label: '#a-b-c' },
+			{ label: 'a.textile' },
+			{ label: 'b.textile' },
+			{ label: 'sub/' },
+		]);
 	});
 
 	test('Should return relative path suggestions using ./', async () => {
+		const workspace = new InMemoryTextileWorkspace([
+			new InMemoryDocument(workspacePath('a.textile'), ''),
+			new InMemoryDocument(workspacePath('b.textile'), ''),
+			new InMemoryDocument(workspacePath('sub/foo.textile'), ''),
+		]);
 		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), joinLines(
 			`"":./${CURSOR}`,
 			``,
 			`h1. A b C`,
-		));
+		), workspace);
 
-		assert.ok(completions.some(x => x.label === 'a.textile'), 'Has a.textile file completion');
-		assert.ok(completions.some(x => x.label === 'b.textile'), 'Has b.textile file completion');
-		assert.ok(completions.some(x => x.label === 'sub/'), 'Has sub folder completion');
+		assertCompletionsEqual(completions, [
+			{ label: 'a.textile' },
+			{ label: 'b.textile' },
+			{ label: 'sub/' },
+		]);
 	});
 
 	test('Should return absolute path suggestions using /', async () => {
+		const workspace = new InMemoryTextileWorkspace([
+			new InMemoryDocument(workspacePath('a.textile'), ''),
+			new InMemoryDocument(workspacePath('b.textile'), ''),
+			new InMemoryDocument(workspacePath('sub/c.textile'), ''),
+		]);
+
 		const completions = await getCompletionsAtCursor(workspacePath('sub', 'new.textile'), joinLines(
 			`"":/${CURSOR}`,
 			``,
 			`h1. A b C`,
-		));
+		), workspace);
 
-		assert.ok(completions.some(x => x.label === 'a.textile'), 'Has a.textile file completion');
-		assert.ok(completions.some(x => x.label === 'b.textile'), 'Has b.textile file completion');
-		assert.ok(completions.some(x => x.label === 'sub/'), 'Has sub folder completion');
-		assert.ok(!completions.some(x => x.label === 'c.textile'), 'Should not have c.textile from sub folder');
+		assertCompletionsEqual(completions, [
+			{ label: 'a.textile' },
+			{ label: 'b.textile' },
+			{ label: 'sub/' },
+		]);
 	});
 
 	test('Should return anchor suggestions in other file', async () => {
+		const workspace = new InMemoryTextileWorkspace([
+			new InMemoryDocument(workspacePath('b.textile'), joinLines(
+				`h1. b`,
+				``,
+				`"./a":./a`,
+				``,
+				`h1. header1`,
+			)),
+		]);
 		const completions = await getCompletionsAtCursor(workspacePath('sub', 'new.textile'), joinLines(
 			`"":/b.textile#${CURSOR}`,
-		));
+		), workspace);
 
-		assert.ok(completions.some(x => x.label === '#b'), 'Has #b header completion');
-		assert.ok(completions.some(x => x.label === '#header1'), 'Has #header1 header completion');
+		assertCompletionsEqual(completions, [
+			{ label: '#b' },
+			{ label: '#header1' },
+		]);
 	});
 
 	test('Should reference links for current file', async () => {
@@ -121,9 +173,11 @@ suite('Textile path completion provider', () => {
 			`[ref-2]http://www.google.com`,
 		));
 
-		//assert.strictEqual(completions.length, 2);
-		assert.ok(completions.some(x => x.label === 'ref-1'), 'Has ref-1 reference completion');
-		assert.ok(completions.some(x => x.label === 'ref-2'), 'Has ref-2 reference completion');
+		assertCompletionsEqual(completions, [
+			{ label: 'new.textile' }, // Added for Textile
+			{ label: 'ref-1' },
+			{ label: 'ref-2' },
+		]);
 	});
 
 	test('Should complete headers in link definitions', async () => {
@@ -135,58 +189,141 @@ suite('Textile path completion provider', () => {
 			`[ref-1]${CURSOR}`,
 		));
 
-		assert.ok(completions.some(x => x.label === '#a-b-c'), 'Has #a-b-c header completion');
-		assert.ok(completions.some(x => x.label === '#x-y-z'), 'Has #x-y-z header completion');
+		assertCompletionsEqual(completions, [
+			{ label: '#a-b-c' },
+			{ label: '#x-y-z' },
+			{ label: 'new.textile' },
+		]);
 	});
 
 	test('Should complete relative paths in link definitions', async () => {
+		const workspace = new InMemoryTextileWorkspace([
+			new InMemoryDocument(workspacePath('a.textile'), ''),
+			new InMemoryDocument(workspacePath('b.textile'), ''),
+			new InMemoryDocument(workspacePath('sub/c.textile'), ''),
+		]);
+
 		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), joinLines(
 			`h1. a B c`,
 			``,
 			`[ref-1]${CURSOR}`,
-		));
+		), workspace);
 
-		assert.ok(completions.some(x => x.label === 'a.textile'), 'Has a.textile file completion');
-		assert.ok(completions.some(x => x.label === 'b.textile'), 'Has b.textile file completion');
-		assert.ok(completions.some(x => x.label === 'sub/'), 'Has sub folder completion');
+		assertCompletionsEqual(completions, [
+			{ label: '#a-b-c' },
+			{ label: 'a.textile' },
+			{ label: 'b.textile' },
+			{ label: 'sub/' },
+		]);
 	});
 
 	test('Should escape spaces in path names', async () => {
+		const workspace = new InMemoryTextileWorkspace([
+			new InMemoryDocument(workspacePath('a.textile'), ''),
+			new InMemoryDocument(workspacePath('b.textile'), ''),
+			new InMemoryDocument(workspacePath('sub/file with space.textile'), ''),
+		]);
+
 		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), joinLines(
 			`"":./sub/${CURSOR}`
-		));
+		), workspace);
 
-		assert.ok(completions.some(x => x.insertText === 'file%20with%20space.textile'), 'Has encoded path completion');
+		assertCompletionsEqual(completions, [
+			{ label: 'file with space.textile', insertText: 'file%20with%20space.textile' },
+		]);
 	});
 
+	/* Disabled for Textile : not relevant
+	test('Should support completions on angle bracket path with spaces', async () => {
+		const workspace = new InMemoryTextileWorkspace([
+			new InMemoryDocument(workspacePath('sub with space/a.md'), ''),
+			new InMemoryDocument(workspacePath('b.md'), ''),
+		]);
+
+		const completions = await getCompletionsAtCursor(workspacePath('new.md'), joinLines(
+			`[](</sub with space/${CURSOR}`
+		), workspace);
+
+		assertCompletionsEqual(completions, [
+			{ label: 'a.md', insertText: 'a.md' },
+		]);
+	});
+
+	test('Should not escape spaces in path names that use angle brackets', async () => {
+		const workspace = new InMemoryTextileWorkspace([
+			new InMemoryDocument(workspacePath('sub/file with space.md'), ''),
+		]);
+
+		{
+			const completions = await getCompletionsAtCursor(workspacePath('new.md'), joinLines(
+				`[](<./sub/${CURSOR}`
+			), workspace);
+
+			assertCompletionsEqual(completions, [
+				{ label: 'file with space.md', insertText: 'file with space.md' },
+			]);
+		}
+		{
+			const completions = await getCompletionsAtCursor(workspacePath('new.md'), joinLines(
+				`[](<./sub/${CURSOR}>`
+			), workspace);
+
+			assertCompletionsEqual(completions, [
+				{ label: 'file with space.md', insertText: 'file with space.md' },
+			]);
+		}
+	});
+	*/
+
 	test('Should complete paths for path with encoded spaces', async () => {
+		const workspace = new InMemoryTextileWorkspace([
+			new InMemoryDocument(workspacePath('a.textile'), ''),
+			new InMemoryDocument(workspacePath('b.textile'), ''),
+			new InMemoryDocument(workspacePath('sub with space/file.textile'), ''),
+		]);
+
 		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), joinLines(
 			`"":./sub%20with%20space/${CURSOR}`
-		));
+		), workspace);
 
-		assert.ok(completions.some(x => x.insertText === 'file.textile'), 'Has file from space');
+		assertCompletionsEqual(completions, [
+			{ label: 'file.textile', insertText: 'file.textile' },
+		]);
 	});
 
 	test('Should complete definition path for path with encoded spaces', async () => {
+		const workspace = new InMemoryTextileWorkspace([
+			new InMemoryDocument(workspacePath('a.textile'), ''),
+			new InMemoryDocument(workspacePath('b.textile'), ''),
+			new InMemoryDocument(workspacePath('sub with space/file.textile'), ''),
+		]);
+
 		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), joinLines(
 			`[def]./sub%20with%20space/${CURSOR}`
-		));
+		), workspace);
 
-		assert.ok(completions.some(x => x.insertText === 'file.textile'), 'Has file from space');
+		assertCompletionsEqual(completions, [
+			{ label: 'def' }, // FIXME : should be filtered by the path
+			{ label: 'file.textile', insertText: 'file.textile' },
+		]);
 	});
 	// -- End : changed for textile
 
 	// -- Begin : added for textile
-	test('Should return completions for image links also', async () => {
+	test('Should complete paths for image links', async () => {
 		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), joinLines(
-			`"":${CURSOR}`,
+			`!!:${CURSOR}`,
 			``,
 			`h1. A b C`,
 			``,
 			`h1. x y Z`,
 		));
 
-		assert.strictEqual(completions.length, 6);
+		assertCompletionsEqual(completions, [
+			{ label: '#a-b-c' },
+			{ label: '#x-y-z' },
+			{ label: 'new.textile' },
+		]);
 	});
 	// -- End : added for textile
 });

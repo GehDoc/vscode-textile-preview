@@ -10,28 +10,29 @@ nls.config({ messageFormat: nls.MessageFormat.bundle, bundleFormat: nls.BundleFo
 
 import { CommandManager } from './commandManager';
 import * as commands from './commands/index';
-// FIXME: import { registerPasteProvider } from './languageFeatures/copyPaste';
-import { MdDefinitionProvider } from './languageFeatures/definitionProvider';
-import { register as registerDiagnostics } from './languageFeatures/diagnostics';
-import { TextileLinkProvider } from './languageFeatures/documentLinkProvider';
-import { TextileDocumentSymbolProvider } from './languageFeatures/documentSymbolProvider';
-// FIXME: import { registerDropIntoEditor } from './languageFeatures/dropIntoEditor';
-import { registerFindFileReferences } from './languageFeatures/fileReferences';
-import { TextileFoldingProvider } from './languageFeatures/foldingProvider';
-import { TextilePathCompletionProvider } from './languageFeatures/pathCompletions';
-import { TextileReferencesProvider } from './languageFeatures/references';
-import { TextileRenameProvider } from './languageFeatures/rename';
-// FIXME: import { TextileSmartSelect } from './languageFeatures/smartSelect';
-import { TextileWorkspaceSymbolProvider } from './languageFeatures/workspaceSymbolProvider';
-import { Logger } from './logger';
-import { TextileEngine } from './textileEngine';
+// FIXME: import { registerPasteSupport } from './languageFeatures/copyPaste';
+import { registerDefinitionSupport } from './languageFeatures/definitions';
+import { registerDiagnosticSupport } from './languageFeatures/diagnostics';
+import { TextileLinkProvider, registerDocumentLinkSupport } from './languageFeatures/documentLinks';
+import { TextileDocumentSymbolProvider, registerDocumentSymbolSupport } from './languageFeatures/documentSymbols';
+// FIXME: import { registerDropIntoEditorSupport } from './languageFeatures/dropIntoEditor';
+import { registerFindFileReferenceSupport } from './languageFeatures/fileReferences';
+import { registerFoldingSupport } from './languageFeatures/folding';
+import { registerPathCompletionSupport } from './languageFeatures/pathCompletions';
+import { TextileReferencesProvider, registerReferencesSupport } from './languageFeatures/references';
+import { registerRenameSupport } from './languageFeatures/rename';
+// FIXME: import { registerSmartSelectSupport } from './languageFeatures/smartSelect';
+import { registerWorkspaceSymbolSupport } from './languageFeatures/workspaceSymbols';
+import { ILogger, VsCodeOutputLogger } from './logging';
+import { ITextileParser, TextileJSEngine, TextileParsingProvider } from './textileEngine';
 import { getTextileExtensionContributions } from './textileExtensions';
-import { TextileContentProvider } from './preview/previewContentProvider';
+import { TextileDocumentRenderer } from './preview/documentRenderer';
 import { TextilePreviewManager } from './preview/previewManager';
 import { ContentSecurityPolicyArbiter, ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './preview/security';
 import { githubSlugifier } from './slugify';
-// import { loadDefaultTelemetryReporter, TelemetryReporter } from './telemetryReporter';
-import { VsCodeTextileWorkspaceContents } from './workspaceContents';
+import { TextileTableOfContentsProvider } from './tableOfContents';
+//import { loadDefaultTelemetryReporter, TelemetryReporter } from './telemetryReporter';
+import { ITextileWorkspace, VsCodeTextileWorkspace } from './workspace';
 
 
 export function activate(context: vscode.ExtensionContext) {
@@ -43,50 +44,61 @@ export function activate(context: vscode.ExtensionContext) {
 	const contributions = getTextileExtensionContributions(context);
 	context.subscriptions.push(contributions);
 
+	const logger = new VsCodeOutputLogger();
+	context.subscriptions.push(logger);
+
 	const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
-	const engine = new TextileEngine(contributions, githubSlugifier);
-	const logger = new Logger();
 	const commandManager = new CommandManager();
 
-	const contentProvider = new TextileContentProvider(engine, context, cspArbiter, contributions, logger);
-	const symbolProvider = new TextileDocumentSymbolProvider(engine);
-	const previewManager = new TextilePreviewManager(contentProvider, logger, contributions, engine);
+	const engine = new TextileJSEngine(contributions, githubSlugifier, logger);
+	const workspace = new VsCodeTextileWorkspace();
+	const parser = new TextileParsingProvider(engine, workspace);
+	const tocProvider = new TextileTableOfContentsProvider(parser, workspace, logger);
+	context.subscriptions.push(workspace, parser, tocProvider);
+
+	const contentProvider = new TextileDocumentRenderer(engine, context, cspArbiter, contributions, logger);
+	const previewManager = new TextilePreviewManager(contentProvider, workspace, logger, contributions, tocProvider);
 	context.subscriptions.push(previewManager);
 
-	context.subscriptions.push(registerTextileLanguageFeatures(commandManager, symbolProvider, engine));
-	context.subscriptions.push(registerTextileCommands(commandManager, previewManager, /* Disabled for textile : telemetryReporter, */ cspArbiter, engine));
+	context.subscriptions.push(registerTextileLanguageFeatures(parser, workspace, commandManager, tocProvider, logger));
+	context.subscriptions.push(registerTextileCommands(commandManager, previewManager, /* Disabled for textile : telemetryReporter, */ cspArbiter, engine, tocProvider));
 
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
-		logger.updateConfiguration();
 		previewManager.updateConfiguration();
 	}));
 }
 
 function registerTextileLanguageFeatures(
+	parser: ITextileParser,
+	workspace: ITextileWorkspace,
 	commandManager: CommandManager,
-	symbolProvider: TextileDocumentSymbolProvider,
-	engine: TextileEngine
+	tocProvider: TextileTableOfContentsProvider,
+	logger: ILogger,
 ): vscode.Disposable {
 	const selector: vscode.DocumentSelector = { language: 'textile', scheme: '*' };
 
-	const linkProvider = new TextileLinkProvider(engine);
-	const workspaceContents = new VsCodeTextileWorkspaceContents();
+	const linkProvider = new TextileLinkProvider(parser, workspace, logger);
+	const referencesProvider = new TextileReferencesProvider(parser, workspace, tocProvider, logger);
+	const symbolProvider = new TextileDocumentSymbolProvider(tocProvider, logger);
 
-	const referencesProvider = new TextileReferencesProvider(linkProvider, workspaceContents, engine, githubSlugifier);
 	return vscode.Disposable.from(
-		vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider),
-		vscode.languages.registerDocumentLinkProvider(selector, linkProvider),
-		vscode.languages.registerFoldingRangeProvider(selector, new TextileFoldingProvider(engine)),
-		// FIXME: vscode.languages.registerSelectionRangeProvider(selector, new TextileSmartSelect(engine)),
-		vscode.languages.registerWorkspaceSymbolProvider(new TextileWorkspaceSymbolProvider(symbolProvider, workspaceContents)),
-		vscode.languages.registerReferenceProvider(selector, referencesProvider),
-		vscode.languages.registerRenameProvider(selector, new TextileRenameProvider(referencesProvider, workspaceContents, githubSlugifier)),
-		vscode.languages.registerDefinitionProvider(selector, new MdDefinitionProvider(referencesProvider)),
-		TextilePathCompletionProvider.register(selector, engine, linkProvider),
-		registerDiagnostics(selector, engine, workspaceContents, linkProvider, commandManager),
-		// FIXME : registerDropIntoEditor(selector),
-		// FIXME : registerPasteProvider(selector),
-		registerFindFileReferences(commandManager, referencesProvider),
+		linkProvider,
+		referencesProvider,
+
+		// Language features
+		registerDefinitionSupport(selector, referencesProvider),
+		registerDiagnosticSupport(selector, workspace, linkProvider, commandManager, referencesProvider, tocProvider, logger),
+		registerDocumentLinkSupport(selector, linkProvider),
+		registerDocumentSymbolSupport(selector, tocProvider, logger),
+		// FIXME : registerDropIntoEditorSupport(selector),
+		registerFindFileReferenceSupport(commandManager, referencesProvider),
+		registerFoldingSupport(selector, parser, tocProvider),
+		// FIXME : registerPasteSupport(selector),
+		registerPathCompletionSupport(selector, workspace, parser, linkProvider),
+		registerReferencesSupport(selector, referencesProvider),
+		registerRenameSupport(selector, workspace, referencesProvider, parser.slugifier),
+		// FIXME : registerSmartSelectSupport(selector, parser, tocProvider),
+		registerWorkspaceSymbolSupport(workspace, symbolProvider),
 	);
 }
 
@@ -95,7 +107,8 @@ function registerTextileCommands(
 	previewManager: TextilePreviewManager,
 	// Disabled for textile : telemetryReporter: TelemetryReporter,
 	cspArbiter: ContentSecurityPolicyArbiter,
-	engine: TextileEngine
+	engine: TextileJSEngine,
+	tocProvider: TextileTableOfContentsProvider,
 ): vscode.Disposable {
 	const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager);
 
@@ -106,10 +119,9 @@ function registerTextileCommands(
 	commandManager.register(new commands.RefreshPreviewCommand(previewManager, engine));
 	commandManager.register(new commands.MoveCursorToPositionCommand());
 	commandManager.register(new commands.ShowPreviewSecuritySelectorCommand(previewSecuritySelector, previewManager));
-	commandManager.register(new commands.OpenDocumentLinkCommand(engine));
+	commandManager.register(new commands.OpenDocumentLinkCommand(tocProvider));
 	commandManager.register(new commands.ToggleLockCommand(previewManager));
 	commandManager.register(new commands.RenderDocument(engine));
 	commandManager.register(new commands.ReloadPlugins(previewManager, engine));
 	return commandManager;
 }
-

@@ -6,58 +6,76 @@
 import * as assert from 'assert';
 import 'mocha';
 import * as vscode from 'vscode';
-import { TextileFoldingProvider } from '../languageFeatures/foldingProvider';
+import { TextileFoldingProvider } from '../languageFeatures/folding';
+import { TextileTableOfContentsProvider } from '../tableOfContents';
+import { noopToken } from '../util/cancellation';
+import { DisposableStore } from '../util/dispose';
 import { InMemoryDocument } from '../util/inMemoryDocument';
 import { createNewTextileEngine } from './engine';
-// FIXME : import { joinLines } from './util';
+import { InMemoryTextileWorkspace } from './inMemoryWorkspace';
+import { nulLogger } from './nulLogging';
+import { joinLines, withStore } from './util';
 
-const testFileName = vscode.Uri.file('test.md');
+const testFileName = vscode.Uri.file('test.textile');
+
+async function getFoldsForDocument(store: DisposableStore, contents: string) {
+	const doc = new InMemoryDocument(testFileName, contents);
+	const workspace = store.add(new InMemoryTextileWorkspace([doc]));
+	const engine = createNewTextileEngine();
+	const tocProvider = store.add(new TextileTableOfContentsProvider(engine, workspace, nulLogger));
+	const provider = new TextileFoldingProvider(engine, tocProvider);
+	return provider.provideFoldingRanges(doc, {}, noopToken);
+}
 
 suite('textile.FoldingProvider', () => {
-	test('Should not return anything for empty document', async () => {
-		const folds = await getFoldsForDocument(``);
+	test('Should not return anything for empty document', withStore(async (store) => {
+		const folds = await getFoldsForDocument(store, ``);
 		assert.strictEqual(folds.length, 0);
-	});
-
-	test('Should not return anything for document without headers', async () => {
-		const folds = await getFoldsForDocument(`a
-**b** afas
-a#b
-a`);
-		assert.strictEqual(folds.length, 0);
-	});
+	}));
 
 	// --- BEGIN : modified for textile
-	test('Should fold from header to end of document', async () => {
-		const folds = await getFoldsForDocument(`a
+	test('Should not return anything for document without headers', withStore(async (store) => {
+		const folds = await getFoldsForDocument(store, joinLines(
+			`a`,
+			`**b** afas`,
+			`a h1. b`,
+			`a`,
+		));
+		assert.strictEqual(folds.length, 0);
+	}));
+
+	test('Should fold from header to end of document', withStore(async (store) => {
+		const folds = await getFoldsForDocument(store, `a
 
 h1. b
 
 c
-d`);
+d`
+		);
 		assert.strictEqual(folds.length, 1);
 		const firstFold = folds[0];
 		assert.strictEqual(firstFold.start, 2);
 		assert.strictEqual(firstFold.end, 5);
-	});
+	}));
 
-	test('Should leave single newline before next header', async () => {
-		const folds = await getFoldsForDocument(`
+	test('Should leave single newline before next header', withStore(async (store) => {
+		const folds = await getFoldsForDocument(store, `
 h1. a
 
 x
 
 h1. b
 
-y`);
+y`
+		);
 		assert.strictEqual(folds.length, 2);
 		const firstFold = folds[0];
 		assert.strictEqual(firstFold.start, 1);
 		assert.strictEqual(firstFold.end, 3);
-	});
+	}));
 
-	test('Should collapse multuple newlines to single newline before next header', async () => {
-		const folds = await getFoldsForDocument(`
+	test('Should collapse multiple newlines to single newline before next header', withStore(async (store) => {
+		const folds = await getFoldsForDocument(store, `
 h1. a
 
 x
@@ -66,31 +84,32 @@ x
 
 h1. b
 
-y`);
+y`
+		);
 		assert.strictEqual(folds.length, 2);
 		const firstFold = folds[0];
 		assert.strictEqual(firstFold.start, 1);
 		assert.strictEqual(firstFold.end, 5);
-	});
+	}));
 
 	/* Disabled for textile : not relevant, if no newline between text and header, there is simply no header
-	test('Should not collapse if there is no newline before next header', async () => {
-		const folds = await getFoldsForDocument(`
-h1. a
-
-x
-h1. b
-
-y`);
+	test('Should not collapse if there is no newline before next header', withStore(async (store) => {
+		const folds = await getFoldsForDocument(store, joinLines(
+			``,
+			`# a`,
+			`x`,
+			`# b`,
+			`y`,
+		));
 		assert.strictEqual(folds.length, 2);
 		const firstFold = folds[0];
 		assert.strictEqual(firstFold.start, 1);
 		assert.strictEqual(firstFold.end, 2);
-	});
+	}));
 	*/
 
-	test('Should fold nested <!-- #region --> markers', async () => {
-		const folds = await getFoldsForDocument(`a
+	test('Should fold nested <!-- #region --> markers', withStore(async (store) => {
+		const folds = await getFoldsForDocument(store, `a
 <!-- #region -->
 b
 <!-- #region hello!-->
@@ -102,7 +121,8 @@ b.b
 <!-- #endregion: foo -->
 b
 <!-- #endregion -->
-a`);
+a`
+		);
 		assert.strictEqual(folds.length, 3);
 		const [outer, first, second] = folds.sort((a, b) => a.start - b.start);
 
@@ -112,42 +132,46 @@ a`);
 		assert.strictEqual(first.end, 5);
 		assert.strictEqual(second.start, 7);
 		assert.strictEqual(second.end, 9);
-	});
+	}));
 
-	test('Should fold from list to end of document', async () => {
-		const folds = await getFoldsForDocument(`a
+	test('Should fold from list to end of document', withStore(async (store) => {
+		const folds = await getFoldsForDocument(store, `a
 * b
 c
-d`);
+d`
+		);
 		assert.strictEqual(folds.length, 1);
 		const firstFold = folds[0];
 		assert.strictEqual(firstFold.start, 1);
 		assert.strictEqual(firstFold.end, 3);
-	});
+	}));
 
-	test('lists folds should span multiple lines of content', async () => {
-		const folds = await getFoldsForDocument(`a
-* This list item\n  spans multiple\n  lines.`);
+	test('lists folds should span multiple lines of content', withStore(async (store) => {
+		const folds = await getFoldsForDocument(store, joinLines(
+			`a`,
+			`* This list item\n  spans multiple\n  lines.`
+		));
 		assert.strictEqual(folds.length, 1);
 		const firstFold = folds[0];
 		assert.strictEqual(firstFold.start, 1);
 		assert.strictEqual(firstFold.end, 3);
-	});
+	}));
 
-	test('List should leave single blankline before new element', async () => {
-		const folds = await getFoldsForDocument(`* a
+	test('List should leave single blankline before new element', withStore(async (store) => {
+		const folds = await getFoldsForDocument(store, `* a
 a
 
 
-b`);
+b`
+		);
 		assert.strictEqual(folds.length, 1);
 		const firstFold = folds[0];
 		assert.strictEqual(firstFold.start, 0);
 		assert.strictEqual(firstFold.end, 2);
-	});
+	}));
 
-	test('Should fold fenced code blocks', async () => {
-		const folds = await getFoldsForDocument(`bc[ts].
+	test('Should fold fenced code blocks', withStore(async (store) => {
+		const folds = await getFoldsForDocument(store, `bc[ts].
 a
 
 b`);
@@ -155,10 +179,10 @@ b`);
 		const firstFold = folds[0];
 		assert.strictEqual(firstFold.start, 0);
 		assert.strictEqual(firstFold.end, 1);
-	});
+	}));
 
-	test('Should fold fenced code blocks with yaml front matter', async () => {
-		const folds = await getFoldsForDocument(`---
+	test('Should fold fenced code blocks with yaml front matter', withStore(async (store) => {
+		const folds = await getFoldsForDocument(store, `---
 title: bla
 ---
 
@@ -168,15 +192,16 @@ a
 a
 a
 b
-a`);
+a`
+		);
 		assert.strictEqual(folds.length, 1);
 		const firstFold = folds[0];
 		assert.strictEqual(firstFold.start, 4);
 		assert.strictEqual(firstFold.end, 5);
-	});
+	}));
 
-	test('Should fold html blocks', async () => {
-		const folds = await getFoldsForDocument(`x
+	test('Should fold html blocks', withStore(async (store) => {
+		const folds = await getFoldsForDocument(store, `x
 <div>
 	fa
 </div>`);
@@ -184,10 +209,10 @@ a`);
 		const firstFold = folds[0];
 		assert.strictEqual(firstFold.start, 1);
 		assert.strictEqual(firstFold.end, 3);
-	});
+	}));
 
-	test('Should fold html block comments', async () => {
-		const folds = await getFoldsForDocument(`x
+	test('Should fold html block comments', withStore(async (store) => {
+		const folds = await getFoldsForDocument(store,`x
 <!--
 fa
 -->`);
@@ -196,13 +221,6 @@ fa
 		assert.strictEqual(firstFold.start, 1);
 		assert.strictEqual(firstFold.end, 3);
 		assert.strictEqual(firstFold.kind, vscode.FoldingRangeKind.Comment);
-	});
+	}));
 	// --- END : modified for textile
 });
-
-
-async function getFoldsForDocument(contents: string) {
-	const doc = new InMemoryDocument(testFileName, contents);
-	const provider = new TextileFoldingProvider(createNewTextileEngine());
-	return await provider.provideFoldingRanges(doc, {}, new vscode.CancellationTokenSource().token);
-}

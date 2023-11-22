@@ -3,15 +3,18 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { TextileJS, Token, Options as TextileJSConfig } from '../libs/textile-js/textile';
-//import Token = require('textile-it/lib/token');
+import { type TextileJS, type Token, Options as TextileJSConfig } from '../libs/textile-js/textile';
 import * as vscode from 'vscode';
-import { TextileContributionProvider as TextileContributionProvider } from './textileExtensions';
+import { ILogger } from './logging';
+import { TextileContributionProvider } from './textileExtensions';
 import { Slugifier } from './slugify';
+import { ITextDocument } from './types/textDocument';
+import { Disposable } from './util/dispose';
 import { stringHash } from './util/hash';
 import { WebviewResourceProvider } from './util/resources';
 import { isOfScheme, Schemes } from './util/schemes';
-import { SkinnyTextDocument } from './workspaceContents';
+import { TextileDocumentInfoCache } from './util/workspaceCache';
+import { ITextileWorkspace } from './workspace';
 
 const UNICODE_NEWLINE_REGEX = /\u2028|\u2029/g;
 
@@ -55,7 +58,7 @@ class TokenCache {
 	};
 	private tokens?: Token[];
 
-	public tryGetCached(document: SkinnyTextDocument, config: TextileJSConfig): Token[] | undefined {
+	public tryGetCached(document: ITextDocument, config: TextileJSConfig): Token[] | undefined {
 		if (this.cachedDocument
 			&& this.cachedDocument.uri.toString() === document.uri.toString()
 			&& this.cachedDocument.version === document.version
@@ -67,7 +70,7 @@ class TokenCache {
 		return undefined;
 	}
 
-	public update(document: SkinnyTextDocument, config: TextileJSConfig, tokens: Token[]) {
+	public update(document: ITextDocument, config: TextileJSConfig, tokens: Token[]) {
 		this.cachedDocument = {
 			uri: document.uri,
 			version: document.version,
@@ -95,17 +98,28 @@ interface RenderEnv {
 	resourceProvider: WebviewResourceProvider | undefined;
 }
 
-export class TextileEngine {
+export interface ITextileParser {
+	readonly slugifier: Slugifier;
+	jsonmlUtils() : Promise<TextileJS["jsonmlUtils"]>; // Added for Textile
+
+	tokenize(document: ITextDocument): Promise<Token[]>;
+}
+
+export class TextileJSEngine implements ITextileParser {
 
 	private textile?: Promise<TextileJS>;
 
 	private _slugCount = new Map<string, number>();
 	private _tokenCache = new TokenCache();
 
+	public readonly slugifier: Slugifier;
 	public constructor(
 		/* Disabled for textile : private */ readonly contributionProvider: TextileContributionProvider,
-		private readonly slugifier: Slugifier,
+		slugifier: Slugifier,
+		private readonly logger: ILogger,
 	) {
+		this.slugifier = slugifier;
+
 		contributionProvider.onContributionsChanged(() => {
 			// Textile plugin contributions may have changed
 			this.textile = undefined;
@@ -205,7 +219,7 @@ export class TextileEngine {
 
 	// -- Begin : Modified for textile
 	private tokenizeDocument(
-		document: SkinnyTextDocument,
+		document: ITextDocument,
 		config: TextileJSConfig,
 		engine: TextileJS,
 		env?: RenderEnv
@@ -216,6 +230,7 @@ export class TextileEngine {
 			return cached;
 		}
 
+		this.logger.verbose('TextileJSEngine', `tokenizeDocument - ${document.uri}`);
 		const tokens = this.tokenizeString(document.getText(), engine, env);
 		this._tokenCache.update(document, config, tokens);
 		return tokens;
@@ -236,7 +251,7 @@ export class TextileEngine {
 		this._slugCount = new Map<string, number>();
 	}
 
-	public async render(input: SkinnyTextDocument | string, resourceProvider?: WebviewResourceProvider): Promise<RenderOutput> {
+	public async render(input: ITextDocument | string, resourceProvider?: WebviewResourceProvider): Promise<RenderOutput> {
 		const config = this.getConfig(typeof input === 'string' ? undefined : input.uri);
 		const engine = await this.getEngine(config);
 
@@ -261,7 +276,7 @@ export class TextileEngine {
 	}
 	// -- End : Modified for textile
 
-	public async parse(document: SkinnyTextDocument, env?: RenderEnv): Promise<Token[]> {
+	public async tokenize(document: ITextDocument, env?: RenderEnv): Promise<Token[]> {
 		const config = this.getConfig(document.uri);
 		const engine = await this.getEngine(config);
 		return this.tokenizeDocument(document, config, engine, env);
@@ -516,3 +531,35 @@ export const getLineNumber = (token: Token) =>
 export const getEndLineNumber = (token: Token) =>
 	typeof(token[0]) === 'string' && typeof(token[1]) === 'object' && typeof(token[1]['data-line-end']) !== 'undefined' ? +token[1]['data-line-end'] : undefined;
 // -- End : added for Textile
+
+export class TextileParsingProvider extends Disposable implements ITextileParser {
+
+	private readonly _cache: TextileDocumentInfoCache<Token[]>;
+
+	public readonly slugifier: Slugifier;
+
+	private readonly engine: TextileJSEngine; // Added for Textile
+
+	constructor(
+		engine: TextileJSEngine,
+		workspace: ITextileWorkspace,
+	) {
+		super();
+
+		this.slugifier = engine.slugifier;
+
+		this.engine = engine; // Added for Textile
+
+		this._cache = this._register(new TextileDocumentInfoCache<Token[]>(workspace, doc => {
+			return engine.tokenize(doc);
+		}));
+	}
+
+	public tokenize(document: ITextDocument): Promise<Token[]> {
+		return this._cache.getForDocument(document);
+	}
+
+	public jsonmlUtils() :Promise<TextileJS["jsonmlUtils"]> {
+	 	return this.engine.jsonmlUtils();
+	}
+}

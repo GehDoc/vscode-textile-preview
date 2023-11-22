@@ -6,23 +6,24 @@
 import * as assert from 'assert';
 import 'mocha';
 import * as vscode from 'vscode';
-import { MdDefinitionProvider } from '../languageFeatures/definitionProvider';
-import { TextileLinkProvider } from '../languageFeatures/documentLinkProvider';
+import { TextileVsCodeDefinitionProvider } from '../languageFeatures/definitions';
 import { TextileReferencesProvider } from '../languageFeatures/references';
-import { githubSlugifier } from '../slugify';
+import { TextileTableOfContentsProvider } from '../tableOfContents';
 import { noopToken } from '../util/cancellation';
+import { DisposableStore } from '../util/dispose';
 import { InMemoryDocument } from '../util/inMemoryDocument';
-import { TextileWorkspaceContents } from '../workspaceContents';
+import { ITextileWorkspace } from '../workspace';
 import { createNewTextileEngine } from './engine';
-import { InMemoryWorkspaceTextileDocuments } from './inMemoryWorkspace';
-import { joinLines, workspacePath } from './util';
+import { InMemoryTextileWorkspace } from './inMemoryWorkspace';
+import { nulLogger } from './nulLogging';
+import { joinLines, withStore, workspacePath } from './util';
 
 
-function getDefinition(doc: InMemoryDocument, pos: vscode.Position, workspaceContents: TextileWorkspaceContents) {
+function getDefinition(store: DisposableStore, doc: InMemoryDocument, pos: vscode.Position, workspace: ITextileWorkspace) {
 	const engine = createNewTextileEngine();
-	const linkProvider = new TextileLinkProvider(engine);
-	const referencesProvider = new TextileReferencesProvider(linkProvider, workspaceContents, engine, githubSlugifier);
-	const provider = new MdDefinitionProvider(referencesProvider);
+	const tocProvider = store.add(new TextileTableOfContentsProvider(engine, workspace, nulLogger));
+	const referencesProvider = store.add(new TextileReferencesProvider(engine, workspace, tocProvider, nulLogger));
+	const provider = new TextileVsCodeDefinitionProvider(referencesProvider);
 	return provider.provideDefinition(doc, pos, noopToken);
 }
 
@@ -47,31 +48,33 @@ function assertDefinitionsEqual(actualDef: vscode.Definition, ...expectedDefs: {
 }
 
 suite('textile: Go to definition', () => {
-	test('Should not return definition when on link text', async () => {
+	test('Should not return definition when on link text', withStore(async (store) => {
 		const doc = new InMemoryDocument(workspacePath('doc.textile'), joinLines(
 			`"ref":#abc`,
 			`[ref]http://example.com`,
 		));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
 
-		const defs = await getDefinition(doc, new vscode.Position(0, 1), new InMemoryWorkspaceTextileDocuments([doc]));
+		const defs = await getDefinition(store, doc, new vscode.Position(0, 1), workspace);
 		assert.deepStrictEqual(defs, undefined);
-	});
+	}));
 
-	test('Should find definition links within file from link', async () => {
+	test('Should find definition links within file from link', withStore(async (store) => {
 		const docUri = workspacePath('doc.textile');
 		const doc = new InMemoryDocument(docUri, joinLines(
 			`"link 1":abc`, // trigger here
 			``,
 			`[abc]https://example.com`,
 		));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
 
-		const defs = await getDefinition(doc, new vscode.Position(0, 12), new InMemoryWorkspaceTextileDocuments([doc]));
+		const defs = await getDefinition(store, doc, new vscode.Position(0, 12), workspace);
 		assertDefinitionsEqual(defs!,
 			{ uri: docUri, line: 2 },
 		);
-	});
+	}));
 
-	test('Should find definition links using shorthand', async () => {
+	test('Should find definition links using shorthand', withStore(async (store) => {
 		const docUri = workspacePath('doc.textile');
 		const doc = new InMemoryDocument(docUri, joinLines(
 			'', // Disabled : not relevant for Textile : `[ref]`, // trigger 1'
@@ -80,51 +83,52 @@ suite('textile: Go to definition', () => {
 			``,
 			`[ref]/Hello.textile` // trigger 3
 		));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
 		/* Disabled : not relevant for Textile
 		{
-			const defs = await getDefinition(doc, new vscode.Position(0, 2), new InMemoryWorkspaceTextileDocuments([doc]));
+			const defs = await getDefinition(store, doc, new vscode.Position(0, 2), workspace);
 			assertDefinitionsEqual(defs!,
 				{ uri: docUri, line: 4 },
 			);
 		}
 		*/
 		{
-			const defs = await getDefinition(doc, new vscode.Position(2, 7), new InMemoryWorkspaceTextileDocuments([doc]));
+			const defs = await getDefinition(store, doc, new vscode.Position(2, 7), workspace);
 			assertDefinitionsEqual(defs!,
 				{ uri: docUri, line: 4 },
 			);
 		}
 		{
-			const defs = await getDefinition(doc, new vscode.Position(4, 2), new InMemoryWorkspaceTextileDocuments([doc]));
+			const defs = await getDefinition(store, doc, new vscode.Position(4, 2), workspace);
 			assertDefinitionsEqual(defs!,
 				{ uri: docUri, line: 4 },
 			);
 		}
-	});
+	}));
 
-	test('Should find definition links within file from definition', async () => {
+	test('Should find definition links within file from definition', withStore(async (store) => {
 		const docUri = workspacePath('doc.textile');
 		const doc = new InMemoryDocument(docUri, joinLines(
 			`"link 1":abc`,
 			``,
 			`[abc]https://example.com`, // trigger here
 		));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
 
-		const defs = await getDefinition(doc, new vscode.Position(2, 3), new InMemoryWorkspaceTextileDocuments([doc]));
+		const defs = await getDefinition(store, doc, new vscode.Position(2, 3), workspace);
 		assertDefinitionsEqual(defs!,
 			{ uri: docUri, line: 2 },
 		);
-	});
+	}));
 
-	test('Should not find definition links across files', async () => {
+	test('Should not find definition links across files', withStore(async (store) => {
 		const docUri = workspacePath('doc.textile');
 		const doc = new InMemoryDocument(docUri, joinLines(
 			`"link 1":abc`,
 			``,
 			`[abc]https://example.com`,
 		));
-
-		const defs = await getDefinition(doc, new vscode.Position(0, 12), new InMemoryWorkspaceTextileDocuments([
+		const workspace = store.add(new InMemoryTextileWorkspace([
 			doc,
 			new InMemoryDocument(workspacePath('other.textile'), joinLines(
 				`"link 1":abc`,
@@ -132,8 +136,10 @@ suite('textile: Go to definition', () => {
 				`[abc]https://example.com?bad`,
 			))
 		]));
+
+		const defs = await getDefinition(store, doc, new vscode.Position(0, 12), workspace);
 		assertDefinitionsEqual(defs!,
 			{ uri: docUri, line: 2 },
 		);
-	});
+	}));
 });

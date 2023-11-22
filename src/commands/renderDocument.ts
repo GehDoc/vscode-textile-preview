@@ -4,17 +4,17 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Command } from '../commandManager';
-import { TextileEngine } from '../textileEngine';
-import { SkinnyTextDocument } from '../workspaceContents';
+import { TextileJSEngine } from '../textileEngine';
+import { ITextDocument } from '../types/textDocument';
 
 export class RenderDocument implements Command {
 	public readonly id = 'textile.api.render';
 
 	public constructor(
-		private readonly engine: TextileEngine
+		private readonly engine: TextileJSEngine
 	) { }
 
-	public async execute(document: SkinnyTextDocument | string): Promise<string> {
+	public async execute(document: ITextDocument | string): Promise<string> {
 		return (await (this.engine.render(document))).html;
 	}
 }

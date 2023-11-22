@@ -29,11 +29,12 @@
 	"configuration.textile.links.openLocation.beside": "Open links beside the active editor.",
 	"configuration.textile.suggest.paths.enabled.description": "Enable/disable path suggestions for textile links",
 	"configuration.textile.editor.drop.enabled": "Enable/disable dropping into the textile editor to insert shift. Requires enabling `#workbench.experimental.editor.dropIntoEditor.enabled#`.",
-	"configuration.textile.editor.pasteLinks.enabled": "Enable/disable pasting files into a Textile editor inserts Textile links.",
+	"configuration.textile.editor.pasteLinks.enabled": "Enable/disable pasting files into a Textile editor inserts Textile links. Requires enabling `#editor.experimental.pasteActions.enabled#`.",
 	"configuration.textile.experimental.validate.enabled.description": "Enable/disable all error reporting in Textile files.",
-	"configuration.textile.experimental.validate.referenceLinks.enabled.description": "Validate reference links in Textile files, e.g. `[link][ref]`.  Requires enabling `#textile.experimental.validate.enabled#`.",
-	"configuration.textile.experimental.validate.headerLinks.enabled.description": "Validate links to headers in Textile files, e.g. `[link](#header)`. Requires enabling `#textile.experimental.validate.enabled#`.",
-	"configuration.textile.experimental.validate.fileLinks.enabled.description": "Validate links to other files in Textile files, e.g. `[link](/path/to/file.md)`. This checks that the target files exists. Requires enabling `#textile.experimental.validate.enabled#`.",
-	"configuration.textile.experimental.validate.ignoreLinks.description": "Configure links that should not be validated. For example `/about` would not validate the link `[about](/about)`, while the glob `/assets/**/*.svg` would let you skip validation for any link to `.svg` files under the `assets` directory.",
+	"configuration.textile.experimental.validate.referenceLinks.enabled.description": "Validate reference links in Textile files, e.g. `\"link\":ref`.  Requires enabling `#textile.experimental.validate.enabled#`.",
+	"configuration.textile.experimental.validate.fragmentLinks.enabled.description": "Validate fragment links to headers in the current Textile file, e.g. `\"link\":#header`. Requires enabling `#textile.experimental.validate.enabled#`.",
+	"configuration.textile.experimental.validate.fileLinks.enabled.description": "Validate links to other files in Textile files, e.g. `\"link\":/path/to/file.textile`. This checks that the target files exists. Requires enabling `#textile.experimental.validate.enabled#`.",
+	"configuration.textile.experimental.validate.fileLinks.textileFragmentLinks.description": "Validate the fragment part of links to headers in other files in Textile files, e.g. `\"link\":/path/to/file.textile#header`. Inherits the setting value from `#textile.experimental.validate.fragmentLinks.enabled#` by default.",
+	"configuration.textile.experimental.validate.ignoreLinks.description": "Configure links that should not be validated. For example `/about` would not validate the link `\"about\":/about`, while the glob `/assets/**/*.svg` would let you skip validation for any link to `.svg` files under the `assets` directory.",
 	"workspaceTrust": "Required for loading styles configured in the workspace."
 }

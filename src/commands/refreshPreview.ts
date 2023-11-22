@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Command } from '../commandManager';
-import { TextileEngine } from '../textileEngine';
+import { TextileJSEngine } from '../textileEngine';
 import { TextilePreviewManager } from '../preview/previewManager';
 
 export class RefreshPreviewCommand implements Command {
@@ -12,7 +12,7 @@ export class RefreshPreviewCommand implements Command {
 
 	public constructor(
 		private readonly webviewManager: TextilePreviewManager,
-		private readonly engine: TextileEngine
+		private readonly engine: TextileJSEngine
 	) { }
 
 	public execute() {

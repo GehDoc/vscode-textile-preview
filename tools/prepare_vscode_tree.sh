@@ -7,8 +7,8 @@
 # After running this tool, you can compare ./ and ./tools/tmp/out/ to gather
 # new features.
 
-VSCODE_VERSION_GIT_TAG=1.68.0
-VSCODE_LOC_VERSION_GIT_TAG=1.68.3
+VSCODE_VERSION_GIT="tags/1.69.2"
+VSCODE_LOC_VERSION_GIT="32be2376681ab2490ef1dc8c9e51168fd4701ccd"
 
 . $(dirname $0)/log.sh
 
@@ -52,30 +52,46 @@ function process_dir_src() {
 		if [ "$extension" = "js" ] || [ "$extension" = "json" ] || [ "$extension" = "ts" ] || [ "$extension" = "css" ]; then
 			# replace markdown by textile
 			sed -e "s/markdown/textile/g" "$file" > "$destfile"
+			sed -i -e "s/dotMdResource/dotTextileResource/g" "$destfile"
+			sed -i -e "s/IMdParser/ITextileParser/g" "$destfile"
+			sed -i -e "s/IMdWorkspace/ITextileWorkspace/g" "$destfile"
+			sed -i -e "s/InMemoryMdWorkspace/InMemoryTextileWorkspace/g" "$destfile"
 			sed -i -e "s/MarkdownIt/TextileJS/g" "$destfile"
 			sed -i -e "s/Markdown/Textile/g" "$destfile"
+			sed -i -e "s/MdDocumentLinks/TextileDocumentLinks/g" "$destfile"
 			sed -i -e "s/MDDocument/TextileDocument/g" "$destfile"
+			sed -i -e "s/MdDocumentRenderer/TextileDocumentRenderer/g" "$destfile"
 			sed -i -e "s/MdReferencesProvider/TextileReferencesProvider/g" "$destfile"
+			sed -i -e "s/MdDocumentInfoCache/TextileDocumentInfoCache/g" "$destfile"
 			sed -i -e "s/MdDocumentSymbolProvider/TextileDocumentSymbolProvider/g" "$destfile"
 			sed -i -e "s/MdLinkSource/TextileLinkSource/g" "$destfile"
 			sed -i -e "s/MdInlineLink/TextileInlineLink/g" "$destfile"
 			sed -i -e "s/MdLinkDefinition/TextileLinkDefinition/g" "$destfile"
 			sed -i -e "s/MdLinkProvider/TextileLinkProvider/g" "$destfile"
 			sed -i -e "s/MdLink/TextileLink/g" "$destfile"
+			sed -i -e "s/MdParsingProvider/TextileParsingProvider/g" "$destfile"
+			sed -i -e "s/MdTableOfContentsProvider/TextileTableOfContentsProvider/g" "$destfile"
+			sed -i -e "s/MdWorkspaceInfoCache/TextileWorkspaceInfoCache/g" "$destfile"
 			sed -i -e "s/MdWorkspaceContents/TextileWorkspaceContents/g" "$destfile"
 			sed -i -e "s/MdWorkspaceSymbolProvider/TextileWorkspaceSymbolProvider/g" "$destfile"
 			sed -i -e "s/MdPathCompletionProvider/TextilePathCompletionProvider/g" "$destfile"
 			sed -i -e "s/MdFoldingProvider/TextileFoldingProvider/g" "$destfile"
 			sed -i -e "s/MdWorkspaceCache/TextileWorkspaceCache/g" "$destfile"
-			sed -i -e "s/dotMdResource/dotTextileResource/g" "$destfile"
-			sed -i -e "s/tryOpenMdFile/tryOpenTextileFile/g" "$destfile"
-			sed -i -e "s/tryFindMdDocumentForLink/tryFindTextileDocumentForLink/g" "$destfile"
 			sed -i -e "s/MdHeaderReference/TextileHeaderReference/g" "$destfile"
 			sed -i -e "s/MdReference/TextileReference/g" "$destfile"
 			sed -i -e "s/MdFileRenameEdit/TextileFileRenameEdit/g" "$destfile"
 			sed -i -e "s/MdWorkspaceEdit/TextileWorkspaceEdit/g" "$destfile"
 			sed -i -e "s/MdRenameProvider/TextileRenameProvider/g" "$destfile"
 			sed -i -e "s/MdSmartSelect/TextileSmartSelect/g" "$destfile"
+			sed -i -e "s/MdTableOfContentsWatcher/TextileTableOfContentsWatcher/g" "$destfile"
+			sed -i -e "s/MdVsCodeDefinitionProvider/TextileVsCodeDefinitionProvider/g" "$destfile"
+			sed -i -e "s/MdVsCodeLinkProvider/TextileVsCodeLinkProvider/g" "$destfile"
+			sed -i -e "s/MdVsCodePathCompletionProvider/TextileVsCodePathCompletionProvider/g" "$destfile"
+			sed -i -e "s/MdVsCodeReferencesProvider/TextileVsCodeReferencesProvider/g" "$destfile"
+			sed -i -e "s/MdVsCodeRenameProvider/TextileVsCodeRenameProvider/g" "$destfile"
+			sed -i -e "s/tryOpenMdFile/tryOpenTextileFile/g" "$destfile"
+			sed -i -e "s/tryFindMdDocumentForLink/tryFindTextileDocumentForLink/g" "$destfile"
+			sed -i -e "s/VsCodeMdWorkspace/VsCodeTextileWorkspace/g" "$destfile"
 			sed -i -e "s/'.md'/'.textile'/g" "$destfile"
 			sed -i -e "s/ .md / .textile /g" "$destfile"
 			sed -i -e "s/\*.md'/\*.textile'/g" "$destfile"
@@ -188,7 +204,7 @@ function github_DL() {
 echo "Processing src"
 
 # Download from github : https://github.com/Microsoft/vscode
-github_DL "vscode" tags/$VSCODE_VERSION_GIT_TAG
+github_DL "vscode" $VSCODE_VERSION_GIT
 
 process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools/tmp/out/  '../shared.webpack.config.js ../tsconfig.base.json ./src/*.* ./src/*/*.* ./media/*.* ./notebook/*.* ./.vscodeignore ./*.json ./*.js ./preview-src/*.* ./schemas/package.schema.json ./test-workspace/*.* ./test-workspace/*/*.*'
 
@@ -197,7 +213,7 @@ process_dir_src ./tools/tmp/vscode/extensions/markdown-language-features ./tools
 echo "Processing locales"
 
 # Download from github : https://github.com/Microsoft/vscode-loc.git
-github_DL "vscode-loc" release/$VSCODE_LOC_VERSION_GIT_TAG
+github_DL "vscode-loc" $VSCODE_LOC_VERSION_GIT
 
 process_dir_i18n ./tools/tmp/vscode-loc/i18n/ ./tools/tmp/out/i18n/
 

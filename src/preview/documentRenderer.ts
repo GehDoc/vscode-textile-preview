@@ -6,9 +6,10 @@
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import * as uri from 'vscode-uri';
-import { Logger } from '../logger';
-import { TextileEngine } from '../textileEngine';
+import { ILogger } from '../logging';
+import { TextileJSEngine } from '../textileEngine';
 import { TextileContributionProvider } from '../textileExtensions';
+import { escapeAttribute, getNonce } from '../util/dom';
 import { WebviewResourceProvider } from '../util/resources';
 import { TextilePreviewConfiguration, TextilePreviewConfigurationManager } from './previewConfig';
 import { ContentSecurityPolicyArbiter, TextilePreviewSecurityLevel } from './security';
@@ -35,23 +36,19 @@ const previewStrings = {
 		'Content Disabled Security Warning')
 };
 
-function escapeAttribute(value: string | vscode.Uri): string {
-	return value.toString().replace(/"/g, '&quot;');
-}
-
 export interface TextileContentProviderOutput {
 	html: string;
 	containingImages: { src: string }[];
 }
 
 
-export class TextileContentProvider {
+export class TextileDocumentRenderer {
 	constructor(
-		private readonly engine: TextileEngine,
+		private readonly engine: TextileJSEngine,
 		private readonly context: vscode.ExtensionContext,
 		private readonly cspArbiter: ContentSecurityPolicyArbiter,
 		private readonly contributionProvider: TextileContributionProvider,
-		private readonly logger: Logger
+		private readonly logger: ILogger
 	) {
 		this.iconPath = {
 			dark: vscode.Uri.joinPath(this.context.extensionUri, 'media', 'preview-dark.svg'),
@@ -61,7 +58,7 @@ export class TextileContentProvider {
 
 	public readonly iconPath: { light: vscode.Uri; dark: vscode.Uri };
 
-	public async provideTextDocumentContent(
+	public async renderDocument(
 		textileDocument: vscode.TextDocument,
 		resourceProvider: WebviewResourceProvider,
 		previewConfigurations: TextilePreviewConfigurationManager,
@@ -83,16 +80,17 @@ export class TextileContentProvider {
 			webviewResourceRoot: resourceProvider.asWebviewUri(textileDocument.uri).toString(),
 		};
 
-		this.logger.log('provideTextDocumentContent', initialData);
+		this.logger.verbose('DocumentRenderer', `provideTextDocumentContent - ${textileDocument.uri}`, initialData);
 
 		// Content Security Policy
 		const nonce = getNonce();
 		const csp = this.getCsp(resourceProvider, sourceUri, nonce);
 
-		const body = await this.textileBody(textileDocument, resourceProvider);
+		const body = await this.renderBody(textileDocument, resourceProvider);
 		if (token.isCancellationRequested) {
 			return { html: '', containingImages: [] };
 		}
+
 		const html = `<!DOCTYPE html>
 			<html style="${escapeAttribute(this.getSettingsOverrideStyles(config))}">
 			<head>
@@ -117,7 +115,7 @@ export class TextileContentProvider {
 		};
 	}
 
-	public async textileBody(
+	public async renderBody(
 		textileDocument: vscode.TextDocument,
 		resourceProvider: WebviewResourceProvider,
 	): Promise<TextileContentProviderOutput> {
@@ -128,9 +126,8 @@ export class TextileContentProvider {
 			containingImages: rendered.containingImages
 		};
 	}
-	public provideFileNotFoundContent(
-		resource: vscode.Uri,
-	): string {
+
+	public renderFileNotFoundDocument(resource: vscode.Uri): string {
 		const resourcePath = uri.Utils.basename(resource);
 		const body = localize('preview.notFound', '{0} cannot be found', resourcePath);
 		return `<!DOCTYPE html>
@@ -248,13 +245,4 @@ export class TextileContentProvider {
 				return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' ${rule} https: data:; media-src 'self' ${rule} https: data:; script-src 'nonce-${nonce}'; style-src 'self' ${rule} 'unsafe-inline' https: data:; font-src 'self' ${rule} https: data:;">`;
 		}
 	}
-}
-
-function getNonce() {
-	let text = '';
-	const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	for (let i = 0; i < 64; i++) {
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
-	}
-	return text;
 }
