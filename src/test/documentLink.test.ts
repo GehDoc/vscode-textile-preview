@@ -106,7 +106,7 @@ async function getLinksForFile(file: vscode.Uri): Promise<vscode.DocumentLink[]>
 		assert.strictEqual(vscode.window.activeTextEditor!.selection.start.line, 1);
 	});
 
-	test('Should navigate to line number within non-md file', async () => {
+	test('Should navigate to line number within non-textile file', async () => {
 		await withFileContents(testFileA, '"b":sub/foo.txt#L3');
 
 		const [link] = await getLinksForFile(testFileA);

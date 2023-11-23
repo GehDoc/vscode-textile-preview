@@ -223,7 +223,7 @@ suite('Textile: Find all references', () => {
 	test('Should find references from link across files', withStore(async (store) => {
 		const docUri = workspacePath('doc.textile');
 		const other1Uri = workspacePath('sub', 'other.textile');
-		const other2Uri = workspacePath('zOther2.md');
+		const other2Uri = workspacePath('zOther2.textile');
 
 		const doc = new InMemoryDocument(docUri, joinLines(
 			`h1. abc`,

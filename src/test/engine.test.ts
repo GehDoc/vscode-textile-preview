@@ -10,7 +10,7 @@ import { InMemoryDocument } from '../util/inMemoryDocument';
 import { createNewTextileEngine } from './engine';
 
 
-const testFileName = vscode.Uri.file('test.md');
+const testFileName = vscode.Uri.file('test.textile');
 
 suite('textile.engine', () => {
 	suite('rendering', () => {
