@@ -6,37 +6,39 @@
 import * as assert from 'assert';
 import 'mocha';
 import * as vscode from 'vscode';
-import { TextileLinkProvider } from '../languageFeatures/documentLinks';
 import { TextileReferencesProvider } from '../languageFeatures/references';
-import { TextileRenameProvider, TextileWorkspaceEdit } from '../languageFeatures/rename';
+import { TextileVsCodeRenameProvider, TextileWorkspaceEdit } from '../languageFeatures/rename';
 import { githubSlugifier } from '../slugify';
+import { TextileTableOfContentsProvider } from '../tableOfContents';
 import { noopToken } from '../util/cancellation';
+import { DisposableStore } from '../util/dispose';
 import { InMemoryDocument } from '../util/inMemoryDocument';
-import { TextileWorkspaceContents } from '../workspace';
+import { ITextileWorkspace } from '../workspace';
 import { createNewTextileEngine } from './engine';
-import { InMemoryWorkspaceTextileDocuments } from './inMemoryWorkspace';
-import { assertRangeEqual, joinLines, workspacePath } from './util';
+import { InMemoryTextileWorkspace } from './inMemoryWorkspace';
+import { nulLogger } from './nulLogging';
+import { assertRangeEqual, joinLines, withStore, workspacePath } from './util';
 
 
 /**
  * Get prepare rename info.
  */
-function prepareRename(doc: InMemoryDocument, pos: vscode.Position, workspaceContents: TextileWorkspaceContents): Promise<undefined | { readonly range: vscode.Range; readonly placeholder: string }> {
+function prepareRename(store: DisposableStore, doc: InMemoryDocument, pos: vscode.Position, workspace: ITextileWorkspace): Promise<undefined | { readonly range: vscode.Range; readonly placeholder: string }> {
 	const engine = createNewTextileEngine();
-	const linkProvider = new TextileLinkProvider(engine);
-	const referencesProvider = new TextileReferencesProvider(linkProvider, workspaceContents, engine, githubSlugifier);
-	const renameProvider = new TextileRenameProvider(referencesProvider, workspaceContents, githubSlugifier);
+	const tocProvider = store.add(new TextileTableOfContentsProvider(engine, workspace, nulLogger));
+	const referenceComputer = store.add(new TextileReferencesProvider(engine, workspace, tocProvider, nulLogger));
+	const renameProvider = store.add(new TextileVsCodeRenameProvider(workspace, referenceComputer, githubSlugifier));
 	return renameProvider.prepareRename(doc, pos, noopToken);
 }
 
 /**
  * Get all the edits for the rename.
  */
-function getRenameEdits(doc: InMemoryDocument, pos: vscode.Position, newName: string, workspaceContents: TextileWorkspaceContents): Promise<TextileWorkspaceEdit | undefined> {
+function getRenameEdits(store: DisposableStore, doc: InMemoryDocument, pos: vscode.Position, newName: string, workspace: ITextileWorkspace): Promise<TextileWorkspaceEdit | undefined> {
 	const engine = createNewTextileEngine();
-	const linkProvider = new TextileLinkProvider(engine);
-	const referencesProvider = new TextileReferencesProvider(linkProvider, workspaceContents, engine, githubSlugifier);
-	const renameProvider = new TextileRenameProvider(referencesProvider, workspaceContents, githubSlugifier);
+	const tocProvider = store.add(new TextileTableOfContentsProvider(engine, workspace, nulLogger));
+	const referencesProvider = store.add(new TextileReferencesProvider(engine, workspace, tocProvider, nulLogger));
+	const renameProvider = store.add(new TextileVsCodeRenameProvider(workspace, referencesProvider, githubSlugifier));
 	return renameProvider.provideRenameEditsImpl(doc, pos, newName, noopToken);
 }
 
@@ -92,43 +94,46 @@ suite('textile: rename', () => {
 		await vscode.extensions.getExtension('gehdoc.vscode-textile-preview')!.activate();
 	});
 
-	test('Rename on header should not include leading #', async () => {
+	test('Rename on header should not include leading #', withStore(async (store) => {
 		const uri = workspacePath('doc.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
 			`h1. abc`
 		));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
 
-		const info = await prepareRename(doc, new vscode.Position(0, 0), new InMemoryWorkspaceTextileDocuments([doc]));
+		const info = await prepareRename(store, doc, new vscode.Position(0, 0), workspace);
 		assertRangeEqual(info!.range, new vscode.Range(0, 4, 0, 7));
 
-		const edit = await getRenameEdits(doc, new vscode.Position(0, 0), "New Header", new InMemoryWorkspaceTextileDocuments([doc]));
+		const edit = await getRenameEdits(store, doc, new vscode.Position(0, 0), "New Header", workspace);
 		assertEditsEqual(edit!, {
 			uri, edits: [
 				new vscode.TextEdit(new vscode.Range(0, 4, 0, 7), 'New Header')
 			]
 		});
-	});
+	}));
 
 	/* Not relevant for Textile
-	test('Rename on header should include leading or trailing #s', async () => {
+	test('Rename on header should include leading or trailing #s', withStore(async (store) => {
 		const uri = workspacePath('doc.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
 			`### abc ###`
 		));
 
-		const info = await prepareRename(doc, new vscode.Position(0, 0), new InMemoryWorkspaceTextileDocuments([doc]));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
+
+		const info = await prepareRename(store, doc, new vscode.Position(0, 0), workspace);
 		assertRangeEqual(info!.range, new vscode.Range(0, 4, 0, 7));
 
-		const edit = await getRenameEdits(doc, new vscode.Position(0, 0), "New Header", new InMemoryWorkspaceTextileDocuments([doc]));
+		const edit = await getRenameEdits(store, doc, new vscode.Position(0, 0), "New Header", workspace);
 		assertEditsEqual(edit!, {
 			uri, edits: [
 				new vscode.TextEdit(new vscode.Range(0, 4, 0, 7), 'New Header')
 			]
 		});
-	});
+	}));
 	*/
 
-	test('Rename on header should pick up links in doc', async () => {
+	test('Rename on header should pick up links in doc', withStore(async (store) => {
 		const uri = workspacePath('doc.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
 			`h3. A b C`, // rename here
@@ -136,16 +141,17 @@ suite('textile: rename', () => {
 			`"text":#a-b-c`,
 		));
 
-		const edit = await getRenameEdits(doc, new vscode.Position(0, 0), "New Header", new InMemoryWorkspaceTextileDocuments([doc]));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
+		const edit = await getRenameEdits(store, doc, new vscode.Position(0, 0), "New Header", workspace);
 		assertEditsEqual(edit!, {
 			uri, edits: [
 				new vscode.TextEdit(new vscode.Range(0, 4, 0, 9), 'New Header'),
 				new vscode.TextEdit(new vscode.Range(2, 8, 2, 13), 'new-header'),
 			]
 		});
-	});
+	}));
 
-	test('Rename on link should use slug for link', async () => {
+	test('Rename on link should use slug for link', withStore(async (store) => {
 		const uri = workspacePath('doc.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
 			`h3. A b C`,
@@ -153,16 +159,17 @@ suite('textile: rename', () => {
 			`"text":#a-b-c`, // rename here
 		));
 
-		const edit = await getRenameEdits(doc, new vscode.Position(2, 10), "New Header", new InMemoryWorkspaceTextileDocuments([doc]));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
+		const edit = await getRenameEdits(store, doc, new vscode.Position(2, 10), "New Header", workspace);
 		assertEditsEqual(edit!, {
 			uri, edits: [
 				new vscode.TextEdit(new vscode.Range(0, 4, 0, 9), 'New Header'),
 				new vscode.TextEdit(new vscode.Range(2, 8, 2, 13), 'new-header'),
 			]
 		});
-	});
+	}));
 
-	test('Rename on link definition should work', async () => {
+	test('Rename on link definition should work', withStore(async (store) => {
 		const uri = workspacePath('doc.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
 			`h3. A b C`,
@@ -171,7 +178,8 @@ suite('textile: rename', () => {
 			`[ref]#a-b-c`// rename here
 		));
 
-		const edit = await getRenameEdits(doc, new vscode.Position(3, 10), "New Header", new InMemoryWorkspaceTextileDocuments([doc]));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
+		const edit = await getRenameEdits(store, doc, new vscode.Position(3, 10), "New Header", workspace);
 		assertEditsEqual(edit!, {
 			uri, edits: [
 				new vscode.TextEdit(new vscode.Range(0, 4, 0, 9), 'New Header'),
@@ -179,9 +187,9 @@ suite('textile: rename', () => {
 				new vscode.TextEdit(new vscode.Range(3, 6, 3, 11), 'new-header'),
 			]
 		});
-	});
+	}));
 
-	test('Rename on header should pick up links across files', async () => {
+	test('Rename on header should pick up links across files', withStore(async (store) => {
 		const uri = workspacePath('doc.textile');
 		const otherUri = workspacePath('other.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
@@ -190,7 +198,7 @@ suite('textile: rename', () => {
 			`"text":#a-b-c`,
 		));
 
-		const edit = await getRenameEdits(doc, new vscode.Position(0, 0), "New Header", new InMemoryWorkspaceTextileDocuments([
+		const edit = await getRenameEdits(store, doc, new vscode.Position(0, 0), "New Header", new InMemoryTextileWorkspace([
 			doc,
 			new InMemoryDocument(otherUri, joinLines(
 				`"text":#a-b-c`, // Should not find this
@@ -209,9 +217,9 @@ suite('textile: rename', () => {
 				new vscode.TextEdit(new vscode.Range(2, 13, 2, 18), 'new-header'),
 			]
 		});
-	});
+	}));
 
-	test('Rename on link should pick up links across files', async () => {
+	test('Rename on link should pick up links across files', withStore(async (store) => {
 		const uri = workspacePath('doc.textile');
 		const otherUri = workspacePath('other.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
@@ -220,7 +228,7 @@ suite('textile: rename', () => {
 			`"text":#a-b-c`,  // rename here
 		));
 
-		const edit = await getRenameEdits(doc, new vscode.Position(2, 10), "New Header", new InMemoryWorkspaceTextileDocuments([
+		const edit = await getRenameEdits(store, doc, new vscode.Position(2, 10), "New Header", new InMemoryTextileWorkspace([
 			doc,
 			new InMemoryDocument(otherUri, joinLines(
 				`"text":#a-b-c`, // Should not find this
@@ -239,9 +247,9 @@ suite('textile: rename', () => {
 				new vscode.TextEdit(new vscode.Range(2, 13, 2, 18), 'new-header'),
 			]
 		});
-	});
+	}));
 
-	test('Rename on link in other file should pick up all refs', async () => {
+	test('Rename on link in other file should pick up all refs', withStore(async (store) => {
 		const uri = workspacePath('doc.textile');
 		const otherUri = workspacePath('other.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
@@ -272,7 +280,7 @@ suite('textile: rename', () => {
 
 		{
 			// Rename on header with file extension
-			const edit = await getRenameEdits(otherDoc, new vscode.Position(1, 22), "New Header", new InMemoryWorkspaceTextileDocuments([
+			const edit = await getRenameEdits(store, otherDoc, new vscode.Position(1, 22), "New Header", new InMemoryTextileWorkspace([
 				doc,
 				otherDoc
 			]));
@@ -280,15 +288,15 @@ suite('textile: rename', () => {
 		}
 		{
 			// Rename on header without extension
-			const edit = await getRenameEdits(otherDoc, new vscode.Position(2, 15), "New Header", new InMemoryWorkspaceTextileDocuments([
+			const edit = await getRenameEdits(store, otherDoc, new vscode.Position(2, 15), "New Header", new InMemoryTextileWorkspace([
 				doc,
 				otherDoc
 			]));
 			assertEditsEqual(edit!, ...expectedEdits);
 		}
-	});
+	}));
 
-	test('Rename on reference should rename references and definition', async () => {
+	test('Rename on reference should rename references and definition', withStore(async (store) => {
 		const uri = workspacePath('doc.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
 			`"text":ref`, // rename here
@@ -297,7 +305,8 @@ suite('textile: rename', () => {
 			`[ref]https://example.com`,
 		));
 
-		const edit = await getRenameEdits(doc, new vscode.Position(0, 8), "new ref", new InMemoryWorkspaceTextileDocuments([doc]));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
+		const edit = await getRenameEdits(store, doc, new vscode.Position(0, 8), "new ref", workspace);
 		assertEditsEqual(edit!, {
 			uri, edits: [
 				new vscode.TextEdit(new vscode.Range(0, 7, 0, 10), 'new ref'),
@@ -305,9 +314,9 @@ suite('textile: rename', () => {
 				new vscode.TextEdit(new vscode.Range(3, 1, 3, 4), 'new ref'),
 			]
 		});
-	});
+	}));
 
-	test('Rename on definition should rename references and definitions', async () => {
+	test('Rename on definition should rename references and definitions', withStore(async (store) => {
 		const uri = workspacePath('doc.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
 			`"text":ref`,
@@ -316,7 +325,8 @@ suite('textile: rename', () => {
 			`[ref]https://example.com`, // rename here
 		));
 
-		const edit = await getRenameEdits(doc, new vscode.Position(3, 3), "new ref", new InMemoryWorkspaceTextileDocuments([doc]));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
+		const edit = await getRenameEdits(store, doc, new vscode.Position(3, 3), "new ref", workspace);
 		assertEditsEqual(edit!, {
 			uri, edits: [
 				new vscode.TextEdit(new vscode.Range(0, 7, 0, 10), 'new ref'),
@@ -324,9 +334,9 @@ suite('textile: rename', () => {
 				new vscode.TextEdit(new vscode.Range(3, 1, 3, 4), 'new ref'),
 			]
 		});
-	});
+	}));
 
-	test('Rename on definition entry should rename header and references', async () => {
+	test('Rename on definition entry should rename header and references', withStore(async (store) => {
 		const uri = workspacePath('doc.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
 			`h1. a B c`,
@@ -335,12 +345,13 @@ suite('textile: rename', () => {
 			`"direct":#a-b-c`,
 			`[ref]#a-b-c`, // rename here
 		));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
 
-		const preparedInfo = await prepareRename(doc, new vscode.Position(4, 10), new InMemoryWorkspaceTextileDocuments([doc]));
+		const preparedInfo = await prepareRename(store, doc, new vscode.Position(4, 10), workspace);
 		assert.strictEqual(preparedInfo!.placeholder, 'a B c');
 		assertRangeEqual(preparedInfo!.range, new vscode.Range(4, 6, 4, 11));
 
-		const edit = await getRenameEdits(doc, new vscode.Position(4, 10), "x Y z", new InMemoryWorkspaceTextileDocuments([doc]));
+		const edit = await getRenameEdits(store, doc, new vscode.Position(4, 10), "x Y z", workspace);
 		assertEditsEqual(edit!, {
 			uri, edits: [
 				new vscode.TextEdit(new vscode.Range(0, 4, 0, 9), 'x Y z'),
@@ -348,51 +359,55 @@ suite('textile: rename', () => {
 				new vscode.TextEdit(new vscode.Range(4, 6, 4, 11), 'x-y-z'),
 			]
 		});
-	});
+	}));
 
-	test('Rename should not be supported on link text', async () => {
+	test('Rename should not be supported on link text', withStore(async (store) => {
 		const uri = workspacePath('doc.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
 			`h1. Header`,
 			``, // Added for Textile
 			`"text":#header`,
 		));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
 
-		await assert.rejects(prepareRename(doc, new vscode.Position(2, 2), new InMemoryWorkspaceTextileDocuments([doc])));
-	});
+		await assert.rejects(prepareRename(store, doc, new vscode.Position(2, 2), workspace));
+	}));
 
-	test('Path rename should use file path as range', async () => {
+	test('Path rename should use file path as range', withStore(async (store) => {
 		const uri = workspacePath('doc.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
 			`"text":./doc.textile`,
 			`[ref]./doc.textile`,
 		));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
 
-		const info = await prepareRename(doc, new vscode.Position(0, 10), new InMemoryWorkspaceTextileDocuments([doc]));
+		const info = await prepareRename(store, doc, new vscode.Position(0, 10), workspace);
 		assert.strictEqual(info!.placeholder, './doc.textile');
 		assertRangeEqual(info!.range, new vscode.Range(0, 7, 0, 20));
-	});
+	}));
 
-	test('Path rename\'s range should excludes fragment', async () => {
+	test('Path rename\'s range should excludes fragment', withStore(async (store) => {
 		const uri = workspacePath('doc.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
 			`"text":./doc.textile#some-header`,
 			`[ref]./doc.textile#some-header`,
 		));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
 
-		const info = await prepareRename(doc, new vscode.Position(0, 10), new InMemoryWorkspaceTextileDocuments([doc]));
+		const info = await prepareRename(store, doc, new vscode.Position(0, 10), workspace);
 		assert.strictEqual(info!.placeholder, './doc.textile');
 		assertRangeEqual(info!.range, new vscode.Range(0, 7, 0, 20));
-	});
+	}));
 
-	test('Path rename should update file and all refs', async () => {
+	test('Path rename should update file and all refs', withStore(async (store) => {
 		const uri = workspacePath('doc.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
 			`"text":./doc.textile`,
 			`[ref]./doc.textile`,
 		));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
 
-		const edit = await getRenameEdits(doc, new vscode.Position(0, 10), './sub/newDoc.textile', new InMemoryWorkspaceTextileDocuments([doc]));
+		const edit = await getRenameEdits(store, doc, new vscode.Position(0, 10), './sub/newDoc.textile', workspace);
 		assertEditsEqual(edit!, {
 			originalUri: uri,
 			newUri: workspacePath('sub', 'newDoc.textile'),
@@ -402,16 +417,17 @@ suite('textile: rename', () => {
 				new vscode.TextEdit(new vscode.Range(1, 5, 1, 18), './sub/newDoc.textile'),
 			]
 		});
-	});
+	}));
 
-	test('Path rename using absolute file path should anchor to workspace root', async () => {
+	test('Path rename using absolute file path should anchor to workspace root', withStore(async (store) => {
 		const uri = workspacePath('sub', 'doc.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
 			`"text":/sub/doc.textile`,
 			`[ref]/sub/doc.textile`,
 		));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
 
-		const edit = await getRenameEdits(doc, new vscode.Position(0, 10), '/newSub/newDoc.textile', new InMemoryWorkspaceTextileDocuments([doc]));
+		const edit = await getRenameEdits(store, doc, new vscode.Position(0, 10), '/newSub/newDoc.textile', workspace);
 		assertEditsEqual(edit!, {
 			originalUri: uri,
 			newUri: workspacePath('newSub', 'newDoc.textile'),
@@ -421,26 +437,28 @@ suite('textile: rename', () => {
 				new vscode.TextEdit(new vscode.Range(1, 5, 1, 21), '/newSub/newDoc.textile'),
 			]
 		});
-	});
+	}));
 
-	test('Path rename should use un-encoded paths as placeholder', async () => {
+	test('Path rename should use un-encoded paths as placeholder', withStore(async (store) => {
 		const uri = workspacePath('sub', 'doc with spaces.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
 			`"text":/sub/doc%20with%20spaces.textile`,
 		));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
 
-		const info = await prepareRename(doc, new vscode.Position(0, 10), new InMemoryWorkspaceTextileDocuments([doc]));
+		const info = await prepareRename(store, doc, new vscode.Position(0, 10), workspace);
 		assert.strictEqual(info!.placeholder, '/sub/doc with spaces.textile');
-	});
+	}));
 
-	test('Path rename should encode paths', async () => {
+	test('Path rename should encode paths', withStore(async (store) => {
 		const uri = workspacePath('sub', 'doc.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
 			`"text":/sub/doc.textile`,
 			`[ref]/sub/doc.textile`,
 		));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
 
-		const edit = await getRenameEdits(doc, new vscode.Position(0, 10), '/NEW sub/new DOC.textile', new InMemoryWorkspaceTextileDocuments([doc]));
+		const edit = await getRenameEdits(store, doc, new vscode.Position(0, 10), '/NEW sub/new DOC.textile', workspace);
 		assertEditsEqual(edit!, {
 			originalUri: uri,
 			newUri: workspacePath('NEW sub', 'new DOC.textile'),
@@ -450,9 +468,9 @@ suite('textile: rename', () => {
 				new vscode.TextEdit(new vscode.Range(1, 5, 1, 21), '/NEW%20sub/new%20DOC.textile'),
 			]
 		});
-	});
+	}));
 
-	test('Path rename should work with unknown files', async () => {
+	test('Path rename should work with unknown files', withStore(async (store) => {
 		const uri1 = workspacePath('doc1.textile');
 		const doc1 = new InMemoryDocument(uri1, joinLines(
 			`!/images/more/image.png(img)!`,
@@ -465,10 +483,12 @@ suite('textile: rename', () => {
 			`!/images/more/image.png(img)!`,
 		));
 
-		const edit = await getRenameEdits(doc1, new vscode.Position(0, 10), '/img/test/new.png', new InMemoryWorkspaceTextileDocuments([
+		const workspace = store.add(new InMemoryTextileWorkspace([
 			doc1,
 			doc2
 		]));
+
+		const edit = await getRenameEdits(store, doc1, new vscode.Position(0, 10), '/img/test/new.png', workspace);
 		assertEditsEqual(edit!,
 			// Should not have file edits since the files don't exist here
 			{
@@ -482,16 +502,17 @@ suite('textile: rename', () => {
 					new vscode.TextEdit(new vscode.Range(0, 1, 0, 23), '/img/test/new.png'),
 				]
 			});
-	});
+	}));
 
-	test('Path rename should use .textile extension on extension-less link', async () => {
+	test('Path rename should use .textile extension on extension-less link', withStore(async (store) => {
 		const uri = workspacePath('doc.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
 			`"text":/doc#header`,
 			`[ref]/doc#other`,
 		));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
 
-		const edit = await getRenameEdits(doc, new vscode.Position(0, 10), '/new File', new InMemoryWorkspaceTextileDocuments([doc]));
+		const edit = await getRenameEdits(store, doc, new vscode.Position(0, 10), '/new File', workspace);
 		assertEditsEqual(edit!, {
 			originalUri: uri,
 			newUri: workspacePath('new File.textile'), // Rename on disk should use file extension
@@ -501,10 +522,10 @@ suite('textile: rename', () => {
 				new vscode.TextEdit(new vscode.Range(1, 5, 1, 9), '/new%20File'),
 			]
 		});
-	});
+	}));
 
 	// TODO: fails on windows
-	test.skip('Path rename should use correctly resolved paths across files', async () => {
+	test.skip('Path rename should use correctly resolved paths across files', withStore(async (store) => {
 		const uri1 = workspacePath('sub', 'doc.textile');
 		const doc1 = new InMemoryDocument(uri1, joinLines(
 			`"text":./doc.textile`,
@@ -529,9 +550,11 @@ suite('textile: rename', () => {
 			`[ref]/sub/doc.textile`,
 		));
 
-		const edit = await getRenameEdits(doc1, new vscode.Position(0, 10), './new/new-doc.textile', new InMemoryWorkspaceTextileDocuments([
+		const workspace = store.add(new InMemoryTextileWorkspace([
 			doc1, doc2, doc3, doc4,
 		]));
+
+		const edit = await getRenameEdits(store, doc1, new vscode.Position(0, 10), './new/new-doc.textile', workspace);
 		assertEditsEqual(edit!, {
 			originalUri: uri1,
 			newUri: workspacePath('sub', 'new', 'new-doc.textile'),
@@ -556,9 +579,9 @@ suite('textile: rename', () => {
 				new vscode.TextEdit(new vscode.Range(1, 7, 1, 18), '/sub/new/new-doc.textile'),
 			]
 		});
-	});
+	}));
 
-	test('Path rename should resolve on links without prefix', async () => {
+	test('Path rename should resolve on links without prefix', withStore(async (store) => {
 		const uri1 = workspacePath('sub', 'doc.textile');
 		const doc1 = new InMemoryDocument(uri1, joinLines(
 			`!sub2/doc3.textile(text)!`,
@@ -572,9 +595,11 @@ suite('textile: rename', () => {
 		const uri3 = workspacePath('sub', 'sub2', 'doc3.textile');
 		const doc3 = new InMemoryDocument(uri3, joinLines());
 
-		const edit = await getRenameEdits(doc1, new vscode.Position(0, 10), 'sub2/cat.textile', new InMemoryWorkspaceTextileDocuments([
+		const workspace = store.add(new InMemoryTextileWorkspace([
 			doc1, doc2, doc3
 		]));
+
+		const edit = await getRenameEdits(store, doc1, new vscode.Position(0, 10), 'sub2/cat.textile', workspace);
 		assertEditsEqual(edit!, {
 			originalUri: workspacePath('sub', 'sub2', 'doc3.textile'),
 			newUri: workspacePath('sub', 'sub2', 'cat.textile'),
@@ -583,9 +608,9 @@ suite('textile: rename', () => {
 		}, {
 			uri: uri2, edits: [new vscode.TextEdit(new vscode.Range(0, 1, 0, 22), 'sub/sub2/cat.textile')]
 		});
-	});
+	}));
 
-	test('Rename on link should use header text as placeholder', async () => {
+	test('Rename on link should use header text as placeholder', withStore(async (store) => {
 		const uri = workspacePath('doc.textile');
 		const doc = new InMemoryDocument(uri, joinLines(
 			`h3. a B c`,
@@ -593,12 +618,13 @@ suite('textile: rename', () => {
 			`[text]#a-b-c`,
 		));
 
-		const info = await prepareRename(doc, new vscode.Position(2, 10), new InMemoryWorkspaceTextileDocuments([doc]));
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
+		const info = await prepareRename(store, doc, new vscode.Position(2, 10), workspace);
 		assert.strictEqual(info!.placeholder, 'a B c');
 		assertRangeEqual(info!.range, new vscode.Range(2, 7, 2, 12));
-	});
+	}));
 
-	test('Rename on http uri should work', async () => {
+	test('Rename on http uri should work', withStore(async (store) => {
 		const uri1 = workspacePath('doc.textile');
 		const uri2 = workspacePath('doc2.textile');
 		const doc = new InMemoryDocument(uri1, joinLines(
@@ -607,12 +633,14 @@ suite('textile: rename', () => {
 			// not relevant for textile : `<http://example.com>`,
 		));
 
-		const edit = await getRenameEdits(doc, new vscode.Position(1, 10), "https://example.com/sub", new InMemoryWorkspaceTextileDocuments([
+		const workspace = store.add(new InMemoryTextileWorkspace([
 			doc,
 			new InMemoryDocument(uri2, joinLines(
 				`"4":http://example.com`,
 			))
 		]));
+
+		const edit = await getRenameEdits(store, doc, new vscode.Position(1, 10), "https://example.com/sub", workspace);
 		assertEditsEqual(edit!, {
 			uri: uri1, edits: [
 				new vscode.TextEdit(new vscode.Range(0, 4, 0, 22), 'https://example.com/sub'),
@@ -624,5 +652,80 @@ suite('textile: rename', () => {
 				new vscode.TextEdit(new vscode.Range(0, 4, 0, 22), 'https://example.com/sub'),
 			]
 		});
-	});
+	}));
+
+	test('Rename on definition path should update all references to path', withStore(async (store) => {
+		const uri = workspacePath('doc.textile');
+		const doc = new InMemoryDocument(uri, joinLines(
+			`"ref text":ref`,
+			`"direct":/file`,
+			`[ref]/file`, // rename here
+		));
+
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
+
+		const preparedInfo = await prepareRename(store, doc, new vscode.Position(2, 10), workspace);
+		assert.strictEqual(preparedInfo!.placeholder, '/file');
+		assertRangeEqual(preparedInfo!.range, new vscode.Range(2, 5, 2, 10));
+
+		const edit = await getRenameEdits(store, doc, new vscode.Position(2, 10), "/newFile", workspace);
+		assertEditsEqual(edit!, {
+			uri, edits: [
+				new vscode.TextEdit(new vscode.Range(1, 9, 1, 14), '/newFile'),
+				new vscode.TextEdit(new vscode.Range(2, 5, 2, 10), '/newFile'),
+			]
+		});
+	}));
+
+	test('Rename on definition path where file exists should also update file', withStore(async (store) => {
+		const uri1 = workspacePath('doc.textile');
+		const doc1 = new InMemoryDocument(uri1, joinLines(
+			`"ref text":ref`,
+			`"direct":/doc2`,
+			`[ref]/doc2`, // rename here
+		));
+
+		const uri2 = workspacePath('doc2.textile');
+		const doc2 = new InMemoryDocument(uri2, joinLines());
+
+		const workspace = store.add(new InMemoryTextileWorkspace([doc1, doc2]));
+
+		const preparedInfo = await prepareRename(store, doc1, new vscode.Position(2, 10), workspace);
+		assert.strictEqual(preparedInfo!.placeholder, '/doc2');
+		assertRangeEqual(preparedInfo!.range, new vscode.Range(2, 5, 2, 10));
+
+		const edit = await getRenameEdits(store, doc1, new vscode.Position(2, 10), "/new-doc", workspace);
+		assertEditsEqual(edit!, {
+			uri: uri1, edits: [
+				new vscode.TextEdit(new vscode.Range(1, 9, 1, 14), '/new-doc'),
+				new vscode.TextEdit(new vscode.Range(2, 5, 2, 10), '/new-doc'),
+			]
+		}, {
+			originalUri: uri2,
+			newUri: workspacePath('new-doc.textile')
+		});
+	}));
+
+	test('Rename on definition path header should update all references to header', withStore(async (store) => {
+		const uri = workspacePath('doc.textile');
+		const doc = new InMemoryDocument(uri, joinLines(
+			`"ref text":ref`,
+			`"direct":/file#header`,
+			`[ref]/file#header`, // rename here
+		));
+
+		const workspace = store.add(new InMemoryTextileWorkspace([doc]));
+
+		const preparedInfo = await prepareRename(store, doc, new vscode.Position(2, 16), workspace);
+		assert.strictEqual(preparedInfo!.placeholder, 'header');
+		assertRangeEqual(preparedInfo!.range, new vscode.Range(2, 11, 2, 17));
+
+		const edit = await getRenameEdits(store, doc, new vscode.Position(2, 16), "New Header", workspace);
+		assertEditsEqual(edit!, {
+			uri, edits: [
+				new vscode.TextEdit(new vscode.Range(1, 15, 1, 21), 'new-header'),
+				new vscode.TextEdit(new vscode.Range(2, 11, 2, 17), 'new-header'),
+			]
+		});
+	}));
 });
