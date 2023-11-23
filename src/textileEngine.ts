@@ -538,7 +538,7 @@ export class TextileParsingProvider extends Disposable implements ITextileParser
 
 	public readonly slugifier: Slugifier;
 
-	private readonly engine: TextileJSEngine; // Added for Textile
+	public readonly jsonmlUtils: () => Promise<TextileJS["jsonmlUtils"]>;
 
 	constructor(
 		engine: TextileJSEngine,
@@ -548,7 +548,7 @@ export class TextileParsingProvider extends Disposable implements ITextileParser
 
 		this.slugifier = engine.slugifier;
 
-		this.engine = engine; // Added for Textile
+		this.jsonmlUtils = () => engine.jsonmlUtils();
 
 		this._cache = this._register(new TextileDocumentInfoCache<Token[]>(workspace, doc => {
 			return engine.tokenize(doc);
@@ -557,9 +557,5 @@ export class TextileParsingProvider extends Disposable implements ITextileParser
 
 	public tokenize(document: ITextDocument): Promise<Token[]> {
 		return this._cache.getForDocument(document);
-	}
-
-	public jsonmlUtils() :Promise<TextileJS["jsonmlUtils"]> {
-	 	return this.engine.jsonmlUtils();
 	}
 }
