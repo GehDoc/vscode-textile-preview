@@ -10,7 +10,7 @@
 	"configuration.textile.editor.pasteLinks.enabled": "Enable/disable pasting files into a Textile editor inserts Textile links. Requires enabling `#editor.experimental.pasteActions.enabled#`.",
 	"configuration.textile.experimental.validate.enabled.description": "Textile ファイル内のすべてのエラー報告を有効または無効にします。",
 	"configuration.textile.experimental.validate.fileLinks.enabled.description": "Textile ファイル内の他のファイルへのリンク (例: `\"link\":/path/to/file.textile`) を検証します。これにより、ターゲット ファイルが存在するかどうかが確認されます。`#textile.experimental.validate.enabled#` を有効にする必要があります。",
-	"configuration.textile.experimental.validate.fileLinks.textileFragmentLinks.description": "Textile ファイルで、他のファイルのヘッダーへのリンクのフラグメント部分を検証します。例: '[link](/path/to/file.md#header)'。既定では、'#textile.experimental.validate.fragmentLinks.enabled#' から設定値を継承します。",
+	"configuration.textile.experimental.validate.fileLinks.textileFragmentLinks.description": "Textile ファイルで、他のファイルのヘッダーへのリンクのフラグメント部分を検証します。例: '\"link\":/path/to/file.textile#header'。既定では、'#textile.experimental.validate.fragmentLinks.enabled#' から設定値を継承します。",
 	"configuration.textile.experimental.validate.fragmentLinks.enabled.description": "現在のTextile ファイルで、ヘッダーへのフラグメント リンクを検証します (例: `\"link\":#header`)。`#textile.experimental.validate.enabled#` を有効にする必要があります。",
 	"configuration.textile.experimental.validate.ignoreLinks.description": "検証しないリンクを校正します。たとえば、`/about` を指定すると、リンク `\"about\":/about` が検証されません。glob `/assets/**/*.svg` を指定すると、`assets` ディレクトリ下の `.svg` ファイルへのリンクの検証をスキップできます。",
 	"configuration.textile.experimental.validate.referenceLinks.enabled.description": "Textile ファイルの参照リンクを検証します (例: `\"link\":ref`)。 `#textile.experimental.validate.enabled#` を有効にする必要があります。",

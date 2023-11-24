@@ -10,7 +10,7 @@
 	"configuration.textile.editor.pasteLinks.enabled": "Enable/disable pasting files into a Textile editor inserts Textile links. Requires enabling `#editor.experimental.pasteActions.enabled#`.",
 	"configuration.textile.experimental.validate.enabled.description": "Textile 파일에서 모든 오류 보고를 사용/사용하지 않도록 설정합니다.",
 	"configuration.textile.experimental.validate.fileLinks.enabled.description": "Textile 파일의 다른 파일에 대한 링크의 유효성을 검사합니다(예: '\"link\":/path/to/file.textile'). 그러면 대상 파일이 있는지 확인합니다. '#textile.experimental.validate.enabled#'을 사용하도록 설정해야 합니다.",
-	"configuration.textile.experimental.validate.fileLinks.textileFragmentLinks.description": "Textile 파일의 다른 파일에 있는 헤더에 대한 링크의 조각 부분을 확인합니다. `[링크](/path/to/file.md#header)`. 기본적으로 `#textile.experimental.validate.fragmentLinks.enabled#`의 설정 값을 상속합니다.",
+	"configuration.textile.experimental.validate.fileLinks.textileFragmentLinks.description": "Textile 파일의 다른 파일에 있는 헤더에 대한 링크의 조각 부분을 확인합니다. `\"link\":/path/to/file.textile#header`. 기본적으로 `#textile.experimental.validate.fragmentLinks.enabled#`의 설정 값을 상속합니다.",
 	"configuration.textile.experimental.validate.fragmentLinks.enabled.description": "현재 Textile 파일의 헤더에 대한 조각 링크(예: '\"link\":#header')의 유효성을 검사합니다. `#textile.experimental.validate.enabled#`을 사용하도록 설정해야 합니다.",
 	"configuration.textile.experimental.validate.ignoreLinks.description": "유효성을 검사하지 않아야 하는 링크를 구성합니다. 예를 들어 `/about`은 `\"about\":/about` 링크의 유효성을 검사하지 않는다면, glob `/assets/**/*.svg`를 사용하면 `assets` 디렉터리 아래의 `.svg` 파일로 연결되는 모든 링크에 대한 유효성 검사를 건너뛸 수 있습니다.",
 	"configuration.textile.experimental.validate.referenceLinks.enabled.description": "Textile 파일에서 참조 링크(예: `\"link\":ref`)의 유효성을 검사합니다. '#textile.experimental.validate.enabled#'을 사용하도록 설정해야 합니다.",

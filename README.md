@@ -49,7 +49,7 @@ Features considered out of scope of this extension :
 * Telemetry reporter : Need a non free Azure account to use [@vscode/extension-telemetry](https://www.npmjs.com/package/@vscode/extension-telemetry) module.
 
 Maybe implemented, if requested :
-* Add other translations than the 9 core languages listed there : https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
+* Add other translations than the 11 core languages listed there : https://github.com/microsoft/vscode-loc/#visual-studio-code-language-packs
 * Support enabling/disabling 'linkify' = Enable or disable conversion of URL-like text to links in the Textile preview;
 * Some helper functionalities, like link normalization and validation (may allow file:// protocol and absolute paths to images. Currently, http:// protocol, and path relative to Textile file are recognized). Look [here](./src/textileEngine.ts), and search for Disabled and FIXME;
 * Smart select;

@@ -15,6 +15,7 @@
 
 const DEFAULT_REPLACEMENTS = [
 	[ /\[link\]\(\/path\/to\/file\.md\)/g, '\\"link\\":/path/to/file.textile' , 1 ],
+	[ /\[(link|link text|링크)\]\(\/path\/to\/file\.md#header\)/g, '\\"link\\":/path/to/file.textile#header', 1 ],
 	[ /\[(link|vínculo)\]\(#header\)/g , '\\"link\\":#header', 1 ],
 	[ /\[about\]\(\/about\)/g , '\\"about\\":/about', 1 ],
 	[ /\[link\]\[ref\]/g, '\\"link\\":ref', 1 ],
@@ -74,6 +75,24 @@ module.exports = {
 			...DEFAULT_REPLACEMENTS,
 			[ /markdown/g, 'textile', 42 ],
 			[ /Markdown/g, 'Textile', 33 ],
+		]
+	},
+	'pl':{
+		id: 'pl',
+		folderName: 'pol',
+		replacements: [
+			...DEFAULT_REPLACEMENTS,
+			[ /markdown/g, 'textile', 41 ],
+			[ /Markdown/g, 'Textile', 34 ],
+		]
+	},
+	'pt-BR':{
+		id: 'pt-br',
+		folderName: 'ptb',
+		replacements: [
+			...DEFAULT_REPLACEMENTS,
+			[ /markdown/g, 'textile', 43 ],
+			[ /Markdown/g, 'Textile', 32 ],
 		]
 	},
 	'ru':{
