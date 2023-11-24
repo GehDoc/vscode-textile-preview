@@ -372,7 +372,7 @@ export class TextileLinkComputer {
 			...inlineLinks,
 			// Disabled for Textile : ...this.getReferenceLinks(document, noLinkRanges.concatInline(inlineLinks.map(x => x.source.range))),
 			...this.getLinkDefinitions(document, noLinkRanges),
-			// FIXME for Textile : ...this.getAutoLinks(document, noLinkRanges),
+			// Disabled for Textile : ...this.getAutoLinks(document, noLinkRanges),
 		]);
 		const definitionSet = new LinkDefinitionSet(allLinks);
 		return allLinks.map((link) => this.toReferenceLink(link, definitionSet));

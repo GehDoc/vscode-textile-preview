@@ -18,10 +18,10 @@ enum CompletionContextKind {
 	Link,
 
 	/** `[...][|]` */
-	ReferenceLink,
+	ReferenceLink, // Not relevant for Textile
 
 	/** `[]: |` */
-	LinkDefinition, // TODO: not implemented
+	LinkDefinition,
 }
 
 interface AnchorContext {

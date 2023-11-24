@@ -47,11 +47,6 @@ function assertCompletionsEqual(actual: readonly vscode.CompletionItem[], expect
 suite('Textile: Path completions', () => {
 
 	// -- Begin : changed for textile
-	setup(async () => {
-		// These tests assume that the textile completion provider is already registered
-		await vscode.extensions.getExtension('gehdoc.vscode-textile-preview')!.activate();
-	});
-
 	test('Should not return anything when triggered in empty doc', async () => {
 		const completions = await getCompletionsAtCursor(workspacePath('new.textile'), `${CURSOR}`);
 		assertCompletionsEqual(completions, []);
