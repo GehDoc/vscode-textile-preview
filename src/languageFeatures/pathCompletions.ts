@@ -116,8 +116,11 @@ export class TextileVsCodePathCompletionProvider implements vscode.CompletionIte
 			case CompletionContextKind.LinkDefinition:
 			case CompletionContextKind.Link: {
 				const items: vscode.CompletionItem[] = [];
-				for await (const item of this.provideReferenceSuggestions(document, position, context)) {
-					items.push(item); // Modified for Textile
+				if (context.linkPrefix.length === 0) {
+					// Modified for Textile : links & references suggested together
+					for await (const item of this.provideReferenceSuggestions(document, position, context)) {
+						items.push(item);
+					}
 				}
 
 				const isAnchorInCurrentDoc = context.anchorInfo && context.anchorInfo.beforeAnchor.length === 0;

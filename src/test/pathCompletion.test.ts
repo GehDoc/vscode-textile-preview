@@ -298,7 +298,6 @@ suite('Textile: Path completions', () => {
 		), workspace);
 
 		assertCompletionsEqual(completions, [
-			{ label: 'def' }, // FIXME : should be filtered by the path
 			{ label: 'file.textile', insertText: 'file.textile' },
 		]);
 	});

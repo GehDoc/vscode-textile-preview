@@ -11,10 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [INTERNAL] WIP - Update to vscode 1.69.2
 - [DEPENDENCIES] update to latest vscode-nls
 
-### TODO before release
-- FIXME in pathCompletion.test.ts
-- finalize to move tests out of quarantine
-
 
 ## [1.3.24] - 20230907
 
