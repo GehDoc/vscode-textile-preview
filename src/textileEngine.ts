@@ -3,7 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type TextileJS, type Token, Options as TextileJSConfig } from '../libs/textile-js/textile';
+import TextileJS = require('../libs/textile-js/textile');
+import { type Token, Options as TextileJSConfig } from '../libs/textile-js/textile';
 import * as vscode from 'vscode';
 import { ILogger } from './logging';
 import { TextileContributionProvider } from './textileExtensions';

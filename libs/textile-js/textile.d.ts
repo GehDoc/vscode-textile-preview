@@ -2,8 +2,6 @@
 // Project: https://github.com/GehDoc/textile-js/
 // Definitions by: Gérald Hameau <https://github.com/GehDoc>
 
-export = TextileJS;
-
 declare namespace TextileJS {
 	type Token = any;
 
@@ -22,18 +20,22 @@ declare namespace TextileJS {
 		renderers?: Renderer[],
 		dontEscapeContentForTags? :string[],
 	};
-
-	interface TextileJS {
-		convert(text: string, options?: Options, context?: any): string;
-		setOptions(options: Options): object;
-
-		tokenize(text: string, options?: Options, context?: any): Token[];
-		serialize(tokens: Token[], options?: Options, context?: any): string;
-
-		jsonmlUtils: {
-			applyHooks(jsonml: Token[], hooks: Hook[], nodeLevel?: number, context?: any): Token[];
-			addAttributes(jsonml: Token[], newAttr: jsonmlAttributes): jsonmlAttributes;
-			escape(text: string, escapeQuotes?: boolean): string;
-		};
-	}
 }
+
+interface TextileJS {
+	convert(text: string, options?: TextileJS.Options, context?: any): string;
+	setOptions(options: TextileJS.Options): object;
+
+	tokenize(text: string, options?: TextileJS.Options, context?: any): TextileJS.Token[];
+	serialize(tokens: TextileJS.Token[], options?: TextileJS.Options, context?: any): string;
+
+	jsonmlUtils: {
+		applyHooks(jsonml: TextileJS.Token[], hooks: TextileJS.Hook[], nodeLevel?: number, context?: any): TextileJS.Token[];
+		addAttributes(jsonml: TextileJS.Token[], newAttr: TextileJS.jsonmlAttributes): TextileJS.jsonmlAttributes;
+		escape(text: string, escapeQuotes?: boolean): string;
+	};
+}
+
+declare const TextileJS: TextileJS;
+
+export = TextileJS;
