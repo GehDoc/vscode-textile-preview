@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.3.25] - 20231124
 
 ### Changed
-- [INTERNAL] WIP - Update to vscode 1.69.2
+- [INTERNAL] Update to vscode 1.69.2
 - [DEPENDENCIES] update to latest vscode-nls
 
 ### Added
