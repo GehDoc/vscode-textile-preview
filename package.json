@@ -455,7 +455,7 @@
   "dependencies": {
     "highlight.js": "^11.4.0",
     "morphdom": "^2.6.1",
-    "picomatch": "^2.3.1",
+    "picomatch": "^2.3.2",
     "vscode-languageserver-textdocument": "^1.0.4",
     "vscode-nls": "^5.2.0",
     "vscode-uri": "^3.0.3"
